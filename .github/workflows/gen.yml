@@ -23,9 +23,9 @@ jobs:
           # Set output directory
           export OUT_DIR="$HOME/out"
           mkdir -p "$OUT_DIR"
-          
+
           cd ${{ github.workspace }}
-          
+
           DBIN_PGRS="dwarfs-tools bwrap-patched"
 
           export GOBIN="$HOME/.local/bin"
@@ -49,14 +49,14 @@ jobs:
             ln -sfT "$GOBIN/bwrap-patched" "$GOBIN/bwrap"
           }
 
-          cd ~/out
+          cd "$OUT_DIR"
           # Check if the recipes directory exists
           if [ -d "${{ github.workspace }}/recipes" ]; then
             echo "Listing contents of ./recipes:"
-            ls -l ${{ github.workspace }}/recipes/
+            ls -l "${{ github.workspace }}/recipes/"
 
             # Iterate over build scripts in recipes/*
-            for dir in ${{ github.workspace }}/recipes/*; do
+            for dir in "${{ github.workspace }}/recipes/"*; do
               if [ -d "$dir" ]; then
                 for script in "$dir"/*.*sh; do  # Target files ending in .sh
                   # Check if the script exists before making it executable
@@ -86,5 +86,5 @@ jobs:
           prerelease: false
           draft: false
           files: |
-            $HOME/out/*
+            $OUT_DIR/*
           repo_token: ${{ secrets.GITHUB_TOKEN }}
