@@ -50,6 +50,7 @@ jobs:
             ln -sfT "$GOBIN/bwrap-patched" "$GOBIN/bwrap"
           }
 
+          ls
           # Check if the recipes directory exists
           if [ -d "./recipes" ]; then
             echo "Listing contents of ./recipes:"
