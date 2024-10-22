@@ -37,7 +37,7 @@ jobs:
           go install github.com/xplshn/pelf/cmd/pelfd@dev
           #go install github.com/xplshn/pelf/cmd/dynexec/lib4bin@dev
 
-          wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "$HOME/.local/bin/dbin" $DBIN_PGRS && \
+          wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "$HOME/.local/bin/dbin" add $DBIN_PGRS && \
           export PATH="$HOME/.local/bin:$PATH" && {
             ln -sfT "$HOME/.local/bin/dwarfs-tools" "$HOME/.local/bin/mkdwarfs"
             ln -sfT "$HOME/.local/bin/dwarfs-tools" "$HOME/.local/bin/dwarfs"
