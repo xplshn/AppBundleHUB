@@ -32,10 +32,15 @@ jobs:
           mkdir -p "$HOME/.local/bin"
 
           git clone --depth 1 --branch dev https://github.com/xplshn/pelf
+          
           cp ./pelf/pelf* ~/.local/bin
           cp ./pelf/cmd/misc/* ~/.local/bin
-          go install github.com/xplshn/pelf/cmd/pelfd@dev
-          #go install github.com/xplshn/pelf/cmd/dynexec/lib4bin@dev
+
+          cd pelf/cmd/pelfd
+          go build -o "$GOBIN/pelfd"
+
+          cd ../dynexec/lib4bin
+          go build -o "$GOBIN/lib4bin"
 
           wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "$HOME/.local/bin/dbin" add $DBIN_PGRS && \
           export PATH="$HOME/.local/bin:$PATH" && {
@@ -68,5 +73,4 @@ jobs:
           draft: false
           files: |
             $HOME/out/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            repo_token: ${{ secrets.GITHUB_TOKEN }}
