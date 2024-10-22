@@ -22,9 +22,11 @@ jobs:
           export OUT_DIR="$HOME/out"
           mkdir -p "$OUT_DIR"
           cd "$OUT_DIR"
-          wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "$HOME/.local/bin/dbin"
-          export PATH="$HOME/.local/bin:$PATH"
-          dbin add dwarfs-tools bwrap-patched && {
+
+          DBIN_PGRS="dwarfs-tools bwrap-patched"
+
+          wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "$HOME/.local/bin/dbin" $DBIN_PGRS &&
+          export PATH="$HOME/.local/bin:$PATH" && {
             ln -sfT "$HOME/.local/bin/dwarfs-tools" "$HOME/.local/bin/mkdwarfs"
             ln -sfT "$HOME/.local/bin/dwarfs-tools" "$HOME/.local/bin/dwarfs"
             ln -sfT "$HOME/.local/bin/bwrap-patched" "$HOME/.local/bin/bwrap"
