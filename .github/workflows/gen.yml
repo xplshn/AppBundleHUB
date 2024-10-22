@@ -19,9 +19,10 @@ jobs:
 
       # Find and run all build scripts inside ./programs/*
       - name: Run build scripts for all architectures
+        id: build_step
         run: |
           # Set output directory
-          export OUT_DIR="$HOME/out"
+          OUT_DIR="$HOME/out"
           mkdir -p "$OUT_DIR"
 
           cd ${{ github.workspace }}
@@ -76,6 +77,10 @@ jobs:
           else
             echo "No recipes directory found, skipping."
           fi
+          ls "$OUT_DIR"
+
+          # Set the output for the OUT_DIR variable
+          echo "OUT_DIR=${OUT_DIR}" >> $GITHUB_ENV
 
       # Create GitHub Release
       - name: Create Release
@@ -86,5 +91,5 @@ jobs:
           prerelease: false
           draft: false
           files: |
-            $OUT_DIR/*
+            ${{ env.OUT_DIR }}/*
           repo_token: ${{ secrets.GITHUB_TOKEN }}
