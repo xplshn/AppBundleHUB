@@ -115,5 +115,5 @@ jobs:
           prerelease: false
           draft: false
           files: |
-            ${{ env.OUT_DIR }}/*
+            ${{ env.OUT_DIR }}/*.AppBundle
           repo_token: ${{ secrets.GITHUB_TOKEN }}
