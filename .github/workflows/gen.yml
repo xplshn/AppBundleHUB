@@ -25,7 +25,18 @@ jobs:
 
           DBIN_PGRS="dwarfs-tools bwrap-patched"
 
-          wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "$HOME/.local/bin/dbin" $DBIN_PGRS &&
+          export GOBIN="$HOME/.local/bin"
+
+          mkdir -p "$HOME/.local/bin"
+
+          sudo apt install go
+          git clone --depth 1 --branch dev https://github.com/xplshn/pelf
+          cp ./pelf/pelf* ~/.local/bin
+          cp ./pelf/cmd/misc/* ~/.local/bin
+          go install github.com/xplshn/pelf/cmd/pelfd@dev
+          go install github.com/xplshn/pelf/cmd/dynexec/lib4bin@dev
+
+          wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "$HOME/.local/bin/dbin" $DBIN_PGRS && \
           export PATH="$HOME/.local/bin:$PATH" && {
             ln -sfT "$HOME/.local/bin/dwarfs-tools" "$HOME/.local/bin/mkdwarfs"
             ln -sfT "$HOME/.local/bin/dwarfs-tools" "$HOME/.local/bin/dwarfs"
