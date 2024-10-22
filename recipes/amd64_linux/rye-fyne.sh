@@ -159,7 +159,7 @@ BUILDSCRIPT_END
 }
 
 # MAIN
-pelfCreator -m xplshn -n fyneDevEnv -p "build-base libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev linux-headers mesa-dev go git fuse bash" -z -e "sh" && {
+pelfCreator -m xplshn -n fyneDevEnv -p "fuse3 build-base libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev linux-headers mesa-dev go git fuse bash" -z -e "sh" && {
     APPDIR="fyneDevEnv-$(date +%d_%m_%Y).AppDir"
     add_apprun "$@"
     echo "Rye_multibuild.sh" > "$APPDIR/rootfs/entrypoint"
