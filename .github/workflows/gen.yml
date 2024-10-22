@@ -15,7 +15,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Go
-        uses: actions/setup-go@v5.0.2
+        uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
 
       # Find and run all build scripts inside ./programs/*
       - name: Run build scripts for all architectures
@@ -115,5 +117,5 @@ jobs:
           prerelease: false
           draft: false
           files: |
-            ${{ env.OUT_DIR }}/*
+            ${{ env.OUT_DIR }}/*.AppBundle
           repo_token: ${{ secrets.GITHUB_TOKEN }}
