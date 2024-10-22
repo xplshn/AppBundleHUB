@@ -82,6 +82,30 @@ jobs:
           # Set the output for the OUT_DIR variable
           echo "OUT_DIR=${OUT_DIR}" >> $GITHUB_ENV
 
+      # Remove older tags if more than 5 exist
+      - name: Manage Tags
+        run: |
+          # Fetch all tags
+          git fetch --tags
+
+          # Get the list of tags and count them
+          TAGS=$(git tag | sort -V)  # Sort tags in version order
+          TAG_COUNT=$(echo "$TAGS" | wc -l)
+
+          if [ "$TAG_COUNT" -gt 5 ]; then
+            # Get the tags to delete (all except the latest)
+            TAGS_TO_DELETE=$(echo "$TAGS" | head -n -1)  # All but the last tag
+
+            # Delete each old tag
+            for TAG in $TAGS_TO_DELETE; do
+              echo "Deleting tag: $TAG"
+              git tag -d "$TAG" || echo "Tag $TAG could not be deleted locally."
+              git push origin --delete "$TAG" || echo "Tag $TAG could not be deleted from remote."
+            done
+          else
+            echo "Tag count is $TAG_COUNT, no tags to delete."
+          fi
+
       # Create GitHub Release
       - name: Create Release
         uses: marvinpinto/action-automatic-releases@latest
