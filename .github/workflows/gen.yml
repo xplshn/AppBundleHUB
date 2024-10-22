@@ -23,18 +23,19 @@ jobs:
           # Set output directory
           export OUT_DIR="$HOME/out"
           mkdir -p "$OUT_DIR"
-          cd "$OUT_DIR"
-
+          
+          # Ensure working directory is set to the repository root
+          cd ${{ github.workspace }}
+          
           DBIN_PGRS="dwarfs-tools bwrap-patched"
 
           export GOBIN="$HOME/.local/bin"
-
-          mkdir -p "$HOME/.local/bin"
+          mkdir -p "$GOBIN"
 
           git clone --depth 1 --branch dev https://github.com/xplshn/pelf
           
-          cp ./pelf/pelf* ~/.local/bin
-          cp ./pelf/cmd/misc/* ~/.local/bin
+          cp ./pelf/pelf* "$GOBIN"
+          cp ./pelf/cmd/misc/* "$GOBIN"
 
           cd pelf/cmd/pelfd
           go build -o "$GOBIN/pelfd"
@@ -42,22 +43,29 @@ jobs:
           cd ../dynexec/lib4bin
           go build -o "$GOBIN/lib4bin"
 
-          wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "$HOME/.local/bin/dbin" add $DBIN_PGRS && \
-          export PATH="$HOME/.local/bin:$PATH" && {
-            ln -sfT "$HOME/.local/bin/dwarfs-tools" "$HOME/.local/bin/mkdwarfs"
-            ln -sfT "$HOME/.local/bin/dwarfs-tools" "$HOME/.local/bin/dwarfs"
-            ln -sfT "$HOME/.local/bin/bwrap-patched" "$HOME/.local/bin/bwrap"
+          wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "$GOBIN/dbin" add $DBIN_PGRS && \
+          export PATH="$GOBIN:$PATH" && {
+            ln -sfT "$GOBIN/dwarfs-tools" "$GOBIN/mkdwarfs"
+            ln -sfT "$GOBIN/dwarfs-tools" "$GOBIN/dwarfs"
+            ln -sfT "$GOBIN/bwrap-patched" "$GOBIN/bwrap"
           }
 
-          # Iterate over build scripts in programs/*
+          # Debugging to check if the recipes directory is found and has executable scripts
+          echo "Listing contents of ./recipes:"
+          ls -l ./recipes/*
+
+          # Iterate over build scripts in recipes/*
           for dir in ./recipes/*; do
             if [ -d "$dir" ]; then
-              for script in "$dir"/*; do
-                if [ -x "$script" ]; then
+              for script in "$dir"/*.*sh; do  # Target files ending in .sh
+                # Check if the script exists before making it executable
+                if [ -e "$script" ]; then
+                  echo "Making $script executable..."
+                  chmod +x "$script"
                   echo "Running $script..."
-                  $script
+                  "$script"
                 else
-                  echo "$script is not executable, skipping."
+                  echo "$script does not exist, skipping."
                 fi
               done
             fi
@@ -73,4 +81,4 @@ jobs:
           draft: false
           files: |
             $HOME/out/*
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+            repo_token: ${GITHUB_TOKEN}
