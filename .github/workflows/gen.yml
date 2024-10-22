@@ -69,12 +69,14 @@ jobs:
           draft: false
           prerelease: false
 
-      # Upload each file from $HOME/out to the GitHub release
-      - name: Upload Release Assets
-        run: |
-          for file in $HOME/out/*; do
-            if [ -f "$file" ]; then
-              echo "Uploading $file"
-              gh release upload ${{ steps.create_release.outputs.upload_url }} "$file" --clobber
-            fi
-          done
+      - name: Create Release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          title: "Weekly Release - Run ${{ github.run_id }}"
+          automatic_release_tag: weekly-release-${{ github.run_id }}
+          prerelease: false
+          draft: false
+          files: |
+            $HOME/out/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
