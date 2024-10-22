@@ -50,26 +50,32 @@ jobs:
             ln -sfT "$GOBIN/bwrap-patched" "$GOBIN/bwrap"
           }
 
-          # Debugging to check if the recipes directory is found and has executable scripts
-          echo "Listing contents of ./recipes:"
-          ls -l ./recipes/*
+          # Check if the recipes directory exists
+          if [ -d "./recipes" ]; then
+            echo "Listing contents of ./recipes:"
+            ls -l ./recipes/
 
-          # Iterate over build scripts in recipes/*
-          for dir in ./recipes/*; do
-            if [ -d "$dir" ]; then
-              for script in "$dir"/*.*sh; do  # Target files ending in .sh
-                # Check if the script exists before making it executable
-                if [ -e "$script" ]; then
-                  echo "Making $script executable..."
-                  chmod +x "$script"
-                  echo "Running $script..."
-                  "$script"
-                else
-                  echo "$script does not exist, skipping."
-                fi
-              done
-            fi
-          done
+            # Iterate over build scripts in recipes/*
+            for dir in ./recipes/*; do
+              if [ -d "$dir" ]; then
+                for script in "$dir"/*.*sh; do  # Target files ending in .sh
+                  # Check if the script exists before making it executable
+                  if [ -e "$script" ]; then
+                    echo "Making $script executable..."
+                    chmod +x "$script"
+                    echo "Running $script..."
+                    "$script"
+                  else
+                    echo "$script does not exist, skipping."
+                  fi
+                done
+              else
+                echo "$dir is not a directory, skipping."
+              fi
+            done
+          else
+            echo "No recipes directory found, skipping."
+          fi
 
       # Create GitHub Release
       - name: Create Release
