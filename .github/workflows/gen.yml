@@ -24,7 +24,6 @@ jobs:
           export OUT_DIR="$HOME/out"
           mkdir -p "$OUT_DIR"
           
-          # Ensure working directory is set to the repository root
           cd ${{ github.workspace }}
           
           DBIN_PGRS="dwarfs-tools bwrap-patched"
@@ -50,7 +49,7 @@ jobs:
             ln -sfT "$GOBIN/bwrap-patched" "$GOBIN/bwrap"
           }
 
-          ls
+          cd ${{ github.workspace }}
           # Check if the recipes directory exists
           if [ -d "./recipes" ]; then
             echo "Listing contents of ./recipes:"
@@ -65,7 +64,9 @@ jobs:
                     echo "Making $script executable..."
                     chmod +x "$script"
                     echo "Running $script..."
-                    "$script"
+                    cd ~/out && \
+                    "$script" ; \
+                    cd ${{ github.workspace }}
                   else
                     echo "$script does not exist, skipping."
                   fi
