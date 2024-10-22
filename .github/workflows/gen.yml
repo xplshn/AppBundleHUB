@@ -73,4 +73,4 @@ jobs:
           draft: false
           files: |
             $HOME/out/*
-            repo_token: ${{ secrets.GITHUB_TOKEN }}
+            repo_token: ${GITHUB_TOKEN}
