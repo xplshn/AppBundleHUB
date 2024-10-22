@@ -49,14 +49,14 @@ jobs:
             ln -sfT "$GOBIN/bwrap-patched" "$GOBIN/bwrap"
           }
 
-          cd ${{ github.workspace }}
+          cd ~/out
           # Check if the recipes directory exists
-          if [ -d "./recipes" ]; then
+          if [ -d "${{ github.workspace }}/recipes" ]; then
             echo "Listing contents of ./recipes:"
-            ls -l ./recipes/
+            ls -l ${{ github.workspace }}/recipes/
 
             # Iterate over build scripts in recipes/*
-            for dir in ./recipes/*; do
+            for dir in ${{ github.workspace }}/recipes/*; do
               if [ -d "$dir" ]; then
                 for script in "$dir"/*.*sh; do  # Target files ending in .sh
                   # Check if the script exists before making it executable
@@ -64,9 +64,7 @@ jobs:
                     echo "Making $script executable..."
                     chmod +x "$script"
                     echo "Running $script..."
-                    cd ~/out && \
-                    "$script" ; \
-                    cd ${{ github.workspace }}
+                    "$script"
                   else
                     echo "$script does not exist, skipping."
                   fi
