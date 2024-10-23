@@ -1,4 +1,4 @@
-pelfCreator -m xplshn -n xfce4-multicall -p "mousepad thunar ristretto xfce4-appfinder xfce4-terminal xfce4-screenshooter xfce4-panel xfce4-taskmanager" -z -c
+pelfCreator -m xplshn -n xfce4-multicall -p "mousepad thunar ristretto xfce4-appfinder xfce4-terminal xfce4-screenshooter xfce4-panel xfce4-taskmanager xfce4-power-manager" -c
 APPDIR="$(echo xfce4-multicall*.AppDir)"
 # Add the .DirIcon
 if ! wget -qO "$APPDIR/.DirIcon" "https://i.ibb.co/qx1n74v/image.png"; then
