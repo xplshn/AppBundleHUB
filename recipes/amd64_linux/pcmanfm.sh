@@ -1,1 +1,1 @@
-pelfCreator -m "xplshn" -n "pcmanfm" -p "pcmanfm" -e "pcmanfm.desktop"
+pelfCreator -m "xplshn" -n "pcmanfm" -p "pcmanfm" -x "usr/bin/pcmanfm" -e "pcmanfm.desktop"

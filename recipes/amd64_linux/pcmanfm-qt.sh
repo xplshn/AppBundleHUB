@@ -1,4 +1,4 @@
-pelfCreator -m "xplshn" -n "pcmanfm-qt" -p "pcmanfm-qt" -e "pcmanfm-qt.desktop" -z
+pelfCreator -m "xplshn" -n "pcmanfm-qt" -p "pcmanfm-qt" -x "usr/bin/pcmanfm-qt"  -e "pcmanfm-qt.desktop" -z
 APPDIR="$(echo pcmanfm-qt*.AppDir)"
 # Add the .DirIcon
 if ! wget -qO "$APPDIR/.DirIcon" "https://i.ibb.co/CtNbwVk/lxqt-logo.png"; then
