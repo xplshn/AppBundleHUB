@@ -17,17 +17,19 @@ jobs:
       - name: Find build scripts
         id: find_scripts
         run: |
-          # Find all scripts in the recipes directory
           if [ -d "${{ github.workspace }}/recipes" ]; then
             find "${{ github.workspace }}/recipes" -type f -name "*.sh" > scripts.txt
+            echo "Found build scripts:"
+            cat scripts.txt
           else
             echo "No recipes directory found."
             exit 1
           fi
-
-          # Set scripts list as a matrix strategy
-          scripts=$(cat scripts.txt | jq -R -s -c 'split("\n") | map(select(length > 0))')
-          echo "::set-output name=scripts::$scripts"
+      - name: Upload build scripts list
+        uses: actions/upload-artifact@v3
+        with:
+          name: scripts-list
+          path: scripts.txt
 
   build:
     name: Build and Run Scripts
@@ -42,37 +44,34 @@ jobs:
             out_suffix: '-amd64'
           - architecture: arm64
             out_suffix: ''
-        script: ${{ fromJson(needs.find-scripts.outputs.scripts) }}  # Use the scripts found in the previous step
       fail-fast: false
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Go
-        uses: actions/setup-go@v5
+      - name: Download scripts list
+        uses: actions/download-artifact@v3
         with:
-          go-version: 'stable'
+          name: scripts-list
+          path: ./scripts
 
-      - name: Install Build Tools and Environment
+      - name: Read and run each script
         run: |
-          # Set output directory
           OUT_DIR="$HOME/out"
           mkdir -p "$OUT_DIR"
 
           DBIN_PGRS="dwarfs-tools bwrap-patched sharun yq jq"
-
           export GOBIN="$HOME/.local/bin"
           mkdir -p "$GOBIN"
 
+          # Install required tools
           git clone --depth 1 --branch dev https://github.com/xplshn/pelf
-          
           cp ./pelf/pelf* "$GOBIN"
           cp ./pelf/cmd/misc/* "$GOBIN"
 
           cd pelf/cmd/pelfd
           go build -o "$GOBIN/pelfd"
-
           cd ../dynexec/lib4bin
           go build -o "$GOBIN/lib4bin"
 
@@ -83,21 +82,23 @@ jobs:
             ln -sfT "$GOBIN/bwrap-patched" "$GOBIN/bwrap"
           }
 
-      - name: Setup Shared devEnv
-        run: |
           ROOTFS_URL="$(curl -qsL https://dl-cdn.alpinelinux.org/alpine/edge/releases/x86_64/latest-releases.yaml | yq '.[0].file')"
           ROOTFS_URL="https://dl-cdn.alpinelinux.org/alpine/edge/releases/$(uname -m)/${ROOTFS_URL}"
           export ROOTFS_URL
 
           pelfCreator -m xplshn -n devEnv -p "fuse3 build-base go git" -z -c
           devEnv="$(echo ${{ github.workspace }}/devEnv*/AppRun)"
-          echo "devEnv=${devEnv}" >> $GITHUB_ENV
 
-      - name: Run Build Script
-        run: |
-          # Make the current script executable and run it with devEnv
-          chmod +x "${{ matrix.script }}"
-          "${{ env.devEnv }}" "${{ matrix.script }}"
+          # Iterate over the scripts and run them
+          while IFS= read -r script; do
+            if [ -f "$script" ]; then
+              echo "Running $script..."
+              chmod +x "$script"
+              "${devEnv}" "$script"
+            else
+              echo "Script $script not found, skipping."
+            fi
+          done < ./scripts/scripts.txt
 
       - name: Upload Artifacts
         run: |
@@ -115,18 +116,13 @@ jobs:
 
       - name: Manage Tags
         run: |
-          # Fetch all tags
           git fetch --tags
-
-          # Get the list of tags and count them
-          TAGS=$(git tag | sort -V)  # Sort tags in version order
+          TAGS=$(git tag | sort -V)
           TAG_COUNT=$(echo "$TAGS" | wc -l)
 
           if [ "$TAG_COUNT" -gt 5 ]; then
-            # Get the tags to delete (all except the latest)
-            TAGS_TO_DELETE=$(echo "$TAGS" | head -n -1)  # All but the last tag
+            TAGS_TO_DELETE=$(echo "$TAGS" | head -n -1)
 
-            # Delete each old tag
             for TAG in $TAGS_TO_DELETE; do
               echo "Deleting tag: $TAG"
               git tag -d "$TAG" || echo "Tag $TAG could not be deleted locally."
