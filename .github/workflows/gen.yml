@@ -54,7 +54,7 @@ jobs:
 
           cd ${{ github.workspace }}
           pelfCreator -m xplshn -n devEnv -p "fuse3 build-base go git" -z -c
-          devEnv="$(ls -1 ${{ github.workspace }}/devEnv*/AppRun)"
+          devEnv="$(echo ${{ github.workspace }}/devEnv*/AppRun)"
 
           cd "$OUT_DIR"
           # Check if the recipes directory exists
