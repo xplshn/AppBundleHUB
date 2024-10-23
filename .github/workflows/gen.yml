@@ -92,6 +92,10 @@ jobs:
           fi
           ls "$OUT_DIR"
 
+          UTC_TIME="$(TZ='UTC' date +'%Y-%m-%d_%I:%M:%S_%p' | tr ' :-' '_')"
+          echo "UTC_TIME=${UTC_TIME}" >> "${GITHUB_ENV}"
+
+
           # Set the output for the OUT_DIR variable
           echo "OUT_DIR=${OUT_DIR}" >> $GITHUB_ENV
         continue-on-error: true
@@ -124,8 +128,8 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2.0.8
         with:
-          name: "Weekly Release - Run ${{ github.run_id }}"
-          tag_name: "weekly-release-${{ github.run_id }}-${{ github.sha }}"
+          name: "Weekly Release - ${{ env.UTC_TIME }}"
+          tag_name: "${{ env.UTC_TIME }}"
           prerelease: false
           draft: false
           generate_release_notes: false
