@@ -7,8 +7,10 @@ on:
 
 jobs:
   build:
-    name: Build and Release Packages
+    name: Build and Release AppBundles
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
