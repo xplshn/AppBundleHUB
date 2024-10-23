@@ -24,6 +24,7 @@ jobs:
       - name: Run build scripts for all architectures
         id: build_step
         run: |
+          set -x
           # Set output directory
           OUT_DIR="/tmp/APPBUNDLES"
           mkdir -p "$OUT_DIR"
