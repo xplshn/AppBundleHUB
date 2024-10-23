@@ -71,9 +71,7 @@ jobs:
             # Iterate over build scripts in recipes/*
             find "${{ github.workspace }}/recipes" -type f -name "*.sh" -print0 | \
               xargs -0 -n 1 -P "$(nproc)" -I {} sh -c '
-              echo "Debugging {}:"
-              ls -l "{}"
-              head -n 10 "{}"
+              ls -1 "{}"
               echo "Running {}..."
               "${devEnv}" "{}"
             '
