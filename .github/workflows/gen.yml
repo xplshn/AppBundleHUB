@@ -54,7 +54,7 @@ jobs:
 
           cd ${{ github.workspace }}
 
-          ROOTFS_URL="$(curl -qsL https://dl-cdn.alpinelinux.org/alpine/edge/releases/x86_64/latest-release.yaml | yq --transparent '.[0].file')"
+          ROOTFS_URL="$(curl -qsL https://dl-cdn.alpinelinux.org/alpine/edge/releases/x86_64/latest-release.yaml | yq '.[0].file')"
           ROOTFS_URL="https://dl-cdn.alpinelinux.org/alpine/edge/releases/$(uname -m)/${ROOTFS_URL}"
           export ROOTFS_URL
 
