@@ -53,7 +53,7 @@ jobs:
           }
 
           pelfCreator -m xplshn -n devEnv -p "fuse3 build-base go git" -z -c
-          devEnv="$(echo "devEnv*/AppRun")"
+          devEnv="$(echo devEnv*/AppRun)"
 
           cd "$OUT_DIR"
           # Check if the recipes directory exists
