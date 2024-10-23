@@ -70,7 +70,7 @@ jobs:
                     echo "Making $script executable..."
                     chmod +x "$script"
                     echo "Running $script..."
-                    "$devEnv" "$script"
+                    "${{ github.workspace }}/${devEnv}" "$script"
                   else
                     echo "$script does not exist, skipping."
                   fi
