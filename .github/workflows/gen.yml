@@ -83,6 +83,7 @@ jobs:
 
           # Set the output for the OUT_DIR variable
           echo "OUT_DIR=${OUT_DIR}" >> $GITHUB_ENV
+        continue-on-error: true
 
       # Remove older tags if more than 5 exist
       - name: Manage Tags
