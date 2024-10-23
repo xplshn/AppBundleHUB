@@ -9,6 +9,7 @@ jobs:
   build:
     name: Build and Release Packages
     runs-on: ubuntu-latest
+    permissions: write-all
 
     steps:
       - name: Checkout repository
@@ -24,7 +25,7 @@ jobs:
         id: build_step
         run: |
           # Set output directory
-          OUT_DIR="$HOME/out"
+          OUT_DIR="/tmp/APPBUNDLES"
           mkdir -p "$OUT_DIR"
 
           cd ${{ github.workspace }}
@@ -120,12 +121,16 @@ jobs:
 
       # Create GitHub Release
       - name: Create Release
-        uses: marvinpinto/action-automatic-releases@latest
+        uses: softprops/action-gh-release@v2.0.8
         with:
-          title: "Weekly Release - Run ${{ github.run_id }}"
-          automatic_release_tag: weekly-release-${{ github.run_id }}
+          name: "Weekly Release - Run ${{ github.run_id }}"
+          tag_name: "weekly-release-${{ github.run_id }}-${{ github.sha }}"
           prerelease: false
           draft: false
+          generate_release_notes: false
+          make_latest: true
           files: |
-            ${{ env.OUT_DIR }}/*.AppBundle
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+            /tmp/APPBUNDLES/*.AppBundle
+          continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
