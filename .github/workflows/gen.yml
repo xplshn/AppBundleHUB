@@ -52,6 +52,9 @@ jobs:
             ln -sfT "$GOBIN/bwrap-patched" "$GOBIN/bwrap"
           }
 
+          pelfCreator -m xplshn -n devEnv -p "fuse3 build-base go git" -z -c
+          devEnv="$(echo "devEnv*/AppRun")"
+
           cd "$OUT_DIR"
           # Check if the recipes directory exists
           if [ -d "${{ github.workspace }}/recipes" ]; then
@@ -67,7 +70,7 @@ jobs:
                     echo "Making $script executable..."
                     chmod +x "$script"
                     echo "Running $script..."
-                    "$script"
+                    "$devEnv" "$script"
                   else
                     echo "$script does not exist, skipping."
                   fi
