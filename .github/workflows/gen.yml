@@ -52,6 +52,7 @@ jobs:
             ln -sfT "$GOBIN/bwrap-patched" "$GOBIN/bwrap"
           }
 
+          cd ${{ github.workspace }}
           pelfCreator -m xplshn -n devEnv -p "fuse3 build-base go git" -z -c
           devEnv="$(ls -1 ${{ github.workspace }}/devEnv*/AppRun)"
 
