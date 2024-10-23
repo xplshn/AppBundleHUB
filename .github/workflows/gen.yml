@@ -132,4 +132,4 @@ jobs:
           make_latest: true
           files: |
             /tmp/APPBUNDLES/*.AppBundle
-          continue-on-error: true
+        continue-on-error: true
