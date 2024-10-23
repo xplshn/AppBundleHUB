@@ -1,4 +1,4 @@
-name: Build and Release Packages
+name: Build and Release AppBundles
 
 on:
   schedule:
