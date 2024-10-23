@@ -29,7 +29,7 @@ jobs:
 
           cd ${{ github.workspace }}
 
-          DBIN_PGRS="dwarfs-tools bwrap-patched sharun"
+          DBIN_PGRS="dwarfs-tools bwrap-patched sharun yq jq"
 
           export GOBIN="$HOME/.local/bin"
           mkdir -p "$GOBIN"
@@ -53,6 +53,11 @@ jobs:
           }
 
           cd ${{ github.workspace }}
+
+          ROOTFS_URL="$(curl -qsL https://dl-cdn.alpinelinux.org/alpine/edge/releases/x86_64/latest-release.yaml | yq --transparent '.[0].file')"
+          ROOTFS_URL="https://dl-cdn.alpinelinux.org/alpine/edge/releases/$(uname -m)/${ROOTFS_URL}"
+          export ROOTFS_URL
+
           pelfCreator -m xplshn -n devEnv -p "fuse3 build-base go git" -z -c
           devEnv="$(echo ${{ github.workspace }}/devEnv*/AppRun)"
 
