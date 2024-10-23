@@ -71,7 +71,7 @@ jobs:
             # Iterate over build scripts in recipes/*
             for dir in "${{ github.workspace }}/recipes/"*; do
               if [ -d "$dir" ]; then
-                for script in "$dir"/*.*sh; do  # Target files ending in .sh
+                for script in "$dir"/*.*sh; do
                   # Check if the script exists before making it executable
                   if [ -e "$script" ]; then
                     echo "Making $script executable..."

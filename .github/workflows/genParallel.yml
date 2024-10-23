@@ -7,8 +7,10 @@ on:
 
 jobs:
   build:
-    name: Build and Release Packages
+    name: Build and Release AppBundles (Parallel)
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -66,14 +68,13 @@ jobs:
           if [ -d "${{ github.workspace }}/recipes" ]; then
             echo "Listing contents of ./recipes:"
             ls -l "${{ github.workspace }}/recipes/"
-
             # Iterate over build scripts in recipes/*
             find "${{ github.workspace }}/recipes" -type f -name "*.sh" -print0 | \
               xargs -0 -n 1 -P "$(nproc)" -I {} sh -c '
-                chmod +x "{}"
-                echo "Running {}..."
-                "${devEnv}" "{}"
-              '
+              ls -1 "{}"
+              echo "Running {}..."
+              "${devEnv}" "{}"
+            '
           else
             echo "No recipes directory found, skipping."
           fi
