@@ -70,9 +70,12 @@ jobs:
             ls -l "${{ github.workspace }}/recipes/"
             # Iterate over build scripts in recipes/*
             find "${{ github.workspace }}/recipes" -type f -name "*.sh" -print0 | \
-            xargs -0 -n 1 -P "$(nproc)" -I {} sh -c '
-            echo "Running {}..."
-            "${devEnv}" "{}"
+              xargs -0 -n 1 -P "$(nproc)" -I {} sh -c '
+              echo "Debugging {}:"
+              ls -l "{}"
+              head -n 10 "{}"
+              echo "Running {}..."
+              "${devEnv}" "{}"
             '
           else
             echo "No recipes directory found, skipping."
