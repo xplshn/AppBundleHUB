@@ -75,8 +75,8 @@ jobs:
 
       - name: List available scripts
         run: |
-          echo "Listing available scripts in recipes:"
-          ls -l "${{ github.workspace }}/recipes/"
+          echo "Listing available recipes:"
+          tree "${{ github.workspace }}/recipes"
 
       - name: Run selected build scripts in OUT_DIR
         run: |
