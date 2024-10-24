@@ -55,22 +55,23 @@ jobs:
           ln -sfT "$GOBIN/bwrap-patched" "$GOBIN/bwrap"
           echo "PATH=$PATH" >> $GITHUB_ENV
 
-      - name: Download Alpine RootFS
+      - name: Select latest Edge Alpine rootfs
         id: rootfs
         run: |
           ROOTFS_URL="$(curl -qsL https://dl-cdn.alpinelinux.org/alpine/edge/releases/x86_64/latest-releases.yaml | yq '.[0].file')"
           ROOTFS_URL="https://dl-cdn.alpinelinux.org/alpine/edge/releases/$(uname -m)/${ROOTFS_URL}"
           echo "ROOTFS_URL=$ROOTFS_URL" >> $GITHUB_ENV
 
-      - name: Create pelf environment
-        run: |
-          pelfCreator -m xplshn -n devEnv -p "fuse3 build-base go git" -z -c
-
       - name: Set OUT_DIR environment variable
         run: |
           OUT_DIR="${{ github.workspace }}/APPBUNDLES" # Store in workspace
           mkdir -p "$OUT_DIR"
           echo "OUT_DIR=${OUT_DIR}" >> $GITHUB_ENV
+
+      - name: Create pelf environment
+        run: |
+          cd "$OUT_DIR"
+          pelfCreator -m xplshn -n musl_C_Go_Fyne_DevEnv -p "fuse3 build-base libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev linux-headers mesa-dev go git fuse bash" -c
 
       - name: List available scripts
         run: |
@@ -93,23 +94,23 @@ jobs:
             if echo "$script" | grep -E "$PATTERN"; then
               echo "Running $script"
               chmod +x "$script"
-              ${{ github.workspace }}/devEnv*/AppRun "$script"
+              ./musl_C_Go_Fyne_DevEnv*.AppDir/AppRun sh "$script"
             else
               echo "Skipping $script (does not match pattern)"
             fi
           done
 
-      - name: Archive output
+      - name: List output
         run: |
           echo "Archiving output from $OUT_DIR"
           ls "$OUT_DIR"
 
       - name: Upload build artifacts
         if: ${{ github.event.inputs.release == 'false' }} # Only upload artifacts if no release
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: app-bundles
-          path: ${{ env.OUT_DIR }}/*.AppBundle # Only upload AppBundle files, no rootfs
+          path: ${{ env.OUT_DIR }}/*.AppBundle
 
       - name: Manage Tags
         if: ${{ github.event.inputs.release == 'true' }} # Only manage tags for releases
