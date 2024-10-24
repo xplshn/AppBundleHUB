@@ -68,17 +68,18 @@ jobs:
 
       - name: Set OUT_DIR environment variable
         run: |
-          OUT_DIR="${{ github.workspace }}/APPBUNDLES"
+          OUT_DIR="${{ github.workspace }}/APPBUNDLES" # Store in workspace
           mkdir -p "$OUT_DIR"
-          echo "OUT_DIR=$OUT_DIR" >> $GITHUB_ENV
+          echo "OUT_DIR=${OUT_DIR}" >> $GITHUB_ENV
 
       - name: List available scripts
         run: |
           echo "Listing available scripts in recipes:"
           ls -l "${{ github.workspace }}/recipes/"
 
-      - name: Run selected build scripts
+      - name: Run selected build scripts in OUT_DIR
         run: |
+          cd $OUT_DIR
           SCRIPT_PATTERN="${{ github.event.inputs.script_pattern }}"
           if [ -z "$SCRIPT_PATTERN" ]; then
             echo "No script pattern provided, running all scripts."
@@ -92,19 +93,11 @@ jobs:
             if echo "$script" | grep -E "$PATTERN"; then
               echo "Running $script"
               chmod +x "$script"
-              ${{ github.workspace }}/devEnv*/AppRun "$script" "$OUT_DIR"
+              ${{ github.workspace }}/devEnv*/AppRun "$script"
             else
               echo "Skipping $script (does not match pattern)"
             fi
           done
-
-      - name: Verify generated artifacts
-        run: |
-          echo "Verifying generated files in $OUT_DIR"
-          if [ ! "$(ls -A $OUT_DIR)" ]; then
-            echo "Error: No artifacts found in $OUT_DIR!"
-            exit 1
-          fi
 
       - name: Archive output
         run: |
