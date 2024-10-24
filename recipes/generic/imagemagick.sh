@@ -1,0 +1,1 @@
+pelfCreator -m "xplshn" -n "imageMagick" -p "imagemagick" -x "usr/bin/animate usr/bin/compare usr/bin/composite usr/bin/conjure usr/bin/convert usr/bin/display usr/bin/identify usr/bin/import usr/bin/magick usr/bin/magick-script usr/bin/mogrify usr/bin/montage usr/bin/stream" -e "magick"
