@@ -127,12 +127,21 @@ jobs:
             echo "Tag count is $TAG_COUNT, no tags to delete."
           fi
 
+      - name: Create Git Tag
+        if: ${{ github.event.inputs.release == 'true' }} # Only create tag for releases
+        run: |
+          TAG_NAME="v$(date +'%Y%m%d%H%M%S')" # Generate tag based on current timestamp
+          echo "Creating tag: $TAG_NAME"
+          git tag "$TAG_NAME"
+          git push origin "$TAG_NAME"
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+
       - name: Create Release
         if: ${{ github.event.inputs.release == 'true' }} # Conditional release
         uses: softprops/action-gh-release@v2.0.8
         with:
-          name: "Weekly Release - ${{ env.UTC_TIME }}"
-          tag_name: "${{ env.UTC_TIME }}"
+          name: "Weekly Release - ${{ env.TAG_NAME }}"
+          tag_name: "${{ env.TAG_NAME }}"
           prerelease: false
           draft: false
           generate_release_notes: false
@@ -140,4 +149,3 @@ jobs:
           files: |
             ${{ env.OUT_DIR }}/*.AppBundle
         continue-on-error: true
-
