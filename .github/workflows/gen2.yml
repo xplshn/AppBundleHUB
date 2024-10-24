@@ -38,11 +38,9 @@ jobs:
           cp ./pelf/cmd/misc/* "$GOBIN"
           echo "GOBIN=$GOBIN" >> $GITHUB_ENV
 
-      - name: Build pelfd and lib4bin
+      - name: Build lib4bin
         run: |
-          cd pelf/cmd/pelfd
-          go build -o "$GOBIN/pelfd"
-          cd ../dynexec/lib4bin
+          cd pelf/cmd/dynexec/lib4bin
           go build -o "$GOBIN/lib4bin"
 
       - name: Install tools
