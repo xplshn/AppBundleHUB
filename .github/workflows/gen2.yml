@@ -139,3 +139,5 @@ jobs:
           make_latest: true
           files: |
             ${{ env.OUT_DIR }}/*.AppBundle
+        continue-on-error: true
+
