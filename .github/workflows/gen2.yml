@@ -103,7 +103,15 @@ jobs:
           echo "Archiving output from $OUT_DIR"
           ls "$OUT_DIR"
 
+      - name: Upload build artifacts
+        if: ${{ github.event.inputs.release == 'false' }} # Only upload artifacts if no release
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-bundles
+          path: ${{ env.OUT_DIR }}
+
       - name: Manage Tags
+        if: ${{ github.event.inputs.release == 'true' }} # Only manage tags for releases
         run: |
           git fetch --tags
           TAGS=$(git tag | sort -V)
