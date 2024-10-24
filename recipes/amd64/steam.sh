@@ -2,4 +2,4 @@ if ! wget -qO "./steam.AppImage" "https://github.com/ivan-hc/Steam-appimage/rele
 	echo "Couldn't download Steam AppImage"
 	exit 1
 fi
-BS2AppBundle ./steam.AppImage
+COMPRESSION_OPTS="-l7 -C zstd:level=22 --metadata-compression null -S 25 -B 8 --order nilsimsa -W 12 -w 4" BS2AppBundle ./steam.AppImage
