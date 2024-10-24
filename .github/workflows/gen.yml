@@ -31,7 +31,7 @@ jobs:
 
           cd ${{ github.workspace }}
 
-          DBIN_PGRS="dwarfs-tools bwrap-patched sharun yq jq"
+          DBIN_PGRS="dwarfs-tools bwrap-patched sharun yq jq eget2"
 
           export GOBIN="$HOME/.local/bin"
           mkdir -p "$GOBIN"
