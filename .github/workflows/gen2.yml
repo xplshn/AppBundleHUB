@@ -70,7 +70,7 @@ jobs:
         run: |
           OUT_DIR="${{ github.workspace }}/APPBUNDLES"
           mkdir -p "$OUT_DIR"
-          echo "OUT_DIR=${OUT_DIR}" >> $GITHUB_ENV
+          echo "OUT_DIR=$OUT_DIR" >> $GITHUB_ENV
 
       - name: List available scripts
         run: |
