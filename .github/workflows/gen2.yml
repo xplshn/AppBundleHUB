@@ -69,7 +69,7 @@ jobs:
       - name: Create pelf environment
         run: |
           cd "$OUT_DIR"
-          pelfCreator -m xplshn -n musl_C_Go_Fyne_DevEnv -p "fuse3 fuse build-base libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev linux-headers mesa-dev go git bash" -e "sh"
+          pelfCreator -m xplshn -n musl_C_Go_Fyne_DevEnv -p "fuse3 fuse build-base libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev linux-headers mesa-dev go git bash" -c -e "sh"
 
       - name: List available scripts
         run: |
