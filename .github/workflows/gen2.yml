@@ -92,7 +92,7 @@ jobs:
             if echo "$script" | grep -E "$PATTERN"; then
               echo "Running $script"
               chmod +x "$script"
-              DEBUG=1 ./musl_C_Go_Fyne_DevEnv*.AppDir/AppRun "$script"
+              ./musl_C_Go_Fyne_DevEnv*.AppDir/AppRun "$script"
             else
               echo "Skipping $script (does not match pattern)"
             fi
