@@ -1,4 +1,4 @@
-name: Build and Release AppBundles - Alpine Docker
+name: Build and Release AppBundles - Alpine
 
 on:
   schedule:
@@ -18,37 +18,32 @@ jobs:
   build:
     name: Build and Release AppBundles
     runs-on: ubuntu-latest
+    permissions: write-all
     container:
       image: alpine:edge
-      options: --privileged
-    permissions: write-all
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Alpine environment
+      - name: Install dependencies
         run: |
-          apk update && apk add --no-cache \
-            fuse3 fuse build-base libxcursor-dev libxrandr-dev \
-            libxinerama-dev libxi-dev linux-headers mesa-dev \
-            go git bash tree
+          apk update
+          apk add --no-cache fuse3 fuse build-base libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev linux-headers mesa-dev go git bash
 
       - name: Prepare environment
         run: |
-          GOBIN="$HOME/.local/bin"
+          GOBIN="/root/.local/bin"
           mkdir -p "$GOBIN"
           git clone --depth 1 --branch dev https://github.com/xplshn/pelf
           cp ./pelf/pelf* "$GOBIN"
           cp ./pelf/cmd/misc/* "$GOBIN"
           echo "GOBIN=$GOBIN" >> $GITHUB_ENV
-        shell: sh
 
       - name: Build lib4bin
         run: |
           cd pelf/cmd/dynexec/lib4bin
           go build -o "$GOBIN/lib4bin"
-        shell: sh
 
       - name: Install tools
         run: |
@@ -59,20 +54,17 @@ jobs:
           ln -sfT "$GOBIN/dwarfs-tools" "$GOBIN/dwarfs"
           ln -sfT "$GOBIN/bwrap-patched" "$GOBIN/bwrap"
           echo "PATH=$PATH" >> $GITHUB_ENV
-        shell: sh
 
       - name: Set OUT_DIR environment variable
         run: |
-          OUT_DIR="${{ github.workspace }}/APPBUNDLES"
+          OUT_DIR="/github/workspace/APPBUNDLES"
           mkdir -p "$OUT_DIR"
           echo "OUT_DIR=${OUT_DIR}" >> $GITHUB_ENV
-        shell: sh
 
       - name: List available scripts
         run: |
           echo "Listing available recipes:"
-          tree "${{ github.workspace }}/recipes"
-        shell: sh
+          tree "/github/workspace/recipes"
 
       - name: Run selected build scripts in OUT_DIR
         run: |
@@ -86,7 +78,7 @@ jobs:
             PATTERN="$SCRIPT_PATTERN"
           fi
 
-          for script in "${{ github.workspace }}/recipes/"*/*.*sh; do
+          for script in "/github/workspace/recipes/"*/*.*sh; do
             if echo "$script" | grep -E "$PATTERN"; then
               echo "Running $script"
               chmod +x "$script"
@@ -95,13 +87,11 @@ jobs:
               echo "Skipping $script (does not match pattern)"
             fi
           done
-        shell: sh
 
       - name: List output
         run: |
           echo "Archiving output from $OUT_DIR"
           ls "$OUT_DIR"
-        shell: sh
 
       - name: Upload build artifacts
         if: ${{ github.event.inputs.release == 'false' }}
@@ -126,7 +116,6 @@ jobs:
           else
             echo "Tag count is $TAG_COUNT, no tags to delete."
           fi
-        shell: sh
 
       - name: Create Git Tag
         if: ${{ github.event.inputs.release == 'true' }}
@@ -136,7 +125,6 @@ jobs:
           git tag "$TAG_NAME"
           git push origin "$TAG_NAME"
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-        shell: sh
 
       - name: Create Release
         if: ${{ github.event.inputs.release == 'true' }}
