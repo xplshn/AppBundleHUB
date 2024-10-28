@@ -4,4 +4,5 @@ pelfCreator -m "xplshn" -n "wezterm" -p "wezterm" -e "wezterm-gui" -x "usr/bin/w
     	echo "Failed to 128x128 icon"
     	exit 1
     fi
+    "$APPDIR/.gen"
 }
