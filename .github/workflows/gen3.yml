@@ -30,11 +30,11 @@ jobs:
       - name: Install dependencies
         run: |
           apk update
-          apk add --no-cache fuse3 fuse build-base libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev linux-headers mesa-dev go git
+          apk add --no-cache fuse3 fuse build-base libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev linux-headers mesa-dev go git bash tree
 
       - name: Prepare environment
         run: |
-          export GOBIN="$GITHUB_WORKSPACE/.local/bin"
+          GOBIN="$GITHUB_WORKSPACE/.local/bin"
           mkdir -p "$GOBIN"
           git clone --depth 1 --branch dev https://github.com/xplshn/pelf
           cp ./pelf/pelf* "$GOBIN"
@@ -47,31 +47,97 @@ jobs:
           cd pelf/cmd/dynexec/lib4bin
           go build -o "$GOBIN/lib4bin"
 
-      - name: Install tools and ensure mkdwarfs is available
+      - name: Install tools
         run: |
           DBIN_PGRS="dwarfs-tools bwrap-patched sharun yq jq eget2"
           wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "$GOBIN/dbin" add $DBIN_PGRS
           PATH="$GOBIN:$PATH"
           ln -sfT "$GOBIN/dwarfs-tools" "$GOBIN/mkdwarfs"
           ln -sfT "$GOBIN/dwarfs-tools" "$GOBIN/dwarfs"
-          ln -sfT "$GOBIN/dwarfs-tools" "$GOBIN/dwarfsextract"
+          ln -sfT "$GOBIN/bwrap-patched" "$GOBIN/bwrap"
           echo "PATH=$PATH" >> $GITHUB_ENV
 
-      - name: Set and Export OUT_DIR
+      - name: Set OUT_DIR environment variable
         run: |
-          export OUT_DIR="$GITHUB_WORKSPACE/output"
+          OUT_DIR="$GITHUB_WORKSPACE/APPBUNDLES"
           mkdir -p "$OUT_DIR"
-          echo "OUT_DIR=$OUT_DIR" >> $GITHUB_ENV
+          echo "OUT_DIR=${OUT_DIR}" >> $GITHUB_ENV
 
-      - name: Run Build Scripts
+      - name: List available scripts
+        run: |
+          echo "Listing available recipes:"
+          tree "$GITHUB_WORKSPACE/recipes"
+
+      - name: Run selected build scripts in OUT_DIR
         run: |
           cd $OUT_DIR
-          pattern="${{ github.event.inputs.script_pattern }}"
-          find "$GITHUB_WORKSPACE/AppBundleHUB/recipes" -type f -name "${pattern}.sh" -exec bash {} \;
-
-      - name: Check Final Packaging
-        run: |
-          if ! command -v mkdwarfs &>/dev/null; then
-            echo "ERROR: mkdwarfs could not be found. Please check installation."
-            exit 1
+          SCRIPT_PATTERN="${{ github.event.inputs.script_pattern }}"
+          if [ -z "$SCRIPT_PATTERN" ]; then
+            echo "No script pattern provided, running all scripts."
+            PATTERN=".*"
+          else
+            echo "Pattern provided: $SCRIPT_PATTERN"
+            PATTERN="$SCRIPT_PATTERN"
           fi
+
+          for script in "$GITHUB_WORKSPACE/recipes/"*/*.*sh; do
+            if echo "$script" | grep -E "$PATTERN"; then
+              echo "Running $script"
+              chmod +x "$script"
+              DEBUG=1 "$script"
+            else
+              echo "Skipping $script (does not match pattern)"
+            fi
+          done
+
+      - name: List output
+        run: |
+          echo "Archiving output from $OUT_DIR"
+          ls "$OUT_DIR"
+
+      - name: Upload build artifacts
+        if: ${{ github.event.inputs.release == 'false' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-bundles
+          path: ${{ env.OUT_DIR }}/*.AppBundle
+
+      - name: Manage Tags
+        if: ${{ github.event.inputs.release == 'true' }}
+        run: |
+          git fetch --tags
+          TAGS=$(git tag | sort -V)
+          TAG_COUNT=$(echo "$TAGS" | wc -l)
+          if [ "$TAG_COUNT" -gt 5 ]; then
+            TAGS_TO_DELETE=$(echo "$TAGS" | head -n -1)
+            for TAG in $TAGS_TO_DELETE; do
+              echo "Deleting tag: $TAG"
+              git tag -d "$TAG"
+              git push origin --delete "$TAG"
+            done
+          else
+            echo "Tag count is $TAG_COUNT, no tags to delete."
+          fi
+
+      - name: Create Git Tag
+        if: ${{ github.event.inputs.release == 'true' }}
+        run: |
+          TAG_NAME="v$(date +'%Y%m%d%H%M%S')"
+          echo "Creating tag: $TAG_NAME"
+          git tag "$TAG_NAME"
+          git push origin "$TAG_NAME"
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+
+      - name: Create Release
+        if: ${{ github.event.inputs.release == 'true' }}
+        uses: softprops/action-gh-release@v2.0.8
+        with:
+          name: "Weekly Release - ${{ env.TAG_NAME }}"
+          tag_name: "${{ env.TAG_NAME }}"
+          prerelease: false
+          draft: false
+          generate_release_notes: false
+          make_latest: true
+          files: |
+            ${{ env.OUT_DIR }}/*.AppBundle
+        continue-on-error: true
