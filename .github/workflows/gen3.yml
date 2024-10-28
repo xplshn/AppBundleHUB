@@ -21,6 +21,7 @@ jobs:
     permissions: write-all
     container:
       image: alpine:edge
+      options: --privileged
 
     steps:
       - name: Checkout repository
