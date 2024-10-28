@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: |
           apk update
-          apk add --no-cache fuse3 fuse build-base libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev linux-headers mesa-dev go git bash
+          apk add --no-cache fuse3 fuse build-base libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev linux-headers mesa-dev go git bash tree
 
       - name: Prepare environment
         run: |
@@ -39,6 +39,7 @@ jobs:
           cp ./pelf/pelf* "$GOBIN"
           cp ./pelf/cmd/misc/* "$GOBIN"
           echo "GOBIN=$GOBIN" >> $GITHUB_ENV
+          echo "PATH=$GOBIN:$PATH" >> $GITHUB_ENV
 
       - name: Build lib4bin
         run: |
