@@ -117,12 +117,29 @@ jobs:
           name: app-bundles
           path: ${{ github.workspace }}
 
-      - name: Extract artifacts
+      - name: Upload individual artifacts
+        if: ${{ github.event.inputs.release != 'true' }}
         run: |
-          cd ${{ github.workspace }}
-          ls
-          unzip app-bundles*
-          rm app-bundles*
+          for file in ${{ github.workspace }}/*.AppBundle; do
+            echo "Uploading $file"
+            echo "::set-output name=artifact_name::$(basename $file)"
+            echo "::set-output name=artifact_path::$file"
+          done
+        id: upload_individual
+
+      - name: Upload individual artifacts
+        if: ${{ github.event.inputs.release != 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.upload_individual.outputs.artifact_name }}
+          path: ${{ steps.upload_individual.outputs.artifact_path }}
+
+      - name: Upload all artifacts
+        if: ${{ github.event.inputs.release != 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-app-bundles
+          path: ${{ github.workspace }}/*.AppBundle
 
       - name: Manage Tags
         if: ${{ github.event.inputs.release == 'true' }}
