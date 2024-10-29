@@ -51,11 +51,16 @@ jobs:
         run: |
           DBIN_PGRS="dwarfs-tools bwrap-patched sharun yq jq eget2"
           wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "$GOBIN/dbin" add $DBIN_PGRS
-          PATH="$GOBIN:$PATH"
           ln -sfT "$GOBIN/dwarfs-tools" "$GOBIN/mkdwarfs"
           ln -sfT "$GOBIN/dwarfs-tools" "$GOBIN/dwarfs"
           ln -sfT "$GOBIN/bwrap-patched" "$GOBIN/bwrap"
-          echo "PATH=$PATH" >> $GITHUB_ENV
+          echo "PATH=$GOBIN:$PATH" >> $GITHUB_ENV
+
+      - name: Verify tools installation
+        run: |
+          echo "PATH is $PATH"
+          which mkdwarfs
+          mkdwarfs --version
 
       - name: Set OUT_DIR environment variable
         run: |
@@ -92,7 +97,7 @@ jobs:
 
       - name: List output
         run: |
-          echo "Archiving output from $OUT_DIR"
+          echo "Listing output from $OUT_DIR"
           ls "$OUT_DIR"
 
       - name: Upload build artifacts
