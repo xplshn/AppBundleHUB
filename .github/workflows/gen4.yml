@@ -1,4 +1,4 @@
-name: Build and Release AppBundles - Alpine
+name: Build and Release AppBundles - (docker, same as toolpacks' infra)
 
 on:
   schedule:
