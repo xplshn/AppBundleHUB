@@ -27,10 +27,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-     # - name: Remove stuff
-     #   run: |
-     #     # These are not compliant. I want to know when my recipes are not compliant.
-     #     apk del findutils gawk grep diffutils
+      - name: Remove stuff
+        run: |
+          # These are not compliant. I want to know when my recipes are not compliant.
+          apk del findutils gawk grep diffutils
+
+      - name: Replace the broken lib4bin with one that works
+        run: |
+          git clone --depth 1 https://github.com/xplshn/pelf
+          cd ./pelf/cmd/dynexec/lib4bin
+          GOBIN="$GITHUB_WORKSPACE/.local/bin"
+          mkdir -p "$GOBIN"
+          echo "PATH=${GOBIN}" >> $GITHUB_ENV
+          go install .
 
       - name: Set OUT_DIR environment variable
         run: |
