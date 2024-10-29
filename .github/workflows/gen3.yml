@@ -167,13 +167,22 @@ jobs:
           git push origin "$TAG_NAME"
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
 
+      - name: Determine if pre-release
+        id: determine_prerelease
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "prerelease=true" >> $GITHUB_ENV
+          else
+            echo "prerelease=false" >> $GITHUB_ENV
+          fi
+
       - name: Create Release
         if: ${{ github.event.inputs.release == 'true' }}
         uses: softprops/action-gh-release@v2.0.8
         with:
           name: "Weekly Release - ${{ env.TAG_NAME }}"
           tag_name: "${{ env.TAG_NAME }}"
-          prerelease: false
+          prerelease: ${{ env.prerelease }}
           draft: false
           generate_release_notes: false
           make_latest: true
