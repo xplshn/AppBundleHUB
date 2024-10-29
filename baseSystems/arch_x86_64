@@ -1,0 +1,53 @@
+#!/bin/sh
+
+OPWD="$PWD"
+BASE="$(dirname "$(realpath "$0")")"
+if [ "$OPWD" != "$BASE" ]; then
+	echo "... $BASE is not the same as $PWD ..."
+	echo "Going into $BASE and coming back here in a bit"
+	cd "$BASE" || exit 1
+fi
+trap 'cd "$OPWD"' INT EXIT
+
+mkdir -p ./ArchLinux_localResources && cd ./ArchLinux_localResources
+
+[ ! -f "rootfs.tgz" ] && [ -z "$NO_DOWNLOAD" ] && {
+	eget2 github.com/Azathothas/flatimage-base --asset="artixlinux.rootfs.tar" --download-only && {
+		gzip "artixlinux.rootfs.tar" && {
+			mv "artixlinux.rootfs.tar.gz" "rootfs.tgz"
+			# ---
+			if ! wget -qO "AppRun.rootfs" "https://github.com/xplshn/pelf/raw/refs/heads/pelf-ng/assets/AppRun.rootfs-based"; then
+				error "Unable to download AppRun.rootfs-based and add it as ./AppRun.rootfs"
+			fi
+			# ---
+			if ! wget -qO "AppRun.sharun" "https://github.com/xplshn/pelf/raw/refs/heads/pelf-ng/assets/AppRun.sharun"; then
+				error "Unable to download AppRun.sharun and add it as ./AppRun.sharun"
+			fi
+			# ---
+			if ! wget -qO "AppRun.sharun.ovfsProto" "https://github.com/xplshn/pelf/raw/refs/heads/pelf-ng/assets/AppRun.sharun.ovfsProto"; then
+				error "Unable to download AppRun.sharun.proto and add it as ./AppRun.sharun.proto"
+			fi
+			# ---
+			if ! wget -qO "bwrap" "https://bin.ajam.dev/$(uname -m)/bwrap-patched"; then
+				error "Unable to download bwrap and add it as ./bwrap"
+			fi
+			# ---
+			if ! wget -qO "fuse-overlayfs" "https://bin.ajam.dev/$(uname -m)/fuse-overlayfs"; then
+				error "Unable to download fuse-overlayfs and add it as ./fuse-overlayfs"
+			fi
+			# ---
+			cat <<'EOF' >./pkgadd && chmod +x ./pkgadd
+#!/bin/sh
+if [ "$AUR" = 1 ]; then
+    yay -S --noconfirm $@ ; pacman -Rcnsd base-devel --noconfirm
+else
+    pacman -Sy --noconfirm $@
+fi
+EOF
+            		} && return 0
+            	}
+            }
+
+export LOCAL_PATH="$PWD" && {
+    cd "$OPWD"
+} && "$@"
