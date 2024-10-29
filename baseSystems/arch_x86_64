@@ -12,8 +12,7 @@ trap 'cd "$OPWD"' INT EXIT
 mkdir -p ./ArchLinux_localResources && cd ./ArchLinux_localResources
 
 [ ! -f "rootfs.tgz" ] && [ -z "$NO_DOWNLOAD" ] && {
-#	eget github.com/Azathothas/flatimage-base --asset="cachyos.rootfs.tar" --download-only && {
-    wget "https://github.com/Azathothas/flatimage-base/releases/download/2024_10_28-x86_64/cachyos.rootfs.tar" && {
+    wget "https://github.com/Azathothas/flatimage-base/releases/download/x86_64/cachyos.rootfs.tar" && {
 		gzip "cachyos.rootfs.tar" && {
 			mv "cachyos.rootfs.tar.gz" "rootfs.tgz"
 			# ---
