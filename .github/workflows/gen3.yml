@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies
         run: |
           apk update
-          apk add --no-cache fuse3 fuse build-base libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev linux-headers mesa-dev go git bash tree
+          apk add --no-cache fuse3 fuse build-base libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev linux-headers mesa-dev go git tree
 
       - name: Prepare environment
         run: |
@@ -120,12 +120,8 @@ jobs:
       - name: Extract artifacts
         run: |
           cd ${{ env.OUT_DIR }}
-          for file in *; do
-            if [ -f "$file" ]; then
-              unzip "$file"
-              rm "$file"
-            fi
-          done
+          unzip app-bundles
+          rm app-bundles
 
       - name: Manage Tags
         if: ${{ github.event.inputs.release == 'true' }}
