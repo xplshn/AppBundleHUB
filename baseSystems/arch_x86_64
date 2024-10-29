@@ -50,4 +50,4 @@ EOF
 
 export LOCAL_PATH="$PWD" && {
     cd "$OPWD"
-} && LOCAL_PATH="$LOCAL_PATH" "$@"
+} && "$@"
