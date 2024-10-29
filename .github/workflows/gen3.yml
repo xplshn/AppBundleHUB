@@ -39,6 +39,11 @@ jobs:
           git clone --depth 1 --branch dev https://github.com/xplshn/pelf
           cp ./pelf/pelf* "$GOBIN"
           cp ./pelf/cmd/misc/* "$GOBIN"
+          DBIN_PGRS="dwarfs-tools bwrap-patched sharun yq jq eget2"
+          wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | DBIN_INSTALL_DIR="$GOBIN" sh -s -- --install "$GOBIN/dbin" add $DBIN_PGRS
+          ln -sfT "$GOBIN/dwarfs-tools" "$GOBIN/mkdwarfs"
+          ln -sfT "$GOBIN/dwarfs-tools" "$GOBIN/dwarfs"
+          ln -sfT "$GOBIN/bwrap-patched" "$GOBIN/bwrap"
           echo "GOBIN=$GOBIN" >> $GITHUB_ENV
           echo "PATH=$GOBIN:$PATH" >> $GITHUB_ENV
 
@@ -46,16 +51,6 @@ jobs:
         run: |
           cd pelf/cmd/dynexec/lib4bin
           go build -o "$GOBIN/lib4bin"
-
-      - name: Install tools
-        run: |
-          GOBIN="$GITHUB_WORKSPACE/.local/bin"
-          DBIN_PGRS="dwarfs-tools bwrap-patched sharun yq jq eget2"
-          wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "$GOBIN/dbin" add $DBIN_PGRS
-          ln -sfT "$GOBIN/dwarfs-tools" "$GOBIN/mkdwarfs"
-          ln -sfT "$GOBIN/dwarfs-tools" "$GOBIN/dwarfs"
-          ln -sfT "$GOBIN/bwrap-patched" "$GOBIN/bwrap"
-          echo "PATH=$GOBIN:$PATH" >> $GITHUB_ENV
 
       - name: Set OUT_DIR environment variable
         run: |
