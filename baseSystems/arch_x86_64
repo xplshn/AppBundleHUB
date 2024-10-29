@@ -12,7 +12,8 @@ trap 'cd "$OPWD"' INT EXIT
 mkdir -p ./ArchLinux_localResources && cd ./ArchLinux_localResources
 
 [ ! -f "rootfs.tgz" ] && [ -z "$NO_DOWNLOAD" ] && {
-	eget2 github.com/Azathothas/flatimage-base --asset="cachyos.rootfs.tar" --download-only && {
+#	eget github.com/Azathothas/flatimage-base --asset="cachyos.rootfs.tar" --download-only && {
+    wget "https://github.com/Azathothas/flatimage-base/releases/download/2024_10_28-x86_64/cachyos.rootfs.tar" && {
 		gzip "cachyos.rootfs.tar" && {
 			mv "cachyos.rootfs.tar.gz" "rootfs.tgz"
 			# ---
@@ -39,7 +40,7 @@ mkdir -p ./ArchLinux_localResources && cd ./ArchLinux_localResources
 			cat <<'EOF' >./pkgadd.sh && chmod +x ./pkgadd.sh # you can use ./pkgadd (single line, includes --Xbwrap command) for single-line installation procedures, or ./pkgadd.sh (always runs as uid 0, gid 0, within the container, its a sh script, can be multiline) for a more involved setup
 #!/bin/sh
 if [ "$AUR" = 1 ]; then
-    yay -Sy --noconfirm $@ ; yay -cc ; pacman -Rcnsd base-devel --noconfirm
+    yay -Sy --noconfirm $@ ; yay -Yc ; yay -Scc --noconfirm ; yay -Ps ; pacman -Rcnsd base-devel --noconfirm
 else
     pacman -Sy --noconfirm $@
 fi
