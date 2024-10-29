@@ -1,1 +1,1 @@
-pelfCreator -m "xplshn" -n "signal" -p "signal-desktop" -x "usr/bin/signal-desktop" -e "signal-desktop.desktop"
+pelfCreator -m "xplshn" -n "signal-desktop" -p "signal-desktop" -e "signal-desktop.desktop"
