@@ -117,12 +117,14 @@ jobs:
           name: app-bundles
           path: ${{ env.OUT_DIR }}
 
-      - name: Decompress artifacts
+      - name: Extract artifacts
         run: |
           cd ${{ env.OUT_DIR }}
-          for file in *.zip; do
-            unzip "$file"
-            rm "$file"
+          for file in *; do
+            if [ -f "$file" ]; then
+              unzip "$file"
+              rm "$file"
+            fi
           done
 
       - name: Manage Tags
