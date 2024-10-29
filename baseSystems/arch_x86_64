@@ -54,6 +54,7 @@ else
     pacman -Rcnsd python --noconfirm
     pacman -Scc --noconfirm
 fi
+touch /etc/localtime
 EOF
             		}
             	}
