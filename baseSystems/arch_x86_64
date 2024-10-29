@@ -12,9 +12,9 @@ trap 'cd "$OPWD"' INT EXIT
 mkdir -p ./ArchLinux_localResources && cd ./ArchLinux_localResources
 
 [ ! -f "rootfs.tgz" ] && [ -z "$NO_DOWNLOAD" ] && {
-	eget2 github.com/Azathothas/flatimage-base --asset="artixlinux.rootfs.tar" --download-only && {
-		gzip "artixlinux.rootfs.tar" && {
-			mv "artixlinux.rootfs.tar.gz" "rootfs.tgz"
+	eget2 github.com/Azathothas/flatimage-base --asset="cachyos.rootfs.tar" --download-only && {
+		gzip "cachyos.rootfs.tar" && {
+			mv "cachyos.rootfs.tar.gz" "rootfs.tgz"
 			# ---
 			if ! wget -qO "AppRun.rootfs" "https://github.com/xplshn/pelf/raw/refs/heads/pelf-ng/assets/AppRun.rootfs-based"; then
 				error "Unable to download AppRun.rootfs-based and add it as ./AppRun.rootfs"
