@@ -45,6 +45,8 @@ jobs:
 
       - name: Run selected build scripts in OUT_DIR
         run: |
+          ls "$GITHUB_WORKSPACE/baseSystems"
+          set -x
           export PATH="$GITHUB_WORKSPACE/baseSystems:$PATH"
           echo "PATH=$PATH" >> $GITHUB_ENV
           
