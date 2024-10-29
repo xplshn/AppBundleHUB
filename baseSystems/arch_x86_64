@@ -36,7 +36,7 @@ mkdir -p ./ArchLinux_localResources && cd ./ArchLinux_localResources
 				error "Unable to download fuse-overlayfs and add it as ./fuse-overlayfs"
 			fi
 			# ---
-			cat <<'EOF' >./pkgadd && chmod +x ./pkgadd
+			cat <<'EOF' >./pkgadd && chmod +x ./pkgadd.sh # you can use ./pkgadd for single-line installation procedures, or ./pkgadd.sh for a more involved setup
 #!/bin/sh
 if [ "$AUR" = 1 ]; then
     yay -S --noconfirm $@ ; pacman -Rcnsd base-devel --noconfirm
