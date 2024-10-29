@@ -117,6 +117,14 @@ jobs:
           name: app-bundles
           path: ${{ env.OUT_DIR }}
 
+      - name: Decompress artifacts
+        run: |
+          cd ${{ env.OUT_DIR }}
+          for file in *.zip; do
+            unzip "$file"
+            rm "$file"
+          done
+
       - name: Manage Tags
         if: ${{ github.event.inputs.release == 'true' }}
         run: |
