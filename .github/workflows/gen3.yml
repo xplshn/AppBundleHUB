@@ -120,8 +120,9 @@ jobs:
       - name: Extract artifacts
         run: |
           cd ${{ github.workspace }}
-          unzip app-bundles
-          rm app-bundles
+          ls
+          unzip app-bundles*
+          rm app-bundles*
 
       - name: Manage Tags
         if: ${{ github.event.inputs.release == 'true' }}
