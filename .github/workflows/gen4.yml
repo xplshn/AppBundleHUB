@@ -30,7 +30,10 @@ jobs:
       - name: Remove stuff
         run: |
           # These are not compliant. I want to know when my recipes are not compliant.
-          apk del findutils gawk grep diffutils
+          apk del findutils gawk grep diffutils coreutils
+          apk add busybox
+          ln -sfT /bin/busybox /bin/ash
+          ln -sfT /bin/ash /bin/sh
 
       - name: Replace the broken lib4bin with one that works
         run: |
@@ -53,7 +56,6 @@ jobs:
           tree "$GITHUB_WORKSPACE/recipes"
 
       - name: Run selected build scripts in OUT_DIR
-        shell: bash
         run: |
           ls "$GITHUB_WORKSPACE/baseSystems"
           set -x
