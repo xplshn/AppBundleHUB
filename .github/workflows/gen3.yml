@@ -68,8 +68,7 @@ jobs:
 
       - name: Run selected build scripts in OUT_DIR
         run: |
-          GOBIN="$GITHUB_WORKSPACE/.local/bin"
-          export PATH="$GOBIN:$PATH"
+          export PATH="$GITHUB_WORKSPACE/baseSystems:$PATH"
           cd $OUT_DIR
           SCRIPT_PATTERN="${{ github.event.inputs.script_pattern }}"
           if [ -z "$SCRIPT_PATTERN" ]; then
