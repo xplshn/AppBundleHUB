@@ -27,10 +27,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Remove stuff
-        run: |
-          # These are not compliant. I want to know when my recipes are not compliant.
-          apk del findutils gawk grep diffutils
+     # - name: Remove stuff
+     #   run: |
+     #     # These are not compliant. I want to know when my recipes are not compliant.
+     #     apk del findutils gawk grep diffutils
 
       - name: Set OUT_DIR environment variable
         run: |
