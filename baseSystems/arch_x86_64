@@ -39,12 +39,12 @@ mkdir -p ./ArchLinux_localResources && cd ./ArchLinux_localResources
 			cat <<'EOF' >./pkgadd.sh && chmod +x ./pkgadd.sh # you can use ./pkgadd (single line, includes --Xbwrap command) for single-line installation procedures, or ./pkgadd.sh (always runs as uid 0, gid 0, within the container, its a sh script, can be multiline) for a more involved setup
 #!/bin/sh
 if [ "$AUR" = 1 ]; then
-    yay --Sycc --noconfirm $@ ; pacman -Rcnsd base-devel --noconfirm
+    yay -Sy --noconfirm $@ ; yay -cc ; pacman -Rcnsd base-devel --noconfirm
 else
     pacman -Sy --noconfirm $@
 fi
 EOF
-            		} && return 0
+            		}
             	}
             }
 
