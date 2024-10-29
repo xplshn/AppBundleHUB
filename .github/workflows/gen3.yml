@@ -32,6 +32,12 @@ jobs:
           apk update
           apk add --no-cache fuse3 fuse build-base libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev linux-headers mesa-dev go git bash tree
 
+      - name: Set up Git (prevent repo context issues)
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+        shell: sh
+
       - name: Prepare environment
         run: |
           GOBIN="$GITHUB_WORKSPACE/.local/bin"
