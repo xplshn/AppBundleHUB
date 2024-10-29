@@ -38,11 +38,22 @@ mkdir -p ./ArchLinux_localResources && cd ./ArchLinux_localResources
 			# ---
 			cat <<'EOF' >./pkgadd.sh && chmod +x ./pkgadd.sh # you can use ./pkgadd (single line, includes --Xbwrap command) for single-line installation procedures, or ./pkgadd.sh (always runs as uid 0, gid 0, within the container, its a sh script, can be multiline) for a more involved setup
 #!/bin/sh
-pacman -Ql $@ || yay -Ql $@
-pacman -Rsn base-devel --noconfirm
-pacman -Rsn perl --noconfirm
-pacman -Rsn python --noconfirm
-pacman -Scc --noconfirm && yay -Scc --noconfirm
+if [ "$AUR" = 1 ]; then
+    yay -Sy --noconfirm $@ ; yay -Yc ; yay -Scc --noconfirm ; yay -Ps 
+    yay -Ql $@
+    pacman -Rcnsd base-devel --noconfirm
+    pacman -Rcnsd perl --noconfirm
+    pacman -Rcnsd python --noconfirm
+    pacman -Scc --noconfirm ; yay -Scc --noconfirm
+
+else
+    pacman -Sy --noconfirm $@
+    pacman -Ql $@
+    pacman -Rcnsd base-devel --noconfirm
+    pacman -Rcnsd perl --noconfirm
+    pacman -Rcnsd python --noconfirm
+    pacman -Scc --noconfirm
+fi
 EOF
             		}
             	}
