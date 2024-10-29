@@ -19,24 +19,47 @@ jobs:
     name: Build and Release AppBundles
     runs-on: ubuntu-latest
     permissions: write-all
-    container:
-      image: alpine:edge
-      options: --privileged
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install dependencies
+      # Git operations outside of the container
+      - name: Manage Tags (Outside Container)
+        if: ${{ github.event.inputs.release == 'true' }}
+        run: |
+          git fetch --tags
+          TAGS=$(git tag | sort -V)
+          TAG_COUNT=$(echo "$TAGS" | wc -l)
+          if [ "$TAG_COUNT" -gt 5 ]; then
+            TAGS_TO_DELETE=$(echo "$TAGS" | head -n -1)
+            for TAG in $TAGS_TO_DELETE; do
+              echo "Deleting tag: $TAG"
+              git tag -d "$TAG"
+              git push origin --delete "$TAG"
+            done
+          else
+            echo "Tag count is $TAG_COUNT, no tags to delete."
+          fi
+
+      - name: Create Git Tag (Outside Container)
+        if: ${{ github.event.inputs.release == 'true' }}
+        run: |
+          TAG_NAME="v$(date +'%Y%m%d%H%M%S')"
+          echo "Creating tag: $TAG_NAME"
+          git tag "$TAG_NAME"
+          git push origin "$TAG_NAME"
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+
+      - name: Set up container environment
+        container:
+          image: alpine:edge
+          options: --privileged
+
+      - name: Install dependencies in container
         run: |
           apk update
           apk add --no-cache fuse3 fuse build-base libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev linux-headers mesa-dev go git bash tree
-
-      - name: Set up Git (prevent repo context issues)
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-        shell: sh
 
       - name: Prepare environment
         run: |
@@ -107,32 +130,6 @@ jobs:
         with:
           name: app-bundles
           path: ${{ env.OUT_DIR }}/*.AppBundle
-
-      - name: Manage Tags
-        if: ${{ github.event.inputs.release == 'true' }}
-        run: |
-          git fetch --tags
-          TAGS=$(git tag | sort -V)
-          TAG_COUNT=$(echo "$TAGS" | wc -l)
-          if [ "$TAG_COUNT" -gt 5 ]; then
-            TAGS_TO_DELETE=$(echo "$TAGS" | head -n -1)
-            for TAG in $TAGS_TO_DELETE; do
-              echo "Deleting tag: $TAG"
-              git tag -d "$TAG"
-              git push origin --delete "$TAG"
-            done
-          else
-            echo "Tag count is $TAG_COUNT, no tags to delete."
-          fi
-
-      - name: Create Git Tag
-        if: ${{ github.event.inputs.release == 'true' }}
-        run: |
-          TAG_NAME="v$(date +'%Y%m%d%H%M%S')"
-          echo "Creating tag: $TAG_NAME"
-          git tag "$TAG_NAME"
-          git push origin "$TAG_NAME"
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
 
       - name: Create Release
         if: ${{ github.event.inputs.release == 'true' }}
