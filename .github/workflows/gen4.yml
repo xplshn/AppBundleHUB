@@ -44,6 +44,7 @@ jobs:
           tree "$GITHUB_WORKSPACE/recipes"
 
       - name: Run selected build scripts in OUT_DIR
+        shell: bash
         run: |
           ls "$GITHUB_WORKSPACE/baseSystems"
           set -x
