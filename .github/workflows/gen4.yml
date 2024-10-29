@@ -30,7 +30,7 @@ jobs:
       - name: Remove stuff
         run: |
           # These are not compliant. I want to know when my recipes are not compliant.
-          apk del bash findutil gawk grep diffutils
+          apk del bash findutils gawk grep diffutils
 
       - name: Set OUT_DIR environment variable
         run: |
