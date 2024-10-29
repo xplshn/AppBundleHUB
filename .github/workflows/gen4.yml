@@ -29,11 +29,8 @@ jobs:
 
       - name: Remove stuff
         run: |
-          # These are not compliant. I want to know when my recipes are not compliant.
-          apk del findutils gawk grep diffutils coreutils
-          apk add busybox
-          ln -sfT /bin/busybox /bin/ash
-          ln -sfT /bin/ash /bin/sh
+          # These are not compliant nor good. I want to know when my recipes are not compliant.
+          apk del bash findutils gawk grep diffutils coreutils
 
       - name: Replace the broken lib4bin with one that works
         run: |
@@ -41,7 +38,7 @@ jobs:
           cd ./pelf/cmd/dynexec/lib4bin
           GOBIN="$GITHUB_WORKSPACE/.local/bin"
           mkdir -p "$GOBIN"
-          echo "PATH=${GOBIN}" >> $GITHUB_ENV
+          echo "PATH=$GOBIN:$PATH" >> $GITHUB_ENV
           go install .
 
       - name: Set OUT_DIR environment variable
