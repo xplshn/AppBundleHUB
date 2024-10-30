@@ -54,7 +54,9 @@ else
     pacman -Rcnsd python --noconfirm
     pacman -Scc --noconfirm
 fi
+# ArchLinux is stupid
 touch /etc/localtime
+echo "070dbdbffc888abef97ae21766de319b" > /etc/machine-id
 EOF
             		}
             	}
