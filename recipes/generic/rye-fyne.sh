@@ -82,6 +82,12 @@ build_rye_fyne() {
 
     cp "$PROJECT_NAME" "$GOBIN" || log_error "Failed to copy $PROJECT_NAME to $GOBIN."
 
+    # Install required tools
+    log_action "Installing required tools"
+    export DBIN_INSTALL_DIR="$HOME/.local/bin"
+    wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "/usr/local/bin/dbin" add sharun sharun-lib4bin || log_error "Failed to install dbin and related tools."
+    export PATH="$HOME/.local/bin:$PATH"
+
     git clone --depth 1 https://github.com/xplshn/pelf "$TEMP_DIR/pelf" || log_error "Failed to clone pelf."
     cp "$TEMP_DIR/pelf/pelf"* /usr/local/bin || log_error "Failed to copy pelf binaries to /usr/local/bin."
 
@@ -99,7 +105,7 @@ EOF
 
     # Final steps
     cd ./ryeFyne.AppDir || log_error "Failed to enter ryeFyne.AppDir."
-    lib4bin "$GOBIN/$PROJECT_NAME" || log_error "lib4bin failed."
+    sharun-lib4bin "$GOBIN/$PROJECT_NAME" || log_error "lib4bin failed."
     cp "$(command -v sharun)" . || log_error "Failed to copy sharun."
 
     ln -sfT ../sharun ./bin/"$PROJECT_NAME" || log_error "Failed to symlink $PROJECT_NAME."
