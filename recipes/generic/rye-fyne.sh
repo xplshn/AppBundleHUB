@@ -1,12 +1,5 @@
 #!/bin/sh
 
-add_apprun(){
-    mkdir -p "$APPDIR/rootfs/usr/local/bin"
-    touch "$APPDIR/rootfs/usr/local/bin/Rye_multibuild.sh"
-    chmod +x "$APPDIR/rootfs/usr/local/bin/Rye_multibuild.sh"
-    cat <<'BUILDSCRIPT_END' > "$APPDIR/rootfs/usr/local/bin/Rye_multibuild.sh"
-#!/bin/sh
-
 # Setup base directory
 OPWD="$PWD"
 BASE="$(dirname "$(realpath "$0")")"
@@ -89,14 +82,6 @@ build_rye_fyne() {
 
     cp "$PROJECT_NAME" "$GOBIN" || log_error "Failed to copy $PROJECT_NAME to $GOBIN."
 
-    # Install additional tools
-    log_action "Installing required tools"
-    export DBIN_INSTALL_DIR="/usr/local/bin"
-    wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "/usr/local/bin/dbin" add dwarfs-tools sharun sharun-lib4bin || log_error "Failed to install dbin and related tools."
-
-    ln -sfT /usr/local/bin/dwarfs-tools /usr/local/bin/mkdwarfs || log_error "Failed to symlink mkdwarfs."
-    ln -sfT /usr/local/bin/dwarfs-tools /usr/local/bin/dwarfs || log_error "Failed to symlink dwarfs."
-
     git clone --depth 1 https://github.com/xplshn/pelf "$TEMP_DIR/pelf" || log_error "Failed to clone pelf."
     cp "$TEMP_DIR/pelf/pelf"* /usr/local/bin || log_error "Failed to copy pelf binaries to /usr/local/bin."
 
@@ -155,14 +140,3 @@ for project in $PROJECTS; do
         *) log_warning "Unknown project: $project" ;;
     esac
 done
-BUILDSCRIPT_END
-}
-
-# MAIN
-pelfCreator -m xplshn -n fyneDevEnv -p "fuse3 build-base libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev linux-headers mesa-dev go git fuse bash" -z -e "sh" && {
-    APPDIR="fyneDevEnv-$(date +%d_%m_%Y).AppDir"
-    add_apprun "$@"
-    echo "Rye_multibuild.sh" > "$APPDIR/rootfs/entrypoint"
-    chmod +x "$APPDIR/rootfs/entrypoint"
-    "$APPDIR/AppRun"
-}
