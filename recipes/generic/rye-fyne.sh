@@ -99,7 +99,7 @@ EOF
 
     # Final steps
     cd ./ryeFyne.AppDir || log_error "Failed to enter ryeFyne.AppDir."
-    sharun-lib4bin "$GOBIN/$PROJECT_NAME" || log_error "sharun-lib4bin failed."
+    lib4bin "$GOBIN/$PROJECT_NAME" || log_error "lib4bin failed."
     cp "$(command -v sharun)" . || log_error "Failed to copy sharun."
 
     ln -sfT ../sharun ./bin/"$PROJECT_NAME" || log_error "Failed to symlink $PROJECT_NAME."
