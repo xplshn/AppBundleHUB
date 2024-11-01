@@ -85,6 +85,7 @@ build_rye_fyne() {
     # Install required tools
     log_action "Installing required tools"
     export DBIN_INSTALL_DIR="$HOME/.local/bin"
+    mkdir "$DBIN_INSTALL_DIR"
     wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "/usr/local/bin/dbin" add sharun sharun-lib4bin || log_error "Failed to install dbin and related tools."
     export PATH="$HOME/.local/bin:$PATH"
 
