@@ -38,7 +38,7 @@ jobs:
           mkdir -p "$GOBIN"
           echo "PATH=$GOBIN:$PATH" >> $GITHUB_ENV
           git clone --depth 1 --branch dev https://github.com/xplshn/pelf
-          cp ./pelf/* "$GOBIN"
+          cp ./pelf/* "$GOBIN" || true
           cd ./pelf/cmd/dynexec/lib4bin
           go install .
 
