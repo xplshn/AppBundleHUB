@@ -1,4 +1,5 @@
 #!/bin/sh
+# Reason: Should use OVFS/Proto AppRun. Not only that, but we should also simplify the entire thing.
 
 # Setup base directory
 OPWD="$PWD"
