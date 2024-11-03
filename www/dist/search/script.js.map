@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../search/script.js"],
+  "sourcesContent": ["// search/script.js\ndocument.addEventListener('DOMContentLoaded', () => {\n    const searchInput = document.querySelector('.search-input');\n\n    // Event listener for search input\n    searchInput.addEventListener('input', (e) => {\n        const searchTerm = e.target.value;\n        displayApps(searchTerm);\n\n        // Update URL with search term\n        const url = new URL(window.location);\n        url.searchParams.set('search', searchTerm);\n        history.pushState({ search: searchTerm }, '', url);\n    });\n});\n"],
+  "mappings": "MACA,SAAS,iBAAiB,mBAAoB,IAAM,CAC5B,SAAS,cAAc,eAAe,EAG9C,iBAAiB,QAAUA,GAAM,CACzC,IAAMC,EAAaD,EAAE,OAAO,MAC5B,YAAYC,CAAU,EAGtB,IAAMC,EAAM,IAAI,IAAI,OAAO,QAAQ,EACnCA,EAAI,aAAa,IAAI,SAAUD,CAAU,EACzC,QAAQ,UAAU,CAAE,OAAQA,CAAW,EAAG,GAAIC,CAAG,CACrD,CAAC,CACL,CAAC",
+  "names": ["e", "searchTerm", "url"]
+}

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../shared.js"],
+  "sourcesContent": ["// shared.js\nexport let apps = [];\n\n// Function to update the apps array\nexport function setApps(newApps) {\n    apps = newApps;\n}\n"],
+  "mappings": "MACO,IAAIA,EAAO,CAAC,EAGZ,SAASC,EAAQC,EAAS,CAC7BF,EAAOE,CACX",
+  "names": ["apps", "setApps", "newApps"]
+}
