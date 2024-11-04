@@ -129,3 +129,14 @@ body {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+/* Overflow handling for install commands */
+.install-section .code {
+    overflow: hidden;
+    position: relative;
+}
+
+.install-section .code pre {
+    overflow: auto;
+    white-space: nowrap;
+}

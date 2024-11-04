@@ -1,4 +1,4 @@
-(()=>{document.addEventListener("DOMContentLoaded",()=>{let u=document.getElementById("app-details-modal"),c=document.querySelector(".details-body");window.showAppDetails=function(a,r){let v=r.find(o=>o.name===a);if(v){c.innerHTML=b(v),u.showModal();let o=new URL(window.location);o.searchParams.set("app",a),history.pushState({app:a},"",o)}else console.error("App not found:",a)};function b(a){let r=`
+(()=>{document.addEventListener("DOMContentLoaded",()=>{let u=document.getElementById("app-details-modal"),c=document.querySelector(".details-body");window.showAppDetails=function(a,r){let v=r.find(o=>o.name===a);if(v){c.innerHTML=h(v),u.showModal();let o=new URL(window.location);o.searchParams.set("app",a),history.pushState({app:a},"",o)}else console.error("App not found:",a)};function h(a){let r=`
             <div class="animate-pulse">
                 <!-- Header skeleton with icon and title -->
                 <div class="flex items-start gap-4 mb-6">
@@ -79,8 +79,8 @@
                 </div>
                 <div class="install-section p-4 bg-base-200 rounded-lg mb-4">
 
-                <div class="tooltip tooltip-info" data-tip="one-click-install requires dbin protocol to be set up correctly on your system">
-                    <h3 class="text-xl font-semibold mb-2"><a href="dbin://install?${e.name}" class="install-button btn btn-ghost">Install <span class="nf nf-oct-desktop_download"></span></a></h3>
+                <div class="tooltip tooltip-info tooltip-right" data-tip="one-click-install requires dbin protocol to be set up correctly on your system">
+                    <a href="dbin://install?${e.name}" class="install-button btn btn-ghost text-lg">Install <span class="nf nf-oct-desktop_download"></span></a>
                 </div>
 
                     <h4 class="text-base font-semibold mb-2"># If you don't have <span class="code">dbin</span> installed:</h4>
@@ -105,5 +105,5 @@
                                 <a href="#slide${m}" class="btn btn-circle">\u276F</a>
                             </div>
                         </div>
-                    `}),t+="</div>",t})}return c.innerHTML=r,setTimeout(()=>{c.innerHTML=v(a);let e=document.getElementById("screenshots-container");e&&o(a.screenshots).then(i=>{let n=e.querySelector(".skeleton-container"),s=e.querySelector(".carousel-container");s&&(s.innerHTML=i,n.remove(),s.classList.remove("hidden"),s.querySelectorAll("img").forEach(t=>{t.addEventListener("click",()=>{fullscreenImage.src=t.dataset.fullscreenSrc,imageDialog.showModal()})}),document.querySelectorAll(".carousel-item a").forEach(t=>{t.addEventListener("click",l=>{l.preventDefault();let d=l.target.getAttribute("href");document.querySelector(d).scrollIntoView({behavior:"smooth"})})}))}),c.querySelectorAll(".category-tag").forEach(i=>{i.addEventListener("click",n=>{let s=n.target.dataset.category;updateCategoryFilter(s)})})},500),r}document.querySelector('form[method="dialog"] button').addEventListener("click",h);function h(){u.close();let a=new URL(window.location);a.searchParams.delete("app"),history.pushState({},"",a)}});})();
+                    `}),t+="</div>",t})}return c.innerHTML=r,setTimeout(()=>{c.innerHTML=v(a);let e=document.getElementById("screenshots-container");e&&o(a.screenshots).then(i=>{let n=e.querySelector(".skeleton-container"),s=e.querySelector(".carousel-container");s&&(s.innerHTML=i,n.remove(),s.classList.remove("hidden"),s.querySelectorAll("img").forEach(t=>{t.addEventListener("click",()=>{fullscreenImage.src=t.dataset.fullscreenSrc,imageDialog.showModal()})}),document.querySelectorAll(".carousel-item a").forEach(t=>{t.addEventListener("click",l=>{l.preventDefault();let d=l.target.getAttribute("href");document.querySelector(d).scrollIntoView({behavior:"smooth"})})}))}),c.querySelectorAll(".category-tag").forEach(i=>{i.addEventListener("click",n=>{let s=n.target.dataset.category;updateCategoryFilter(s)})})},500),r}document.querySelector('form[method="dialog"] button').addEventListener("click",b);function b(){u.close();let a=new URL(window.location);a.searchParams.delete("app"),history.pushState({},"",a)}});})();
 //# sourceMappingURL=script.js.map

@@ -124,8 +124,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="install-section p-4 bg-base-200 rounded-lg mb-4">
 
-                <div class="tooltip tooltip-info" data-tip="one-click-install requires dbin protocol to be set up correctly on your system">
-                    <h3 class="text-xl font-semibold mb-2"><a href="dbin://install?${app.name}" class="install-button btn btn-ghost">Install <span class="nf nf-oct-desktop_download"></span></a></h3>
+                <div class="tooltip tooltip-info tooltip-right" data-tip="one-click-install requires dbin protocol to be set up correctly on your system">
+                    <a href="dbin://install?${app.name}" class="install-button btn btn-ghost text-lg">Install <span class="nf nf-oct-desktop_download"></span></a>
                 </div>
 
                     <h4 class="text-base font-semibold mb-2"># If you don't have <span class="code">dbin</span> installed:</h4>
