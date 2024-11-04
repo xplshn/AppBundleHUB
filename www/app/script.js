@@ -123,7 +123,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${app.web_url ? `<a href="${app.web_url}" class="link-button btn btn-secondary" target="_blank">Website</a>` : ''}
                 </div>
                 <div class="install-section p-4 bg-base-200 rounded-lg mb-4">
-                    <h3 class="text-xl font-semibold mb-2">Install</h3>
+
+                <div class="tooltip tooltip-info" data-tip="one-click-install requires dbin protocol to be set up correctly on your system">
+                    <h3 class="text-xl font-semibold mb-2"><a href="dbin://install?${app.name}" class="install-button btn btn-ghost">Install <span class="nf nf-oct-desktop_download"></span></a></h3>
+                </div>
+
                     <h4 class="text-base font-semibold mb-2"># If you don't have <span class="code">dbin</span> installed:</h4>
                     <div class="code bg-base-300 p-2 rounded mb-4">
                         <pre data-prefix="$"><code>wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- install ${app.name}</code></pre>
@@ -135,9 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h4 class="text-base font-semibold mb-2"># Alternative using <span class="code">soar</span>:</h4>
                     <div class="code bg-base-300 p-2 rounded">
                         <pre data-prefix="$"><code>soar add ${app.name}</code></pre>
-                    </div>
-                    <div class="tooltip tooltip-info" data-tip="You must have dbin protocol support on your computer">
-                        <a href="dbin://install?${app.name}" class="install-button btn btn-primary mt-4">Install</a>
                     </div>
                 </div>
                 ${app.note ? `<div class="app-note alert alert-warning"><strong>Note:</strong> ${app.note}</div>` : ''}
@@ -252,3 +253,4 @@ document.addEventListener('DOMContentLoaded', () => {
         history.pushState({}, '', url);
     }
 });
+
