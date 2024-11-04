@@ -1,17 +1,16 @@
 // app/script.js
 import { apps } from '../shared.js';
 document.addEventListener('DOMContentLoaded', () => {
-    const appDetails = document.querySelector('.app-details');
+    const appDetailsModal = document.getElementById('app-details-modal');
     const detailsContent = document.querySelector('.details-body');
-    const closeButton = document.querySelector('.close-button');
 
     // Function to show app details
     window.showAppDetails = function(name, apps) {
         const app = apps.find(app => app.name === name);
         if (app) {
             detailsContent.innerHTML = createAppDetails(app);
-            appDetails.classList.remove('hidden');
-    
+            appDetailsModal.showModal();
+
             // Update URL with app details
             const url = new URL(window.location);
             url.searchParams.set('app', name);
@@ -137,6 +136,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="code bg-base-300 p-2 rounded">
                         <pre data-prefix="$"><code>soar add ${app.name}</code></pre>
                     </div>
+                    <div class="tooltip tooltip-info" data-tip="You must have dbin protocol support on your computer">
+                        <a href="dbin://install?${app.name}" class="install-button btn btn-primary mt-4">Install</a>
+                    </div>
                 </div>
                 ${app.note ? `<div class="app-note alert alert-warning"><strong>Note:</strong> ${app.note}</div>` : ''}
             `;
@@ -238,11 +240,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Event listener to close app details
-    closeButton.addEventListener('click', closeDetails);
+    document.querySelector('form[method="dialog"] button').addEventListener('click', closeDetails);
 
     // Function to close app details
     function closeDetails() {
-        appDetails.classList.add('hidden');
+        appDetailsModal.close();
 
         // Update URL to remove app details
         const url = new URL(window.location);

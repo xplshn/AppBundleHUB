@@ -1,4 +1,4 @@
-(()=>{document.addEventListener("DOMContentLoaded",()=>{let u=document.querySelector(".app-details"),c=document.querySelector(".details-body"),h=document.querySelector(".close-button");window.showAppDetails=function(l,r){let v=r.find(o=>o.name===l);if(v){c.innerHTML=b(v),u.classList.remove("hidden");let o=new URL(window.location);o.searchParams.set("app",l),history.pushState({app:l},"",o)}else console.error("App not found:",l)};function b(l){let r=`
+(()=>{document.addEventListener("DOMContentLoaded",()=>{let u=document.getElementById("app-details-modal"),r=document.querySelector(".details-body");window.showAppDetails=function(l,c){let v=c.find(o=>o.name===l);if(v){r.innerHTML=h(v),u.showModal();let o=new URL(window.location);o.searchParams.set("app",l),history.pushState({app:l},"",o)}else console.error("App not found:",l)};function h(l){let c=`
             <div class="animate-pulse">
                 <!-- Header skeleton with icon and title -->
                 <div class="flex items-start gap-4 mb-6">
@@ -91,15 +91,18 @@
                     <div class="code bg-base-300 p-2 rounded">
                         <pre data-prefix="$"><code>soar add ${e.name}</code></pre>
                     </div>
+                    <div class="tooltip tooltip-info" data-tip="You must have dbin protocol support on your computer">
+                        <a href="dbin://install?${e.name}" class="install-button btn btn-primary mt-4">Install</a>
+                    </div>
                 </div>
                 ${e.note?`<div class="app-note alert alert-warning"><strong>Note:</strong> ${e.note}</div>`:""}
-            `}function o(e){if(!Array.isArray(e)||e.length===0)return"<p>No screenshots available.</p>";let i=e.map((n,s)=>new Promise(t=>{let a=new Image;a.onload=()=>t({src:n,index:s,valid:!0}),a.onerror=()=>t({src:n,index:s,valid:!1}),a.src=n}));return Promise.all(i).then(n=>{let s=n.filter(a=>a.valid);if(s.length===0)return"<p>No screenshots available.</p>";let t='<div class="carousel w-full h-64 rounded-lg">';return s.forEach((a,d)=>{let f=(d+1)%s.length,g=(d-1+s.length)%s.length;t+=`
+            `}function o(e){if(!Array.isArray(e)||e.length===0)return"<p>No screenshots available.</p>";let i=e.map((n,s)=>new Promise(t=>{let a=new Image;a.onload=()=>t({src:n,index:s,valid:!0}),a.onerror=()=>t({src:n,index:s,valid:!1}),a.src=n}));return Promise.all(i).then(n=>{let s=n.filter(a=>a.valid);if(s.length===0)return"<p>No screenshots available.</p>";let t='<div class="carousel w-full h-64 rounded-lg">';return s.forEach((a,d)=>{let m=(d+1)%s.length,f=(d-1+s.length)%s.length;t+=`
                         <div id="slide${d}" class="carousel-item relative w-full">
                             <img src="${a.src}" class="w-full h-full object-contain cursor-pointer" alt="Screenshot ${d+1}" data-fullscreen-src="${a.src}"/>
                             <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-                                <a href="#slide${g}" class="btn btn-circle">\u276E</a>
-                                <a href="#slide${f}" class="btn btn-circle">\u276F</a>
+                                <a href="#slide${f}" class="btn btn-circle">\u276E</a>
+                                <a href="#slide${m}" class="btn btn-circle">\u276F</a>
                             </div>
                         </div>
-                    `}),t+="</div>",t})}return c.innerHTML=r,setTimeout(()=>{c.innerHTML=v(l);let e=document.getElementById("screenshots-container");e&&o(l.screenshots).then(i=>{let n=e.querySelector(".skeleton-container"),s=e.querySelector(".carousel-container");s&&(s.innerHTML=i,n.remove(),s.classList.remove("hidden"),s.querySelectorAll("img").forEach(t=>{t.addEventListener("click",()=>{fullscreenImage.src=t.dataset.fullscreenSrc,imageDialog.showModal()})}),document.querySelectorAll(".carousel-item a").forEach(t=>{t.addEventListener("click",a=>{a.preventDefault();let d=a.target.getAttribute("href");document.querySelector(d).scrollIntoView({behavior:"smooth"})})}))}),c.querySelectorAll(".category-tag").forEach(i=>{i.addEventListener("click",n=>{let s=n.target.dataset.category;updateCategoryFilter(s)})})},500),r}h.addEventListener("click",m);function m(){u.classList.add("hidden");let l=new URL(window.location);l.searchParams.delete("app"),history.pushState({},"",l)}});})();
+                    `}),t+="</div>",t})}return r.innerHTML=c,setTimeout(()=>{r.innerHTML=v(l);let e=document.getElementById("screenshots-container");e&&o(l.screenshots).then(i=>{let n=e.querySelector(".skeleton-container"),s=e.querySelector(".carousel-container");s&&(s.innerHTML=i,n.remove(),s.classList.remove("hidden"),s.querySelectorAll("img").forEach(t=>{t.addEventListener("click",()=>{fullscreenImage.src=t.dataset.fullscreenSrc,imageDialog.showModal()})}),document.querySelectorAll(".carousel-item a").forEach(t=>{t.addEventListener("click",a=>{a.preventDefault();let d=a.target.getAttribute("href");document.querySelector(d).scrollIntoView({behavior:"smooth"})})}))}),r.querySelectorAll(".category-tag").forEach(i=>{i.addEventListener("click",n=>{let s=n.target.dataset.category;updateCategoryFilter(s)})})},500),c}document.querySelector('form[method="dialog"] button').addEventListener("click",b);function b(){u.close();let l=new URL(window.location);l.searchParams.delete("app"),history.pushState({},"",l)}});})();
 //# sourceMappingURL=script.js.map

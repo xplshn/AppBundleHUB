@@ -1,25 +1,34 @@
-(()=>{var o=[];function y(c){o=c}document.addEventListener("DOMContentLoaded",async()=>{let c=document.querySelector(".app-grid"),g=document.querySelector(".category-list"),u=document.querySelector(".search-input"),n=new Map,d="All";async function f(){try{let e=await(await fetch("https://corsproxy.io/?https://pkg.ajam.dev/x86_64/METADATA.AIO.json")).json();y(e.pkg||[]),w(),h(),i()}catch(t){console.error("Error fetching app data:",t),c.innerHTML='<div class="error">Failed to load applications. Please try again later.</div>'}}function h(){let t=new URL(window.location),e=t.searchParams.get("category")||"All",a=t.searchParams.get("search")||"",r=t.searchParams.get("app")||"";l(e),i(a),r&&showAppDetails(r,o)}function w(){n.clear(),n.set("All",o.length),o.forEach(e=>{e.category&&e.category.split(",").map(r=>r.trim()).forEach(r=>{if(r){let s=n.get(r)||0;n.set(r,s+1)}})});let t=new Map([["All",n.get("All")],...Array.from(n.entries()).filter(([e])=>e!=="All").sort((e,a)=>e[0].localeCompare(a[0]))]);g.innerHTML=Array.from(t.entries()).map(([e,a])=>`
-                <li class="category-item ${e===d?"active":""}"
-                    data-category="${e}">
-                    <a class="menu-item flex items-center justify-between">
-                        ${e}
-                        <span class="category-count badge badge-neutral">${a}</span>
-                    </a>
-                </li>
-            `).join("")}function A(t){return t==="All"?o:o.filter(e=>e.category?e.category.split(",").map(r=>r.trim()).includes(t):!1)}function v(t){let e=t.category?t.category.split(",").map(a=>a.trim()).filter(a=>a).map(a=>`<span class="badge badge-sm badge-outline category-tag" data-category="${a}">${a}</span>`).join(""):"";return`
-            <div class="app-card card card-compact bg-base-100 shadow-md border border-base-300" data-name="${t.name}">
-                <figure class="px-4 pt-4">
-                    <img src="${t.icon}" alt="${t.name}" class="app-icon w-16 h-16 object-contain rounded-md" onerror="this.style.display='none';">
+(()=>{var n=[];function f(c){n=c}document.addEventListener("DOMContentLoaded",async()=>{let c=document.getElementById("app-sections"),b=document.querySelector(".search-input"),g=new Map;async function w(){try{let t=await(await fetch("https://corsproxy.io/?https://pkg.ajam.dev/x86_64/METADATA.AIO.json")).json();f(t.pkg||[]),v(),y(),u()}catch(e){console.error("Error fetching app data:",e),c.innerHTML='<div class="error">Failed to load applications. Please try again later.</div>'}}function y(){let e=new URL(window.location),t=e.searchParams.get("search")||"",a=e.searchParams.get("app")||"";u(t),a&&showAppDetails(a,n)}function v(){g.clear(),n.forEach(e=>{e.category&&e.category.split(",").map(a=>a.trim()).forEach(a=>{if(a){let r=g.get(a)||0;g.set(a,r+1)}})})}function h(e){return`
+            <div class="card card-normal card-side bg-base-100 shadow-xl" data-name="${e.name}">
+                <figure class="w-24 h-24">
+                    <img 
+                        src="${e.icon}" 
+                        alt="${e.name}" 
+                        class="w-full h-full object-contain rounded-md" 
+                        loading="lazy" 
+                        onerror="this.style.display='none';"
+                    >
                 </figure>
                 <div class="card-body">
-                    <h2 class="card-title truncate">${t.name}</h2>
-                    <p class="truncate text-base-content/70">${t.description||"No description available."}</p>
-                    <div class="card-actions justify-end">
-                        <div class="flex flex-wrap gap-2">
-                            ${e}
-                        </div>
-                    </div>
+                    <h2 class="card-title">${e.name}</h2>
+                    <p>${e.description||"No description available."}</p>
                 </div>
             </div>
-        `}function i(t=""){let e=A(d);if(t){let r=t.toLowerCase();e=e.filter(s=>s.name.toLowerCase().includes(r)||s.description&&s.description.toLowerCase().includes(r)||s.category&&s.category.toLowerCase().includes(r))}let a=e.map(r=>v(r));c.innerHTML=a.join(""),c.querySelectorAll(".category-tag").forEach(r=>{r.addEventListener("click",s=>{s.stopPropagation();let p=s.target.dataset.category;l(p)})}),c.querySelectorAll(".app-card").forEach(r=>{r.addEventListener("click",s=>{let p=s.currentTarget.dataset.name;showAppDetails(p,o)})})}function l(t){document.querySelectorAll(".category-item").forEach(r=>{r.classList.remove("active")});let e=document.querySelector(`.category-item[data-category="${t}"]`);e&&e.classList.add("active"),d=t,i(u.value),m();let a=new URL(window.location);a.searchParams.set("category",t),history.pushState({category:t},"",a)}g.addEventListener("click",t=>{let e=t.target.closest(".category-item");e&&l(e.dataset.category)}),u.addEventListener("input",t=>{let e=t.target.value;i(e);let a=new URL(window.location);a.searchParams.set("search",e),history.pushState({search:e},"",a)}),f(),window.addEventListener("popstate",t=>{let e=new URL(window.location),a=e.searchParams.get("category")||"All",r=e.searchParams.get("search")||"",s=e.searchParams.get("app")||"";l(a),i(r),s?showAppDetails(s,o):m()});function m(){let t=document.querySelector(".app-details");if(t){t.classList.add("hidden");let e=new URL(window.location);e.searchParams.delete("app"),history.pushState({},"",e)}}});})();
+        `}function u(e=""){let t=n;if(e){let s=e.toLowerCase();t=t.filter(o=>o.name.toLowerCase().includes(s)||o.description&&o.description.toLowerCase().includes(s)||o.category&&o.category.toLowerCase().includes(s))}let a=new Set,r="";g.forEach((s,o)=>{let i=t.filter(l=>l.category?l.category.split(",").map(E=>E.trim()).includes(o)&&!a.has(l.name):!1);if(i.length===0)return;let m=i.slice(0,6);m.forEach(l=>a.add(l.name));let d=m.map(l=>h(l)).join("");r+=`
+            <div class="category-section mb-8">
+                <h2 class="category-title text-xl font-semibold mb-4">${o}</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    ${d}
+                </div>
+                ${i.length>6?`<button class="see-more-btn btn btn-outline shadow-xl btn-xs sm:btn-sm md:btn-md lg:btn-lg" data-category="${o}">See more ${o}</button>`:""}
+            </div>
+        `}),c.innerHTML=r,c.querySelectorAll(".card").forEach(s=>{s.addEventListener("click",o=>{let i=o.currentTarget.dataset.name;showAppDetails(i,n)})}),c.querySelectorAll(".see-more-btn").forEach(s=>{s.addEventListener("click",o=>{let i=o.target.dataset.category;A(i)})});let p=[].slice.call(document.querySelectorAll("img.lazyload"));if("IntersectionObserver"in window){let s=new IntersectionObserver(function(o,i){o.forEach(function(m){if(m.isIntersecting){let d=m.target;d.src=d.dataset.src,d.classList.remove("lazyload"),s.unobserve(d)}})});p.forEach(function(o){s.observe(o)})}else p.forEach(function(s){s.src=s.dataset.src,s.classList.remove("lazyload")})}function A(e){let a=n.filter(r=>r.category?r.category.split(",").map(s=>s.trim()).includes(e):!1).map(r=>h(r)).join("");c.innerHTML=`
+            <div class="category-section mb-8">
+                <h2 class="category-title text-xl font-semibold mb-4">${e}</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    ${a}
+                </div>
+                <button class="see-more-btn btn btn-outline shadow-xl btn-xs sm:btn-sm md:btn-md lg:btn-lg" onclick="window.history.back()">Close</button>
+            </div>
+        `,c.querySelectorAll(".card").forEach(r=>{r.addEventListener("click",p=>{let s=p.currentTarget.dataset.name;showAppDetails(s,n)})})}b.addEventListener("input",e=>{let t=e.target.value;u(t);let a=new URL(window.location);a.searchParams.set("search",t),history.pushState({search:t},"",a)}),w(),window.addEventListener("popstate",e=>{let t=new URL(window.location),a=t.searchParams.get("search")||"",r=t.searchParams.get("app")||"";u(a),r?showAppDetails(r,n):L()});function L(){let e=document.querySelector(".app-details");if(e){e.classList.add("hidden");let t=new URL(window.location);t.searchParams.delete("app"),history.pushState({},"",t)}}});})();
 //# sourceMappingURL=script.js.map

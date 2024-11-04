@@ -10,36 +10,27 @@
 </head>
 <body>
     <header class="header bg-base-100 shadow-md">
-        <div class="search-container max-w-2xl mx-auto p-4">
-            <input type="text" class="search-input input input-bordered w-full" placeholder="Search apps...">
+        <div class="search-container max-w-xs mx-auto p-4">
+            <input type="text" class="search-input input input-bordered input-md w-full" placeholder="Search apps...">
         </div>
     </header>
 
-    <div class="content-wrapper flex flex-1">
-        <aside class="category-menu w-64 bg-base-200 p-4 h-screen overflow-y-auto sticky top-0">
-            <h2 class="category-title text-xl font-semibold mb-4 border-b border-base-300 pb-2">Categories</h2>
-            <ul class="category-list menu">
-                <!-- Categories will be dynamically inserted here -->
-            </ul>
-        </aside>
+    <main class="main-content flex-1 p-4">
+        <div id="app-sections">
+            <!-- App sections will be dynamically inserted here -->
+        </div>
+    </main>
 
-        <main class="main-content flex-1 p-4">
-            <div class="app-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <!-- App cards will be dynamically inserted here -->
-            </div>
-        </main>
-    </div>
-
-    <div class="app-details fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-        <div class="details-content bg-base-100 p-6 rounded-lg max-w-3xl mx-auto my-20 relative">
-            <button class="close-button btn btn-square btn-sm absolute top-2 right-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
+    <!-- Responsive Modal -->
+    <dialog id="app-details-modal" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box bg-base-100 p-6 rounded-lg max-w-3xl mx-auto relative">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
             <div class="details-body"></div>
         </div>
-    </div>
+        <label class="modal-backdrop" for="app-details-modal">Close</label>
+    </dialog>
 
     <!-- Fullscreen Image Dialog -->
     <dialog id="image-dialog" class="modal">
@@ -50,6 +41,7 @@
             </div>
         </div>
     </dialog>
+
     <script src="dist/shared.js"></script>
     <script src="dist/script.js"></script>
     <script src="dist/search/script.js"></script>
