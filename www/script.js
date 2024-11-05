@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Fetch app data from the provided URL
     async function fetchAppData() {
         try {
-            const response = await fetch('https://corsproxy.io/?https://pkg.ajam.dev/x86_64/METADATA.AIO.json');
+            const response = await fetch('https://raw.githubusercontent.com/xplshn/dbin-metadata/refs/heads/master/misc/cmd/modMetadataAIO/METADATA_AIO_amd64_linux.json');
             const data = await response.json();
             setApps(data.pkg || []);
             processCategories();
