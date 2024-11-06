@@ -1,1 +1,1 @@
-pelfCreator -m "xplshn" -n "qbittorrent" -p "qbittorrent" -e "org.qbittorrent.qBittorrent.desktop"
+pelfCreator -m "xplshn" -n "org.qbittorrent.qBittorrent" -p "qbittorrent" -e "org.qbittorrent.qBittorrent.desktop"

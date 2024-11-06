@@ -1,1 +1,1 @@
-pelfCreator -m "xplshn" -n "falkon" -p "falkon" -e "org.kde.falkon.desktop"
+pelfCreator -m "xplshn" -n "org.kde.falkon" -p "falkon" -e "org.kde.falkon.desktop"
