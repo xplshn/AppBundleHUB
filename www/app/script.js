@@ -253,4 +253,3 @@ document.addEventListener('DOMContentLoaded', () => {
         history.pushState({}, '', url);
     }
 });
-
