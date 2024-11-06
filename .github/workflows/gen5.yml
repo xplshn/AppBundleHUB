@@ -37,6 +37,7 @@ jobs:
           set -x
           GOBIN="$GITHUB_WORKSPACE/.local/bin"
           mkdir -p "$GOBIN"
+          echo "GOBIN=$GOBIN" >> $GITHUB_ENV
           echo "PATH=$GOBIN:$PATH" >> $GITHUB_ENV
           git clone --depth 1 --branch dev https://github.com/xplshn/pelf
           cp ./pelf/* "$GOBIN" || true
@@ -93,9 +94,11 @@ jobs:
 
       - name: Generate metadata
         run: |
+          set -x
           echo "We're trying our best"
           which appstream-helper
           which appstream_helper
+          ls "$GOBIN"
           appstream-helper --input-dir "$OUT_DIR" --output-dir "$META_OUT_DIR" --output-file "$META_OUT_DIR/metadata.json"
 
       - name: Zip metadata directory
