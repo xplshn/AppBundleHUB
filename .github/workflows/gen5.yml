@@ -34,6 +34,7 @@ jobs:
 
       - name: Replace the broken lib4bin with one that works
         run: |
+          set -x
           GOBIN="$GITHUB_WORKSPACE/.local/bin"
           mkdir -p "$GOBIN"
           echo "PATH=$GOBIN:$PATH" >> $GITHUB_ENV
