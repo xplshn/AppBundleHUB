@@ -54,6 +54,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Create app card HTML
     function createAppCard(app) {
+        const isPortable = app.pkg.endsWith('.appbundle') || app.pkg.endsWith('.nixappimage');
+        const badgeColor = app.pkg.endsWith('.AppBundle') ? 'badge-warning' : 'badge-success';
+    
         return `
             <div class="card card-normal card-side bg-base-100 shadow-xl" data-name="${app.pkg_name || app.pkg_id}">
                 <figure class="w-24 h-24">
@@ -66,7 +69,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     >
                 </figure>
                 <div class="card-body">
-                    <h2 class="card-title">${app.pkg_name || app.pkg_id}</h2>
+                    <h2 class="card-title">
+                        ${app.pkg_name || app.pkg_id}
+                        ${isPortable ? `<span class="badge ${badgeColor}">Portable</span>` : ''}
+                    </h2>
                     <p>${app.description || 'No description available.'}</p>
                 </div>
             </div>

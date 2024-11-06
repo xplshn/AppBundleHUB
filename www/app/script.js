@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to show app details
     window.showAppDetails = function(name, apps) {
-        const app = apps.find(app => app.name === name);
+        const app = apps.find(app => (app.pkg_name || app.pkg) === name);
         if (app) {
             detailsContent.innerHTML = createAppDetails(app);
             appDetailsModal.showModal();
@@ -82,10 +82,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return `
                 <div class="details-header flex items-start gap-4 mb-4">
-                    <img src="${app.icon}" alt="${app.name}" class="app-icon w-16 h-16 object-contain"
+                    <img src="${app.icon}" alt="${app.pkg_name || app.pkg}" class="app-icon w-16 h-16 object-contain"
                          onerror="this.style.display='none';">
                     <div>
-                        <h2 class="text-2xl font-semibold">${app.name}</h2>
+                        <h2 class="text-2xl font-semibold">${app.pkg_name || app.pkg}</h2>
                         <p>${app.description || 'No description available.'}</p>
                         <div class="category-tags flex flex-wrap gap-2 mt-2">${categoryTags}</div>
                     </div>
@@ -120,25 +120,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="app-links flex gap-2 mb-4">
                     <a href="${app.download_url}" class="download-button btn btn-primary">Download</a>
                     ${app.src_url ? `<a href="${app.src_url}" class="link-button btn btn-secondary" target="_blank">Source Code</a>` : ''}
-                    ${app.web_url ? `<a href="${app.web_url}" class="link-button btn btn-secondary" target="_blank">Website</a>` : ''}
+                    ${app.homepage ? `<a href="${app.homepage}" class="link-button btn btn-secondary" target="_blank">Website</a>` : ''}
                 </div>
                 <div class="install-section p-4 bg-base-200 rounded-lg mb-4">
 
                 <div class="tooltip tooltip-info tooltip-right" data-tip="one-click-install requires dbin protocol to be set up correctly on your system">
-                    <a href="dbin://install?${app.name}" class="install-button btn btn-ghost text-lg">Install <span class="nf nf-oct-desktop_download"></span></a>
+                    <a href="dbin://install?${app.pkg}" class="install-button btn btn-ghost text-lg">Install <span class="nf nf-oct-desktop_download"></span></a>
                 </div>
 
                     <h4 class="text-base font-semibold mb-2"># If you don't have <span class="code">dbin</span> installed:</h4>
                     <div class="code bg-base-300 p-2 rounded mb-4">
-                        <pre data-prefix="$"><code>wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- install ${app.name}</code></pre>
+                        <pre data-prefix="$"><code>wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- install ${app.pkg_name || app.pkg}</code></pre>
                     </div>
                     <h4 class="text-base font-semibold mb-2"># If you have <span class="code">dbin</span> installed:</h4>
                     <div class="code bg-base-300 p-2 rounded mb-4">
-                        <pre data-prefix="$"><code>dbin install ${app.name}</code></pre>
+                        <pre data-prefix="$"><code>dbin install ${app.pkg}</code></pre>
                     </div>
                     <h4 class="text-base font-semibold mb-2"># Alternative using <span class="code">soar</span>:</h4>
                     <div class="code bg-base-300 p-2 rounded">
-                        <pre data-prefix="$"><code>soar add ${app.name}</code></pre>
+                        <pre data-prefix="$"><code>soar add ${app.pkg}</code></pre>
                     </div>
                 </div>
                 ${app.note ? `<div class="app-note alert alert-warning"><strong>Note:</strong> ${app.note}</div>` : ''}

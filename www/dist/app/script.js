@@ -1,4 +1,4 @@
-(()=>{document.addEventListener("DOMContentLoaded",()=>{let u=document.getElementById("app-details-modal"),c=document.querySelector(".details-body");window.showAppDetails=function(a,r){let v=r.find(o=>o.name===a);if(v){c.innerHTML=h(v),u.showModal();let o=new URL(window.location);o.searchParams.set("app",a),history.pushState({app:a},"",o)}else console.error("App not found:",a)};function h(a){let r=`
+(()=>{document.addEventListener("DOMContentLoaded",()=>{let u=document.getElementById("app-details-modal"),c=document.querySelector(".details-body");window.showAppDetails=function(a,r){let v=r.find(n=>(n.pkg_name||n.pkg)===a);if(v){c.innerHTML=h(v),u.showModal();let n=new URL(window.location);n.searchParams.set("app",a),history.pushState({app:a},"",n)}else console.error("App not found:",a)};function h(a){let r=`
             <div class="animate-pulse">
                 <!-- Header skeleton with icon and title -->
                 <div class="flex items-start gap-4 mb-6">
@@ -35,14 +35,14 @@
                 <!-- Install section skeleton -->
                 <div class="skeleton h-64 w-full rounded-lg"></div>
             </div>
-        `;function v(e){let i=e.category?e.category.split(",").map(t=>t.trim()).filter(t=>t).map(t=>`<span class="badge badge-neutral category-tag" data-category="${t}">${t}</span>`).join(""):"",s=new Date(e.build_date).toLocaleDateString("es-AR",{year:"numeric",month:"short",day:"numeric"});return`
+        `;function v(e){let o=e.category?e.category.split(",").map(t=>t.trim()).filter(t=>t).map(t=>`<span class="badge badge-neutral category-tag" data-category="${t}">${t}</span>`).join(""):"",s=new Date(e.build_date).toLocaleDateString("es-AR",{year:"numeric",month:"short",day:"numeric"});return`
                 <div class="details-header flex items-start gap-4 mb-4">
-                    <img src="${e.icon}" alt="${e.name}" class="app-icon w-16 h-16 object-contain"
+                    <img src="${e.icon}" alt="${e.pkg_name||e.pkg}" class="app-icon w-16 h-16 object-contain"
                          onerror="this.style.display='none';">
                     <div>
-                        <h2 class="text-2xl font-semibold">${e.name}</h2>
+                        <h2 class="text-2xl font-semibold">${e.pkg_name||e.pkg}</h2>
                         <p>${e.description||"No description available."}</p>
-                        <div class="category-tags flex flex-wrap gap-2 mt-2">${i}</div>
+                        <div class="category-tags flex flex-wrap gap-2 mt-2">${o}</div>
                     </div>
                 </div>
                 <div id="screenshots-container" class="mb-4">
@@ -75,35 +75,35 @@
                 <div class="app-links flex gap-2 mb-4">
                     <a href="${e.download_url}" class="download-button btn btn-primary">Download</a>
                     ${e.src_url?`<a href="${e.src_url}" class="link-button btn btn-secondary" target="_blank">Source Code</a>`:""}
-                    ${e.web_url?`<a href="${e.web_url}" class="link-button btn btn-secondary" target="_blank">Website</a>`:""}
+                    ${e.homepage?`<a href="${e.homepage}" class="link-button btn btn-secondary" target="_blank">Website</a>`:""}
                 </div>
                 <div class="install-section p-4 bg-base-200 rounded-lg mb-4">
 
                 <div class="tooltip tooltip-info tooltip-right" data-tip="one-click-install requires dbin protocol to be set up correctly on your system">
-                    <a href="dbin://install?${e.name}" class="install-button btn btn-ghost text-lg">Install <span class="nf nf-oct-desktop_download"></span></a>
+                    <a href="dbin://install?${e.pkg}" class="install-button btn btn-ghost text-lg">Install <span class="nf nf-oct-desktop_download"></span></a>
                 </div>
 
                     <h4 class="text-base font-semibold mb-2"># If you don't have <span class="code">dbin</span> installed:</h4>
                     <div class="code bg-base-300 p-2 rounded mb-4">
-                        <pre data-prefix="$"><code>wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- install ${e.name}</code></pre>
+                        <pre data-prefix="$"><code>wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- install ${e.pkg_name||e.pkg}</code></pre>
                     </div>
                     <h4 class="text-base font-semibold mb-2"># If you have <span class="code">dbin</span> installed:</h4>
                     <div class="code bg-base-300 p-2 rounded mb-4">
-                        <pre data-prefix="$"><code>dbin install ${e.name}</code></pre>
+                        <pre data-prefix="$"><code>dbin install ${e.pkg}</code></pre>
                     </div>
                     <h4 class="text-base font-semibold mb-2"># Alternative using <span class="code">soar</span>:</h4>
                     <div class="code bg-base-300 p-2 rounded">
-                        <pre data-prefix="$"><code>soar add ${e.name}</code></pre>
+                        <pre data-prefix="$"><code>soar add ${e.pkg}</code></pre>
                     </div>
                 </div>
                 ${e.note?`<div class="app-note alert alert-warning"><strong>Note:</strong> ${e.note}</div>`:""}
-            `}function o(e){if(!Array.isArray(e)||e.length===0)return"<p>No screenshots available.</p>";let i=e.map((n,s)=>new Promise(t=>{let l=new Image;l.onload=()=>t({src:n,index:s,valid:!0}),l.onerror=()=>t({src:n,index:s,valid:!1}),l.src=n}));return Promise.all(i).then(n=>{let s=n.filter(l=>l.valid);if(s.length===0)return"<p>No screenshots available.</p>";let t='<div class="carousel w-full h-64 rounded-lg">';return s.forEach((l,d)=>{let m=(d+1)%s.length,f=(d-1+s.length)%s.length;t+=`
+            `}function n(e){if(!Array.isArray(e)||e.length===0)return"<p>No screenshots available.</p>";let o=e.map((i,s)=>new Promise(t=>{let l=new Image;l.onload=()=>t({src:i,index:s,valid:!0}),l.onerror=()=>t({src:i,index:s,valid:!1}),l.src=i}));return Promise.all(o).then(i=>{let s=i.filter(l=>l.valid);if(s.length===0)return"<p>No screenshots available.</p>";let t='<div class="carousel w-full h-64 rounded-lg">';return s.forEach((l,d)=>{let b=(d+1)%s.length,m=(d-1+s.length)%s.length;t+=`
                         <div id="slide${d}" class="carousel-item relative w-full">
                             <img src="${l.src}" class="w-full h-full object-contain cursor-pointer" alt="Screenshot ${d+1}" data-fullscreen-src="${l.src}"/>
                             <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-                                <a href="#slide${f}" class="btn btn-circle">\u276E</a>
-                                <a href="#slide${m}" class="btn btn-circle">\u276F</a>
+                                <a href="#slide${m}" class="btn btn-circle">\u276E</a>
+                                <a href="#slide${b}" class="btn btn-circle">\u276F</a>
                             </div>
                         </div>
-                    `}),t+="</div>",t})}return c.innerHTML=r,setTimeout(()=>{c.innerHTML=v(a);let e=document.getElementById("screenshots-container");e&&o(a.screenshots).then(i=>{let n=e.querySelector(".skeleton-container"),s=e.querySelector(".carousel-container");s&&(s.innerHTML=i,n.remove(),s.classList.remove("hidden"),s.querySelectorAll("img").forEach(t=>{t.addEventListener("click",()=>{fullscreenImage.src=t.dataset.fullscreenSrc,imageDialog.showModal()})}),document.querySelectorAll(".carousel-item a").forEach(t=>{t.addEventListener("click",l=>{l.preventDefault();let d=l.target.getAttribute("href");document.querySelector(d).scrollIntoView({behavior:"smooth"})})}))}),c.querySelectorAll(".category-tag").forEach(i=>{i.addEventListener("click",n=>{let s=n.target.dataset.category;updateCategoryFilter(s)})})},500),r}document.querySelector('form[method="dialog"] button').addEventListener("click",b);function b(){u.close();let a=new URL(window.location);a.searchParams.delete("app"),history.pushState({},"",a)}});})();
+                    `}),t+="</div>",t})}return c.innerHTML=r,setTimeout(()=>{c.innerHTML=v(a);let e=document.getElementById("screenshots-container");e&&n(a.screenshots).then(o=>{let i=e.querySelector(".skeleton-container"),s=e.querySelector(".carousel-container");s&&(s.innerHTML=o,i.remove(),s.classList.remove("hidden"),s.querySelectorAll("img").forEach(t=>{t.addEventListener("click",()=>{fullscreenImage.src=t.dataset.fullscreenSrc,imageDialog.showModal()})}),document.querySelectorAll(".carousel-item a").forEach(t=>{t.addEventListener("click",l=>{l.preventDefault();let d=l.target.getAttribute("href");document.querySelector(d).scrollIntoView({behavior:"smooth"})})}))}),c.querySelectorAll(".category-tag").forEach(o=>{o.addEventListener("click",i=>{let s=i.target.dataset.category;updateCategoryFilter(s)})})},500),r}document.querySelector('form[method="dialog"] button').addEventListener("click",g);function g(){u.close();let a=new URL(window.location);a.searchParams.delete("app"),history.pushState({},"",a)}});})();
 //# sourceMappingURL=script.js.map
