@@ -1,4 +1,4 @@
-name: Build and Release AppBundles - (docker, same as toolpacks' infra)
+name: Build and Release AppBundles - (docker, same as toolpacks' infra) - NG
 
 on:
   schedule:
@@ -34,8 +34,10 @@ jobs:
 
       - name: Replace the broken lib4bin with one that works
         run: |
+          set -x
           GOBIN="$GITHUB_WORKSPACE/.local/bin"
           mkdir -p "$GOBIN"
+          echo "GOBIN=$GOBIN" >> $GITHUB_ENV
           echo "PATH=$GOBIN:$PATH" >> $GITHUB_ENV
           git clone --depth 1 --branch dev https://github.com/xplshn/pelf
           cp ./pelf/* "$GOBIN" || true
@@ -64,7 +66,7 @@ jobs:
           set -x
           export PATH="$GITHUB_WORKSPACE/baseSystems:$PATH"
           echo "PATH=$PATH" >> $GITHUB_ENV
-          
+
           cd $OUT_DIR
           SCRIPT_PATTERN="${{ github.event.inputs.script_pattern }}"
           if [ -z "$SCRIPT_PATTERN" ]; then
@@ -92,14 +94,29 @@ jobs:
 
       - name: Generate metadata
         run: |
+          set -x
           echo "We're trying our best"
-          appstream_helper --input-dir "$OUT_DIR" --output-dir "$META_OUT_DIR" --output-file "$META_OUT_DIR/metadata.json"
+          which appstream-helper
+          which appstream_helper
+          ls "$GOBIN"
+          appstream-helper --input-dir "$OUT_DIR" --output-dir "$META_OUT_DIR" --output-file "$META_OUT_DIR/metadata.json"
+
+      - name: Zip metadata directory
+        run: |
+          cd $META_OUT_DIR
+          zip -r metadata.zip .
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: app-bundles
           path: ${{ env.OUT_DIR }}/*.AppBundle
+
+      - name: Upload metadata artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: metadata
+          path: ${{ env.META_OUT_DIR }}/metadata.zip
 
   release:
     name: Release AppBundles
@@ -115,6 +132,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: app-bundles
+          path: ${{ github.workspace }}
+
+      - name: Download metadata artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: metadata
           path: ${{ github.workspace }}
 
       - name: Upload individual artifacts
@@ -188,4 +211,5 @@ jobs:
           make_latest: true
           files: |
             ${{ github.workspace }}/*.AppBundle
+            ${{ github.workspace }}/metadata.zip
         continue-on-error: true
