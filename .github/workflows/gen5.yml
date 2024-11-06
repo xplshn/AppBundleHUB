@@ -94,7 +94,7 @@ jobs:
       - name: Generate metadata
         run: |
           echo "We're trying our best"
-          appstream_helper --input-dir "$OUT_DIR" --output-dir "$META_OUT_DIR" --output-file "$META_OUT_DIR/metadata.json"
+          appstream-helper --input-dir "$OUT_DIR" --output-dir "$META_OUT_DIR" --output-file "$META_OUT_DIR/metadata.json"
 
       - name: Zip metadata directory
         run: |
