@@ -105,8 +105,12 @@ jobs:
         with:
           name: app-bundles
           path: ${{ env.OUT_DIR }}/*.AppBundle
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
           name: metadata
-          path: ${{ env.META_OUT_DIR }}/*.AppBundle
+          path: ${{ env.META_OUT_DIR }}
 
       - name: Upload metadata artifact
         uses: actions/upload-artifact@v4
