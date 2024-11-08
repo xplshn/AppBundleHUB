@@ -100,16 +100,13 @@ jobs:
           ls "$GOBIN"
           appstream-helper --components-xml ./FLATPAK_APPSTREAM.xml --input-dir "$OUT_DIR" --output-dir "$META_OUT_DIR" --output-file "$META_OUT_DIR/metadata.json"
 
-      - name: Zip metadata directory
-        run: |
-          cd $META_OUT_DIR
-          zip -r metadata.zip .
-
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: app-bundles
           path: ${{ env.OUT_DIR }}/*.AppBundle
+          name: metadata
+          path: ${{ env.META_OUT_DIR }}/*.AppBundle
 
       - name: Upload metadata artifact
         uses: actions/upload-artifact@v4
