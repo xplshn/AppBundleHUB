@@ -96,10 +96,9 @@ jobs:
         run: |
           set -x
           echo "We're trying our best"
-          which appstream-helper
-          which appstream_helper
+          wget "https://huggingface.co/datasets/pkgforge/pkgcache/resolve/main/FLATPAK_APPSTREAM.xml"
           ls "$GOBIN"
-          appstream-helper --input-dir "$OUT_DIR" --output-dir "$META_OUT_DIR" --output-file "$META_OUT_DIR/metadata.json"
+          appstream-helper --components-xml ./FLATPAK_APPSTREAM.xml --input-dir "$OUT_DIR" --output-dir "$META_OUT_DIR" --output-file "$META_OUT_DIR/metadata.json"
 
       - name: Zip metadata directory
         run: |
