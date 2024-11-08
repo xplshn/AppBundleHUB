@@ -99,6 +99,7 @@ jobs:
         with:
           name: metadata
           path: ${{ env.META_OUT_DIR }}/metadata.json
+          compression-level: 0  # Ensure no compression is applied to metadata
 
   release:
     name: Release AppBundles
@@ -173,6 +174,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: ${{ github.event.inputs.release == 'true' }}
+    permissions: write-all
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -183,12 +185,23 @@ jobs:
           name: metadata
           path: ${{ github.workspace }}
 
-      - name: Update latest_metadata tag
+      - name: Update latest_metadata tag and create release
         run: |
           git fetch --tags
           if git tag -l | grep -q "^latest_metadata$"; then
             git tag -d latest_metadata
-            git push origin --delete latest_metadata
+            git push origin --delete latest_metadata || true
           fi
           git tag latest_metadata
           git push origin latest_metadata
+
+      - name: Create Release for Metadata
+        uses: softprops/action-gh-release@v2.0.8
+        with:
+          name: "Latest Metadata"
+          tag_name: "latest_metadata"
+          files: ${{ github.workspace }}/*
+          body: "Latest metadata files"
+          draft: false
+          prerelease: false
+          make_latest: false
