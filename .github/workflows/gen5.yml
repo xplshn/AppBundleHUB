@@ -1,4 +1,4 @@
-name: Build and Release AppBundles - (docker, same as toolpacks' infra) - NG
+name: Build and Release AppBundles - NG
 
 on:
   schedule:
@@ -27,12 +27,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Remove stuff
+      - name: Remove non-compliant tools
         run: |
-          # These are not compliant nor good. I want to know when my recipes are not compliant.
           apk del bash findutils gawk grep diffutils coreutils
 
-      - name: Replace the broken lib4bin with one that works
+      - name: Set up GOBIN and install lib4bin
         run: |
           set -x
           export GOBIN="$GITHUB_WORKSPACE/.local/bin"
@@ -60,7 +59,7 @@ jobs:
           echo "Listing available recipes:"
           tree "$GITHUB_WORKSPACE/recipes"
 
-      - name: Run selected build scripts in OUT_DIR
+      - name: Run selected build scripts
         run: |
           ls "$GITHUB_WORKSPACE/baseSystems"
           set -x
@@ -73,50 +72,33 @@ jobs:
             echo "No script pattern provided, running all scripts."
             PATTERN=".*"
           else
-            echo "Pattern provided: $SCRIPT_PATTERN"
             PATTERN="$SCRIPT_PATTERN"
           fi
 
           for script in "$GITHUB_WORKSPACE/recipes/"*/*.*sh; do
             if echo "$script" | grep -E "$PATTERN"; then
-              echo "Running $script"
               chmod +x "$script"
               DEBUG=1 "$script"
-            else
-              echo "Skipping $script (does not match pattern)"
             fi
           done
-
-      - name: List output
-        run: |
-          echo "Listing files of $OUT_DIR"
-          ls "$OUT_DIR"
 
       - name: Generate metadata
         run: |
           set -x
-          echo "We're trying our best"
           wget "https://huggingface.co/datasets/pkgforge/pkgcache/resolve/main/FLATPAK_APPSTREAM.xml"
-          ls "$GOBIN"
           appstream-helper --components-xml ./FLATPAK_APPSTREAM.xml --input-dir "$OUT_DIR" --output-dir "$META_OUT_DIR" --output-file "$META_OUT_DIR/metadata.json"
 
-      - name: Upload build artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: app-bundles
           path: ${{ env.OUT_DIR }}/*.AppBundle
 
-      - name: Upload build artifacts
+      - name: Upload metadata artifacts
         uses: actions/upload-artifact@v4
         with:
           name: metadata
           path: ${{ env.META_OUT_DIR }}
-
-      - name: Upload metadata artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: metadata
-          path: ${{ env.META_OUT_DIR }}/metadata.zip
 
   release:
     name: Release AppBundles
@@ -128,7 +110,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download build artifacts
+      - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           name: app-bundles
@@ -140,52 +122,24 @@ jobs:
           name: metadata
           path: ${{ github.workspace }}
 
-      - name: Upload individual artifacts
-        if: ${{ github.event.inputs.release != 'true' }}
-        run: |
-          for file in ${{ github.workspace }}/*.AppBundle; do
-            echo "Uploading $file"
-            echo "::set-output name=artifact_name::$(basename $file)"
-            echo "::set-output name=artifact_path::$file"
-          done
-        id: upload_individual
-
-      - name: Upload individual artifacts
-        if: ${{ github.event.inputs.release != 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ steps.upload_individual.outputs.artifact_name }}
-          path: ${{ steps.upload_individual.outputs.artifact_path }}
-
-      - name: Upload all artifacts
-        if: ${{ github.event.inputs.release != 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: all-app-bundles
-          path: ${{ github.workspace }}/*.AppBundle
-
       - name: Manage Tags
         if: ${{ github.event.inputs.release == 'true' }}
         run: |
           git fetch --tags
-          TAGS=$(git tag | sort -V)
+          TAGS=$(git tag | grep -v "^latest_metadata$" | sort -V)
           TAG_COUNT=$(echo "$TAGS" | wc -l)
           if [ "$TAG_COUNT" -gt 5 ]; then
             TAGS_TO_DELETE=$(echo "$TAGS" | head -n -1)
             for TAG in $TAGS_TO_DELETE; do
-              echo "Deleting tag: $TAG"
               git tag -d "$TAG"
               git push origin --delete "$TAG"
             done
-          else
-            echo "Tag count is $TAG_COUNT, no tags to delete."
           fi
 
       - name: Create Git Tag
         if: ${{ github.event.inputs.release == 'true' }}
         run: |
           TAG_NAME="v$(date +'%Y%m%d%H%M%S')"
-          echo "Creating tag: $TAG_NAME"
           git tag "$TAG_NAME"
           git push origin "$TAG_NAME"
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
@@ -211,5 +165,30 @@ jobs:
           make_latest: true
           files: |
             ${{ github.workspace }}/*.AppBundle
-            ${{ github.workspace }}/metadata.zip
+            ${{ github.workspace }}/metadata.json
         continue-on-error: true
+
+  publish_metadata:
+    name: Publish Metadata
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{ github.event.inputs.release == 'true' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download metadata artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: metadata
+          path: ${{ github.workspace }}
+
+      - name: Update latest_metadata tag
+        run: |
+          git fetch --tags
+          if git tag -l | grep -q "^latest_metadata$"; then
+            git tag -d latest_metadata
+            git push origin --delete latest_metadata
+          fi
+          git tag latest_metadata
+          git push origin latest_metadata
