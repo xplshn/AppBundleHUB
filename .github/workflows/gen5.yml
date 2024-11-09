@@ -110,12 +110,6 @@ jobs:
           name: app-bundles
           path: ${{ github.workspace }}
 
-      - name: Download appstream-helper artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: appstream-helper
-          path: ${{ github.workspace }}/.local/bin
-
       - name: Manage Tags
         if: ${{ github.event.inputs.release == 'true' }}
         run: |
