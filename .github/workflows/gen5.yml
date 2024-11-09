@@ -110,6 +110,12 @@ jobs:
           name: app-bundles
           path: ${{ github.workspace }}
 
+      - name: Download appstream-helper artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: appstream-helper
+          path: ${{ github.workspace }}/.local/bin
+
       - name: Manage Tags
         if: ${{ github.event.inputs.release == 'true' }}
         run: |
@@ -155,6 +161,22 @@ jobs:
             ${{ github.workspace }}/*.AppBundle
         continue-on-error: true
 
+  generate_metadata:
+    name: Generate Metadata
+    runs-on: ubuntu-latest
+    needs: release
+    permissions: write-all
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download app bundle artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: app-bundles
+          path: ${{ github.workspace }}
+
       - name: Download appstream-helper artifact
         uses: actions/download-artifact@v4
         with:
@@ -168,10 +190,6 @@ jobs:
             echo "appstream-helper not found!"
             exit 1
           fi
-
-      - name: Set up PATH for appstream-helper
-        run: |
-          echo "PATH=${{ github.workspace }}/.local/bin:$PATH" >> $GITHUB_ENV
 
       - name: Generate metadata
         run: |
@@ -189,10 +207,9 @@ jobs:
   publish_metadata:
     name: Publish Metadata
     runs-on: ubuntu-latest
-    needs: release
+    needs: generate_metadata
     if: ${{ github.event.inputs.release == 'true' }}
     permissions: write-all
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
