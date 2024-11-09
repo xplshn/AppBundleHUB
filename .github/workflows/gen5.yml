@@ -46,6 +46,12 @@ jobs:
           cd ./pelf/cmd/misc/appstream_helper
           go install .
 
+      - name: Upload appstream-helper as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: appstream-helper
+          path: ${{ env.GOBIN }}/appstream-helper
+
       - name: Set OUT_DIR environment variable
         run: |
           OUT_DIR="$GITHUB_WORKSPACE/APPBUNDLES"
@@ -165,11 +171,18 @@ jobs:
           name: app-bundles
           path: ${{ github.workspace }}
 
+      - name: Download appstream-helper artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: appstream-helper
+          path: ${{ github.workspace }}/.local/bin
+
       - name: Generate metadata
         run: |
           set -x
           wget "https://huggingface.co/datasets/pkgforge/pkgcache/resolve/main/FLATPAK_APPSTREAM.xml"
-          appstream-helper --components-xml ./FLATPAK_APPSTREAM.xml --input-dir "${{ github.workspace }}" --output-dir "${{ github.workspace }}/APPBUNDLES_META" --output-file "${{ github.workspace }}/APPBUNDLES_META/metadata.json" --download-url-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/${{ env.TAG_NAME }}/" --metadata-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/latest_metadata/"
+          chmod +x ${{ github.workspace }}/.local/bin/appstream-helper
+          ${{ github.workspace }}/.local/bin/appstream-helper --components-xml ./FLATPAK_APPSTREAM.xml --input-dir "${{ github.workspace }}" --output-dir "${{ github.workspace }}/APPBUNDLES_META" --output-file "${{ github.workspace }}/APPBUNDLES_META/metadata.json" --download-url-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/${{ env.TAG_NAME }}/" --metadata-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/latest_metadata/"
 
       - name: Upload metadata artifacts
         uses: actions/upload-artifact@v4
@@ -208,7 +221,7 @@ jobs:
         with:
           name: "Latest Metadata"
           tag_name: "latest_metadata"
-          files: ${{ github.workspace }}/*
+          files: ${{ github.workspace }}/APPBUNDLES_META/*
           body: "Latest metadata files"
           draft: false
           prerelease: true
