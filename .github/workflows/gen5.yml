@@ -82,27 +82,11 @@ jobs:
             fi
           done
 
-      - name: Generate metadata
-        run: |
-          set -x
-          wget "https://huggingface.co/datasets/pkgforge/pkgcache/resolve/main/FLATPAK_APPSTREAM.xml"
-          appstream-helper --components-xml ./FLATPAK_APPSTREAM.xml --input-dir "$OUT_DIR" --output-dir "$META_OUT_DIR" --output-file "$META_OUT_DIR/metadata.json"
-
       - name: Upload app bundle artifacts
         uses: actions/upload-artifact@v4
         with:
           name: app-bundles
           path: ${{ env.OUT_DIR }}/*.AppBundle
-
-      - name: List generated metadata files
-        run: |
-          ls ${{ env.META_OUT_DIR }}/*
-
-      - name: Upload metadata artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: metadata
-          path: ${{ env.META_OUT_DIR }}/*
 
   release:
     name: Release AppBundles
@@ -118,12 +102,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: app-bundles
-          path: ${{ github.workspace }}
-
-      - name: Download metadata artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: metadata
           path: ${{ github.workspace }}
 
       - name: Manage Tags
@@ -169,13 +147,40 @@ jobs:
           make_latest: true
           files: |
             ${{ github.workspace }}/*.AppBundle
-            ${{ github.workspace }}/metadata.json
         continue-on-error: true
+
+  generate_metadata:
+    name: Generate Metadata
+    runs-on: ubuntu-latest
+    needs: release
+    permissions: write-all
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download app bundle artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: app-bundles
+          path: ${{ github.workspace }}
+
+      - name: Generate metadata
+        run: |
+          set -x
+          wget "https://huggingface.co/datasets/pkgforge/pkgcache/resolve/main/FLATPAK_APPSTREAM.xml"
+          appstream-helper --components-xml ./FLATPAK_APPSTREAM.xml --input-dir "${{ github.workspace }}" --output-dir "${{ github.workspace }}/APPBUNDLES_META" --output-file "${{ github.workspace }}/APPBUNDLES_META/metadata.json" --download-url-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/${{ env.TAG_NAME }}/" --metadata-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/latest_metadata/"
+
+      - name: Upload metadata artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: metadata
+          path: ${{ github.workspace }}/APPBUNDLES_META/*
 
   publish_metadata:
     name: Publish Metadata
     runs-on: ubuntu-latest
-    needs: build
+    needs: generate_metadata
     if: ${{ github.event.inputs.release == 'true' }}
     permissions: write-all
     steps:
