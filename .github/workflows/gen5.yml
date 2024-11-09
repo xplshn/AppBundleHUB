@@ -185,6 +185,10 @@ jobs:
             exit 1
           fi
 
+      - name: Set up PATH for appstream-helper
+        run: |
+          echo "PATH=${{ github.workspace }}/.local/bin:$PATH" >> $GITHUB_ENV
+
       - name: Generate metadata
         run: |
           set -x
