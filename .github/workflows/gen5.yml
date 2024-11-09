@@ -206,5 +206,5 @@ jobs:
           files: ${{ github.workspace }}/*
           body: "Latest metadata files"
           draft: false
-          prerelease: false
+          prerelease: true
           make_latest: false
