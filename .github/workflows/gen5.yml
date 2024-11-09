@@ -186,8 +186,24 @@ jobs:
           name: metadata
           path: ${{ github.workspace }}/APPBUNDLES_META/*
 
+  publish_metadata:
+    name: Publish Metadata
+    runs-on: ubuntu-latest
+    needs: release
+    if: ${{ github.event.inputs.release == 'true' }}
+    permissions: write-all
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download metadata artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: metadata
+          path: ${{ github.workspace }}
+
       - name: Update latest_metadata tag and create release
-        if: ${{ github.event.inputs.release == 'true' }}
         run: |
           git fetch --tags
           if git tag -l | grep -q "^latest_metadata$"; then
@@ -198,7 +214,6 @@ jobs:
           git push origin latest_metadata
 
       - name: Create Release for Metadata
-        if: ${{ github.event.inputs.release == 'true' }}
         uses: softprops/action-gh-release@v2.0.8
         with:
           name: "Latest Metadata"
