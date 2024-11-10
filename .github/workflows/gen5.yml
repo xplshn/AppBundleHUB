@@ -173,7 +173,7 @@ jobs:
           make_latest: true
           files: |
             ${{ github.workspace }}/*.AppBundle
-            ${{ github.workspace }}/APPBUNDLES_META/*
+            ${{ github.workspace }}/APPBUNDLES_META/metadata.json
         continue-on-error: true
 
   publish_metadata:
