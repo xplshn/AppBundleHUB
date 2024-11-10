@@ -207,7 +207,12 @@ jobs:
         with:
           name: "Latest Metadata"
           tag_name: "latest_metadata"
-          files: ${{ github.workspace }}/*.{json,png,svg,desktop,xml}
+          files: |
+            ${{ github.workspace }}/*.json
+            ${{ github.workspace }}/*.png
+            ${{ github.workspace }}/*.svg
+            ${{ github.workspace }}/*.desktop
+            ${{ github.workspace }}/*.xml
           draft: false
           prerelease: true
           make_latest: false
