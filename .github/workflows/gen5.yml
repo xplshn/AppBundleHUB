@@ -119,7 +119,9 @@ jobs:
       - name: Verify appstream-helper is downloaded
         run: |
           ls -l ${{ github.workspace }}/.local/bin
-          if [ ! -f ${{ github.workspace }}/.local/bin/appstream-helper ]; then
+          if [ -f ${{ github.workspace }}/.local/bin/appstream-helper ]; then
+            file ${{ github.workspace }}/.local/bin/appstream-helper
+          else
             echo "appstream-helper not found!"
             exit 1
           fi
