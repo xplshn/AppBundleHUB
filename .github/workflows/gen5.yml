@@ -21,7 +21,7 @@ jobs:
     permissions: write-all
     container:
       image: "docker.io/azathothas/appbundler-alpine:latest"
-      options: --privileged
+      options: --privileged --userns=host --device /dev/fuse
 
     steps:
       - name: Checkout repository
@@ -88,6 +88,10 @@ jobs:
               DEBUG=1 "$script"
             fi
           done
+
+      - name: Set executable permissions for AppBundles
+        run: |
+          chmod +x ${{ env.OUT_DIR }}/*.AppBundle
 
       - name: Upload app bundle artifacts
         uses: actions/upload-artifact@v4
