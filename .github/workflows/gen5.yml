@@ -31,7 +31,7 @@ jobs:
         run: |
           apk del bash findutils gawk grep diffutils coreutils
 
-      - name: Remove non-compliant tools
+      - name: Add Fuse3
         run: |
           apk add fuse3
 
