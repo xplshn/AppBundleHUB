@@ -124,6 +124,7 @@ jobs:
       - name: Generate metadata
         run: |
           set -x
+          ls -lshFA ${{ github.workspace }}/.local/bin/
           chmod +x ${{ github.workspace }}/.local/bin/appstream-helper
           wget "https://huggingface.co/datasets/pkgforge/pkgcache/resolve/main/FLATPAK_APPSTREAM.xml"
           
