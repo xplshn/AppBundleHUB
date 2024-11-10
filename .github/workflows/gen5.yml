@@ -117,16 +117,6 @@ jobs:
           name: appstream-helper
           path: ${{ github.workspace }}/.local/bin
 
-      - name: Verify appstream-helper is downloaded
-        run: |
-          ls -l ${{ github.workspace }}/.local/bin
-          if [ -f ${{ github.workspace }}/.local/bin/appstream-helper ]; then
-            file ${{ github.workspace }}/.local/bin/appstream-helper
-          else
-            echo "appstream-helper not found!"
-            exit 1
-          fi
-
       - name: Generate metadata
         run: |
           set -x
