@@ -98,12 +98,18 @@ jobs:
           chmod +x ${{ env.GOBIN }}/appstream-helper
           ${{ env.GOBIN }}/appstream-helper --components-xml ./FLATPAK_APPSTREAM.xml --input-dir "${{ github.workspace }}" --output-dir "${{ github.workspace }}/APPBUNDLES_META" --output-file "${{ github.workspace }}/APPBUNDLES_META/metadata.json" --download-url-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/${{ env.TAG_NAME }}/" --metadata-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/latest_metadata/"
 
-      - name: Manage Tags
+      - name: Manage Tags and Update latest_metadata
         if: ${{ github.event.inputs.release == 'true' }}
         run: |
+          # Mark repository as safe to avoid dubious ownership issues
+          git config --global --add safe.directory "${{ github.workspace }}"
+          
+          # Fetch tags and manage the latest_metadata tag
           git fetch --tags
           TAGS=$(git tag | grep -v "^latest_metadata$" | sort -V)
           TAG_COUNT=$(echo "$TAGS" | wc -l)
+
+          # Delete oldest tags if more than 5 (excluding latest_metadata)
           if [ "$TAG_COUNT" -gt 5 ]; then
             TAGS_TO_DELETE=$(echo "$TAGS" | head -n -1)
             for TAG in $TAGS_TO_DELETE; do
@@ -112,14 +118,23 @@ jobs:
             done
           fi
 
+          # Update latest_metadata tag
+          if git tag -l | grep -q "^latest_metadata$"; then
+            git tag -d latest_metadata
+            git push origin --delete latest_metadata || true
+          fi
+          git tag latest_metadata
+          git push origin latest_metadata
+
       - name: Create Git Tag
         if: ${{ github.event.inputs.release == 'true' }}
         run: |
+          # Generate a unique tag name and push it
           TAG_NAME="v$(date +'%Y%m%d%H%M%S')"
           git tag "$TAG_NAME"
           git push origin "$TAG_NAME"
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-
+          
       - name: Determine if pre-release
         id: determine_prerelease
         run: |
