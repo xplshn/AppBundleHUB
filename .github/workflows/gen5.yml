@@ -109,7 +109,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: app-bundles
-          path: ${{ github.workspace }}
+          path: ${{ github.workspace }}/*.AppBundle
 
       - name: Download appstream-helper artifact
         uses: actions/download-artifact@v4
