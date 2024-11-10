@@ -79,7 +79,7 @@ jobs:
         run: |
           set -x
           wget "https://huggingface.co/datasets/pkgforge/pkgcache/resolve/main/FLATPAK_APPSTREAM.xml"
-          appstream-helper --components-xml ./FLATPAK_APPSTREAM.xml --input-dir "$OUT_DIR" --output-dir "$META_OUT_DIR" --output-file "$META_OUT_DIR/metadata.json"
+          appstream-helper --components-xml ./FLATPAK_APPSTREAM.xml --input-dir "$OUT_DIR" --output-dir "$META_OUT_DIR" --output-file "$META_OUT_DIR/metadata.json" --download-url-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/" --metadata-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/latest_metadata/"
       - name: Upload app bundle artifacts
         uses: actions/upload-artifact@v4
         with:
