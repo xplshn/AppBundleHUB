@@ -38,7 +38,7 @@ jobs:
           mkdir -p "$GOBIN"
           echo "GOBIN=$GOBIN" >> $GITHUB_ENV
           echo "PATH=$GOBIN:$PATH" >> $GITHUB_ENV
-          export GO_LDFLAGS="-buildmode=static-pie" GOFLAGS="-ldflags=-static-pie -ldflags=-s -ldflags=-w"
+          export CGO_ENABLED="0" GO_LDFLAGS="-buildmode=static-pie" GOFLAGS="-ldflags=-static-pie -ldflags=-s -ldflags=-w"
           git clone --depth 1 --branch dev https://github.com/xplshn/pelf
           cp ./pelf/* "$GOBIN" || true
           cd ./pelf/cmd/dynexec/lib4bin
