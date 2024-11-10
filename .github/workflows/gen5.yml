@@ -127,6 +127,8 @@ jobs:
           ls -lshFA ${{ github.workspace }}/.local/bin/
           chmod +x ${{ github.workspace }}/.local/bin/appstream-helper
           PATH="$PATH:${{ github.workspace }}/.local/bin"
+          "${{ github.workspace }}/.local/bin/appstream-helper" --help
+          appstream-helper --help
           wget "https://huggingface.co/datasets/pkgforge/pkgcache/resolve/main/FLATPAK_APPSTREAM.xml"
           
           # Set TAG_NAME for the URLs
