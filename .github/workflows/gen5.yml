@@ -207,7 +207,7 @@ jobs:
         with:
           name: "Latest Metadata"
           tag_name: "latest_metadata"
-          files: ${{ github.workspace }}/APPBUNDLES_META/*
+          path: ${{ github.workspace }}/*.{json,png,svg,desktop,xml}
           body: "Latest metadata files"
           draft: false
           prerelease: true
