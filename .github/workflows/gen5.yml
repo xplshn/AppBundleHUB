@@ -198,5 +198,5 @@ jobs:
             ${{ github.workspace }}/*.xml
           body: "Latest metadata files"
           draft: false
-          prerelease: false
+          prerelease: true
           make_latest: false
