@@ -31,6 +31,10 @@ jobs:
         run: |
           apk del bash findutils gawk grep diffutils coreutils
 
+      - name: Remove non-compliant tools
+        run: |
+          apk add fuse3
+
       - name: Set up GOBIN and install lib4bin
         run: |
           set -x
