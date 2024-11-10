@@ -185,6 +185,7 @@ jobs:
           fi
           git tag latest_metadata
           git push origin latest_metadata
+          
       - name: Create Release for Metadata
         uses: softprops/action-gh-release@v2.0.8
         with:
