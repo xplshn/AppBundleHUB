@@ -194,6 +194,7 @@ jobs:
 
       - name: Update latest_metadata tag and create release
         run: |
+          ls
           git fetch --tags
           if git tag -l | grep -q "^latest_metadata$"; then
             git tag -d latest_metadata
