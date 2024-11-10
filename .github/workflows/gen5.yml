@@ -126,13 +126,14 @@ jobs:
           set -x
           ls -lshFA ${{ github.workspace }}/.local/bin/
           chmod +x ${{ github.workspace }}/.local/bin/appstream-helper
+          PATH="$PATH:${{ github.workspace }}/.local/bin"
           wget "https://huggingface.co/datasets/pkgforge/pkgcache/resolve/main/FLATPAK_APPSTREAM.xml"
           
           # Set TAG_NAME for the URLs
           TAG_NAME="v$(date +'%Y%m%d%H%M%S')"
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
           
-          ${{ github.workspace }}/.local/bin/appstream-helper \
+          appstream-helper \
             --components-xml ./FLATPAK_APPSTREAM.xml \
             --input-dir "${{ github.workspace }}" \
             --output-dir "${{ github.workspace }}/APPBUNDLES_META" \
