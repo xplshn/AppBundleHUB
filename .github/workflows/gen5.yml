@@ -39,15 +39,12 @@ jobs:
           echo "GOBIN=$GOBIN" >> $GITHUB_ENV
           echo "PATH=$GOBIN:$PATH" >> $GITHUB_ENV
           git clone --depth 1 --branch dev https://github.com/xplshn/pelf
-          cd pelf
-          # Build appstream-helper
-          cd cmd/misc/appstream_helper
-          go build -o "$GOBIN/appstream-helper"
-          chmod +x "$GOBIN/appstream-helper"
-          # Build lib4bin
-          cd ../../cmd/dynexec/lib4bin
-          go build -o "$GOBIN/lib4bin"
-          chmod +x "$GOBIN/lib4bin"
+          cp ./pelf/* "$GOBIN" || true
+          cd ./pelf/cmd/dynexec/lib4bin
+          go install .
+          cd -
+          cd ./pelf/cmd/misc/appstream_helper
+          go install .
 
       - name: Upload appstream-helper as artifact
         uses: actions/upload-artifact@v4
