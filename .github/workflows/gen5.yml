@@ -207,8 +207,7 @@ jobs:
         with:
           name: "Latest Metadata"
           tag_name: "latest_metadata"
-          path: ${{ github.workspace }}/*.{json,png,svg,desktop,xml}
-          body: "Latest metadata files"
+          files: ${{ github.workspace }}/*.{json,png,svg,desktop,xml}
           draft: false
           prerelease: true
           make_latest: false
