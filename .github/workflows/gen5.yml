@@ -32,6 +32,7 @@ jobs:
         run: |
           TAG_NAME="v${GITHUB_RUN_NUMBER}-$(date +'%Y%m%d%H%M%S')"
           echo "$TAG_NAME" > tag_name.txt
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
           
         # Upload TAG_NAME as an artifact
       - name: Upload TAG_NAME artifact
