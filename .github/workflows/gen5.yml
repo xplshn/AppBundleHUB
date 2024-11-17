@@ -1,8 +1,5 @@
 name: Build and Release AppBundles - NG
 
-env:
-  TAG_NAME: v${{ github.run_number }}-$(date +'%Y%m%d%H%M%S')
-
 on:
   schedule:
     - cron: '0 0 * * 0'
@@ -29,6 +26,19 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Generate TAG_NAME
+        id: set_tag_name
+        run: |
+          TAG_NAME="v${GITHUB_RUN_NUMBER}-$(date +'%Y%m%d%H%M%S')"
+          echo "$TAG_NAME" > tag_name.txt
+          
+        # Upload TAG_NAME as an artifact
+      - name: Upload TAG_NAME artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tag-name
+          path: tag_name.txt
 
       - name: Remove non-compliant tools
         run: |
@@ -133,6 +143,18 @@ jobs:
               git push origin --delete "$TAG"
             done
           fi
+
+      - name: Download TAG_NAME artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tag-name
+
+      - name: Read TAG_NAME
+        id: get_tag_name
+        run: |
+          TAG_NAME=$(cat tag_name.txt)
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
+
       - name: Create Git Tag
         run: |
           git tag "${{ env.TAG_NAME }}"
@@ -184,6 +206,18 @@ jobs:
           fi
           git tag latest_metadata
           git push origin latest_metadata
+
+      - name: Download TAG_NAME artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tag-name
+
+      - name: Read TAG_NAME
+        id: get_tag_name
+        run: |
+          TAG_NAME=$(cat tag_name.txt)
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
+          
       - name: Create Release for Metadata
         uses: softprops/action-gh-release@v2.0.8
         with:
@@ -195,7 +229,7 @@ jobs:
             ${{ github.workspace }}/*.svg
             ${{ github.workspace }}/*.desktop
             ${{ github.workspace }}/*.xml
-          body: "Latest metadata files"
+          body: "Metadata files for ${{ env.TAG_NAME }}"
           draft: false
           prerelease: true
           make_latest: false
