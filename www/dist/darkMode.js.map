@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../darkMode.js"],
+  "sourcesContent": ["document.addEventListener('DOMContentLoaded', () => {\n    const themeToggle = document.querySelector('.theme-controller');\n    const navElement = document.querySelector('nav');\n\n    if (themeToggle) {\n        // Set initial state\n        const currentTheme = document.body.getAttribute('data-theme');\n        themeToggle.checked = currentTheme === 'dark';\n\n        // Handle theme changes\n        themeToggle.addEventListener('change', (e) => {\n            const isDarkMode = e.target.checked;\n            const newTheme = isDarkMode ? 'dark' : 'light';\n            document.body.setAttribute('data-theme', newTheme);\n            if (navElement) {\n                navElement.setAttribute('data-theme', newTheme);\n            }\n        });\n    }\n});"],
+  "mappings": "MAAA,SAAS,iBAAiB,mBAAoB,IAAM,CAChD,IAAMA,EAAc,SAAS,cAAc,mBAAmB,EACxDC,EAAa,SAAS,cAAc,KAAK,EAE/C,GAAID,EAAa,CAEb,IAAME,EAAe,SAAS,KAAK,aAAa,YAAY,EAC5DF,EAAY,QAAUE,IAAiB,OAGvCF,EAAY,iBAAiB,SAAWG,GAAM,CAE1C,IAAMC,EADaD,EAAE,OAAO,QACE,OAAS,QACvC,SAAS,KAAK,aAAa,aAAcC,CAAQ,EAC7CH,GACAA,EAAW,aAAa,aAAcG,CAAQ,CAEtD,CAAC,CACL,CACJ,CAAC",
+  "names": ["themeToggle", "navElement", "currentTheme", "e", "newTheme"]
+}

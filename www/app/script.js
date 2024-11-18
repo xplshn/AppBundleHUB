@@ -1,5 +1,3 @@
-// app/script.js
-import { apps } from '../shared.js';
 document.addEventListener('DOMContentLoaded', () => {
     const appDetailsModal = document.getElementById('app-details-modal');
     const detailsContent = document.querySelector('.details-body');
