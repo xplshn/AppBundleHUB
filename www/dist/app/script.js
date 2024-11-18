@@ -1,4 +1,4 @@
-(()=>{document.addEventListener("DOMContentLoaded",()=>{let u=document.getElementById("app-details-modal"),c=document.querySelector(".details-body");window.showAppDetails=function(a,r){let v=r.find(n=>(n.pkg_name||n.pkg)===a);if(v){c.innerHTML=h(v),u.showModal();let n=new URL(window.location);n.searchParams.set("app",a),history.pushState({app:a},"",n)}else console.error("App not found:",a)};function h(a){let r=`
+(()=>{document.addEventListener("DOMContentLoaded",()=>{let u=document.getElementById("app-details-modal"),c=document.querySelector(".details-body");window.showAppDetails=function(a,r){let v=r.find(i=>(i.pkg_name||i.pkg)===a);if(v){c.innerHTML=g(v),u.showModal();let i=new URL(window.location);i.searchParams.set("app",a),history.pushState({app:a},"",i)}else console.error("App not found:",a)};function g(a){let r=`
             <div class="animate-pulse">
                 <!-- Header skeleton with icon and title -->
                 <div class="flex items-start gap-4 mb-6">
@@ -35,7 +35,7 @@
                 <!-- Install section skeleton -->
                 <div class="skeleton h-64 w-full rounded-lg"></div>
             </div>
-        `;function v(e){let o=e.category?e.category.split(",").map(t=>t.trim()).filter(t=>t).map(t=>`<span class="badge badge-neutral category-tag" data-category="${t}">${t}</span>`).join(""):"",s=new Date(e.build_date).toLocaleDateString("es-AR",{year:"numeric",month:"short",day:"numeric"});return`
+        `;function v(e){let o=e.category?e.category.split(",").map(t=>t.trim()).filter(t=>t).map(t=>`<span class="badge badge-neutral category-tag" data-category="${t}">${t}</span>`).join(""):"",s=new Date(e.build_date).toLocaleDateString(navigator.language,{year:"numeric",month:"short",day:"numeric"});return`
                 <div class="details-header flex items-start gap-4 mb-4">
                     <img src="${e.icon}" alt="${e.pkg_name||e.pkg}" class="app-icon w-16 h-16 object-contain"
                          onerror="this.style.display='none';">
@@ -97,7 +97,7 @@
                     </div>
                 </div>
                 ${e.note?`<div class="app-note alert alert-warning"><strong>Note:</strong> ${e.note}</div>`:""}
-            `}function n(e){if(!Array.isArray(e)||e.length===0)return"<p>No screenshots available.</p>";let o=e.map((i,s)=>new Promise(t=>{let l=new Image;l.onload=()=>t({src:i,index:s,valid:!0}),l.onerror=()=>t({src:i,index:s,valid:!1}),l.src=i}));return Promise.all(o).then(i=>{let s=i.filter(l=>l.valid);if(s.length===0)return"<p>No screenshots available.</p>";let t='<div class="carousel w-full h-64 rounded-lg">';return s.forEach((l,d)=>{let b=(d+1)%s.length,m=(d-1+s.length)%s.length;t+=`
+            `}function i(e){if(!Array.isArray(e)||e.length===0)return"<p>No screenshots available.</p>";let o=e.map((n,s)=>new Promise(t=>{let l=new Image;l.onload=()=>t({src:n,index:s,valid:!0}),l.onerror=()=>t({src:n,index:s,valid:!1}),l.src=n}));return Promise.all(o).then(n=>{let s=n.filter(l=>l.valid);if(s.length===0)return"<p>No screenshots available.</p>";let t='<div class="carousel w-full h-64 rounded-lg">';return s.forEach((l,d)=>{let b=(d+1)%s.length,m=(d-1+s.length)%s.length;t+=`
                         <div id="slide${d}" class="carousel-item relative w-full">
                             <img src="${l.src}" class="w-full h-full object-contain cursor-pointer" alt="Screenshot ${d+1}" data-fullscreen-src="${l.src}"/>
                             <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
@@ -105,5 +105,5 @@
                                 <a href="#slide${b}" class="btn btn-circle">\u276F</a>
                             </div>
                         </div>
-                    `}),t+="</div>",t})}return c.innerHTML=r,setTimeout(()=>{c.innerHTML=v(a);let e=document.getElementById("screenshots-container");e&&n(a.screenshots).then(o=>{let i=e.querySelector(".skeleton-container"),s=e.querySelector(".carousel-container");s&&(s.innerHTML=o,i.remove(),s.classList.remove("hidden"),s.querySelectorAll("img").forEach(t=>{t.addEventListener("click",()=>{fullscreenImage.src=t.dataset.fullscreenSrc,imageDialog.showModal()})}),document.querySelectorAll(".carousel-item a").forEach(t=>{t.addEventListener("click",l=>{l.preventDefault();let d=l.target.getAttribute("href");document.querySelector(d).scrollIntoView({behavior:"smooth"})})}))}),c.querySelectorAll(".category-tag").forEach(o=>{o.addEventListener("click",i=>{let s=i.target.dataset.category;updateCategoryFilter(s)})})},500),r}document.querySelector('form[method="dialog"] button').addEventListener("click",g);function g(){u.close();let a=new URL(window.location);a.searchParams.delete("app"),history.pushState({},"",a)}});})();
+                    `}),t+="</div>",t})}return c.innerHTML=r,setTimeout(()=>{c.innerHTML=v(a);let e=document.getElementById("screenshots-container");e&&i(a.screenshots).then(o=>{let n=e.querySelector(".skeleton-container"),s=e.querySelector(".carousel-container");s&&(s.innerHTML=o,n.remove(),s.classList.remove("hidden"),s.querySelectorAll("img").forEach(t=>{t.addEventListener("click",()=>{fullscreenImage.src=t.dataset.fullscreenSrc,imageDialog.showModal()})}),document.querySelectorAll(".carousel-item a").forEach(t=>{t.addEventListener("click",l=>{l.preventDefault();let d=l.target.getAttribute("href");document.querySelector(d).scrollIntoView({behavior:"smooth"})})}))}),c.querySelectorAll(".category-tag").forEach(o=>{o.addEventListener("click",n=>{let s=n.target.dataset.category;updateCategoryFilter(s)})})},500),r}document.querySelector('form[method="dialog"] button').addEventListener("click",h);function h(){u.close();let a=new URL(window.location);a.searchParams.delete("app"),history.pushState({},"",a)}});})();
 //# sourceMappingURL=script.js.map

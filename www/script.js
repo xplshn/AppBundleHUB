@@ -269,7 +269,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Function to display popular apps in the carousel
     function displayPopularApps() {
         const popularAppsCarousel = document.getElementById('popular-apps-carousel');
         if (!popularAppsCarousel) return;
@@ -278,35 +277,36 @@ document.addEventListener('DOMContentLoaded', async () => {
             .sort((a, b) => b.popularity_rank - a.popularity_rank)
             .slice(0, 10);
 
-        let validApps = [];
-        let promises = popularApps.map((app, index) =>
-            createCarouselHtml(app, index, popularApps).then(html => {
-                if (html) {
-                    validApps.push({ app, html });
-                }
-            })
+        // Function to validate screenshots
+        const validateScreenshots = (app) => {
+            return Array.isArray(app.screenshots) &&
+                app.screenshots.length > 0 &&
+                app.screenshots.some(screenshot => screenshot && screenshot.trim() !== '');
+        };
+
+        // Filter apps with valid screenshots
+        const appsWithValidScreenshots = popularApps.filter(validateScreenshots);
+
+        // Create promises for carousel HTML
+        let carouselPromises = appsWithValidScreenshots.map((app, index) =>
+            createCarouselHtml(app, index, appsWithValidScreenshots)
         );
 
-        Promise.all(promises).then(() => {
-            const carouselHTML = validApps.map(({ html }) => html).join('');
+        Promise.all(carouselPromises).then((carouselItems) => {
+            const carouselHTML = carouselItems.join('');
 
             popularAppsCarousel.innerHTML = `
-            <div class="carousel w-full">
-                ${carouselHTML}
-            </div>
-        `;
+                <div class="carousel carousel-end w-full">
+                    ${carouselHTML}
+                </div>
+            `;
 
             // Attach event listeners after content is loaded
             attachCarouselEventListeners();
         });
     }
 
-    // Helper function to create carousel HTML
     function createCarouselHtml(app, index, popularApps) {
-        if (!Array.isArray(app.screenshots) || app.screenshots.length === 0) {
-            return Promise.resolve(`<div class="skeleton"></div>`);
-        }
-
         let loadingPromises = app.screenshots.map((src) =>
             new Promise((resolve) => {
                 let img = new Image();
@@ -320,7 +320,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const validScreenshots = results.filter(result => result.valid);
 
             if (validScreenshots.length === 0) {
-                return `<div class="skeleton"></div>`;
+                return null; // Return null if no valid screenshots
             }
 
             const firstValidScreenshot = validScreenshots[0].src;
@@ -329,42 +329,42 @@ document.addEventListener('DOMContentLoaded', async () => {
             const nextSlide = index === popularApps.length - 1 ? 1 : index + 2;
 
             return `
-            <div id="${slideId}" class="carousel-item relative w-full">
-                <div class="flex flex-col sm:flex-row w-full gap-4 p-4">
-                    <div class="sm:w-1/3 flex flex-col justify-center space-y-4">
-                        <div class="flex items-center space-x-4">
-                            <img src="${app.icon}" 
-                                 alt="${app.pkg_name || app.pkg_id}" 
-                                 class="w-16 h-16 object-contain">
-                            <h3 class="text-lg sm:text-xl font-semibold">${app.pkg_name || app.pkg_id}</h3>
+                <div id="${slideId}" 
+                     class="carousel-item relative w-full cursor-pointer" 
+                     data-name="${app.pkg_name || app.pkg_id}">
+                    <div class="flex flex-col lg:flex-row justify-center w-full gap-4 p-4">
+                        <div class="lg:w-1/3 flex items-center flex-col justify-center space-y-4">
+                            <div class="flex items-center space-x-4">
+                                <img src="${app.icon}" 
+                                     alt="${app.pkg_name || app.pkg_id}" 
+                                     class="w-16 h-16 object-contain">
+                                <h3 class="text-lg sm:text-xl font-semibold">${app.pkg_name || app.pkg_id}</h3>
+                            </div>
+                            <p class="text-sm sm:text-base">${app.description || 'No description available.'}</p>
                         </div>
-                        <p class="text-sm sm:text-base">${app.description || 'No description available.'}</p>
+                        <div class="hidden lg:block lg:w-2/3 relative">
+                            <div class="w-full h-48 overflow-hidden rounded-lg">
+                                <img src="${firstValidScreenshot}" 
+                                     alt="Screenshot" 
+                                     class="w-full h-full object-cover bg-base-200">
+                            </div>
+                        </div>
                     </div>
-                    <div class="sm:w-2/3 relative">
-                        <div class="w-full h-48 sm:h-64 md:h-80 lg:h-96 overflow-hidden rounded-lg">
-                            <img src="${firstValidScreenshot}" 
-                                 alt="Screenshot" 
-                                 class="w-full h-full object-contain bg-base-200">
-                        </div>
+                    <div class="flex absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                        <button class="btn btn-circle carousel-prev" data-target="slide${prevSlide}">❮</button>
+                        <button class="btn btn-circle carousel-next" data-target="slide${nextSlide}">❯</button>
                     </div>
                 </div>
-                <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-                    <button class="btn btn-circle carousel-prev" data-target="slide${prevSlide}">❮</button>
-                    <button class="btn btn-circle carousel-next" data-target="slide${nextSlide}">❯</button>
-                </div>
-            </div>
-        `;
+            `;
         });
     }
 
-    // New function to handle carousel navigation
     function attachCarouselEventListeners() {
-        const carousel = document.querySelector('.carousel');
+        const carousel = document.getElementById('popular-apps-carousel');
         if (!carousel) return;
 
         carousel.querySelectorAll('.carousel-prev, .carousel-next').forEach(button => {
             button.addEventListener('click', (e) => {
-                e.preventDefault();
                 const targetSlide = document.getElementById(button.dataset.target);
                 if (targetSlide) {
                     targetSlide.scrollIntoView({
@@ -375,6 +375,44 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             });
         });
+
+        carousel.querySelectorAll('.carousel-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                if (!e.target.closest('.carousel-prev') && !e.target.closest('.carousel-next')) {
+                    const appName = item.dataset.name;
+                    if (appName) {
+                        showAppDetails(appName, getApps());
+                    }
+                }
+            });
+        });
+
+        let currentSlideIndex = 0;
+        const slides = carousel.querySelectorAll('.carousel-item');
+
+        function autoScroll() {
+            const carouselContainer = carousel.querySelector('.carousel');
+            if (!carouselContainer) return;
+            currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+            const targetSlide = slides[currentSlideIndex];
+            const offsetLeft = targetSlide.offsetLeft;
+            carouselContainer.scrollTo({
+                left: offsetLeft,
+                behavior: 'smooth'
+            });
+        }
+
+
+        let autoScrollInterval = setInterval(autoScroll, 5000);
+
+        carousel.addEventListener('mouseenter', () => {
+            clearInterval(autoScrollInterval);
+        });
+
+        carousel.addEventListener('mouseleave', () => {
+            autoScrollInterval = setInterval(autoScroll, 5000);
+        });
+
     }
 
 });
