@@ -8,6 +8,47 @@ export function getApps() {
     return apps;
 }
 
+function createLoadingSkeleton() {
+    return `
+        <!-- Trending Section Skeleton -->
+        <div class="space-y-4 my-4">
+            <div class="skeleton h-8 w-32"></div>
+            <div class="skeleton h-64 w-full rounded-xl"></div>
+        </div>
+
+        <!-- Categories Section Skeletons -->
+        ${Array(3).fill().map(() => `
+            <div class="my-8 space-y-4">
+                <!-- Category Title Skeleton -->
+                <div class="skeleton h-8 w-48"></div>
+                
+                <!-- App Cards Grid Skeleton -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    ${Array(6).fill().map(() => `
+                        <div class="card card-side bg-base-100 shadow-xl">
+                            <!-- App Icon Skeleton -->
+                            <figure class="hidden sm:block w-24 h-24 p-4">
+                                <div class="skeleton w-full h-full rounded-lg"></div>
+                            </figure>
+                            
+                            <!-- App Content Skeleton -->
+                            <div class="card-body">
+                                <div class="hidden sm:block space-y-3">
+                                    <div class="skeleton h-4 w-3/4"></div>
+                                    <div class="skeleton h-3 w-full"></div>
+                                    <div class="skeleton h-3 w-5/6"></div>
+                                </div>
+
+                                <div class="sm:hidden lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('')}
+    `;
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     const appSections = document.getElementById('app-sections');
     const searchInput = document.getElementById('desktop-search-input');
@@ -17,6 +58,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Fetch app data from the provided URL
     async function fetchAppData() {
+        const appSections = document.getElementById('app-sections');
+        const popularAppsCarousel = document.getElementById('popular-apps-carousel');
+
+        // Show loading state
+        appSections.innerHTML = createLoadingSkeleton();
+        popularAppsCarousel.innerHTML = ''; // Clear carousel while loading
+
         try {
             const response = await fetch('https://raw.githubusercontent.com/xplshn/dbin-metadata/refs/heads/master/misc/cmd/modMetadataAIO-ng/METADATA_AIO_amd64_linux.json');
             const data = await response.json();
@@ -75,7 +123,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         return `
             <div class="card cursor-pointer card-normal card-side bg-base-100 shadow-xl" data-name="${app.pkg_name || app.pkg_id}">
-                <figure class="w-24 h-24">
+                <figure class="w-24 h-24 mt-4">
                     <img
                         src="${app.icon}"
                         alt="${app.pkg_name || app.pkg_id}"
@@ -271,7 +319,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function displayPopularApps() {
         const popularAppsCarousel = document.getElementById('popular-apps-carousel');
-        if (!popularAppsCarousel) return;
+        if (!popularAppsCarousel) return null;
+
+        popularAppsCarousel.innerHTML = `
+        <h2 class="text-2xl font-bold my-4">Trending</h2>
+        <div class="carousel shadow-xl rounded-xl w-full h-64">
+            <div class="w-full h-full flex items-center justify-center">
+                <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+            </div>
+        </div>
+    `;
 
         const popularApps = getApps()
             .sort((a, b) => b.popularity_rank - a.popularity_rank)
@@ -287,6 +344,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Filter apps with valid screenshots
         const appsWithValidScreenshots = popularApps.filter(validateScreenshots);
 
+        // If no valid apps found, show an error state
+        if (appsWithValidScreenshots.length === 0) {
+            popularAppsCarousel.innerHTML = `
+                <h2 class="text-2xl font-bold my-4">Trending</h2>
+                <div class="alert alert-warning">
+                    <span>No trending apps available at the moment.</span>
+                </div>
+            `;
+            return;
+        }
+
         // Create promises for carousel HTML
         let carouselPromises = appsWithValidScreenshots.map((app, index) =>
             createCarouselHtml(app, index, appsWithValidScreenshots)
@@ -296,7 +364,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const carouselHTML = carouselItems.join('');
 
             popularAppsCarousel.innerHTML = `
-                <div class="carousel carousel-end w-full">
+            <h2 class="text-2xl font-bold my-4">Trending</h2>
+                <div class="carousel shadow-xl rounded-xl w-full h-64 carousel-end w-full">
                     ${carouselHTML}
                 </div>
             `;
@@ -320,7 +389,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const validScreenshots = results.filter(result => result.valid);
 
             if (validScreenshots.length === 0) {
-                return null; // Return null if no valid screenshots
+                return null;
             }
 
             const firstValidScreenshot = validScreenshots[0].src;
@@ -412,7 +481,5 @@ document.addEventListener('DOMContentLoaded', async () => {
         carousel.addEventListener('mouseleave', () => {
             autoScrollInterval = setInterval(autoScroll, 5000);
         });
-
     }
-
 });

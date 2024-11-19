@@ -1,4 +1,4 @@
-(()=>{document.addEventListener("DOMContentLoaded",()=>{let u=document.getElementById("app-details-modal"),c=document.querySelector(".details-body");window.showAppDetails=function(a,r){let v=r.find(i=>(i.pkg_name||i.pkg)===a);if(v){c.innerHTML=g(v),u.showModal();let i=new URL(window.location);i.searchParams.set("app",a),history.pushState({app:a},"",i)}else console.error("App not found:",a)};function g(a){let r=`
+(()=>{document.addEventListener("DOMContentLoaded",()=>{let u=document.getElementById("app-details-modal"),v=document.querySelector(".details-body"),g=document.getElementById("image-dialog"),m=document.getElementById("fullscreen-image"),k=document.getElementById("close-dialog");window.showAppDetails=function(o,d){if(!Array.isArray(d)){console.error("Apps data is not an array");return}let c=d.find(a=>(a.pkg_name||a.pkg)===o);if(!c){console.error("App not found:",o);return}try{u.showModal(),v.innerHTML=b(c);let a=new URL(window.location);a.searchParams.set("app",o),history.pushState({app:o},"",a)}catch(a){console.error("Error showing app details:",a)}};function b(o){let d=`
             <div class="animate-pulse">
                 <!-- Header skeleton with icon and title -->
                 <div class="flex items-start gap-4 mb-6">
@@ -35,16 +35,22 @@
                 <!-- Install section skeleton -->
                 <div class="skeleton h-64 w-full rounded-lg"></div>
             </div>
-        `;function v(e){let o=e.category?e.category.split(",").map(t=>t.trim()).filter(t=>t).map(t=>`<span class="badge badge-neutral category-tag" data-category="${t}">${t}</span>`).join(""):"",s=new Date(e.build_date).toLocaleDateString(navigator.language,{year:"numeric",month:"short",day:"numeric"});return`
+        `;function c(e){let r=e.category?e.category.split(",").map(t=>t.trim()).filter(t=>t).map(t=>`<span class="badge badge-neutral category-tag cursor-pointer" data-category="${t}">${t}</span>`).join(""):"",s=new Date(e.build_date).toLocaleDateString("es-AR",{year:"numeric",month:"short",day:"numeric"}),l=e.rich_description?`
+                    <div class="rich-description mt-4 mb-6 prose max-w-none">
+                        <h3 class="text-xl font-semibold mb-3">About ${e.pkg_name||e.pkg}</h3>
+                        ${e.rich_description.replace(/\u003cp\u003e/g,"<p>")}
+                    </div>
+                  `:"";return`
                 <div class="details-header flex items-start gap-4 mb-4">
                     <img src="${e.icon}" alt="${e.pkg_name||e.pkg}" class="app-icon w-16 h-16 object-contain"
                          onerror="this.style.display='none';">
                     <div>
                         <h2 class="text-2xl font-semibold">${e.pkg_name||e.pkg}</h2>
                         <p>${e.description||"No description available."}</p>
-                        <div class="category-tags flex flex-wrap gap-2 mt-2">${o}</div>
+                        <div class="category-tags flex flex-wrap gap-2 mt-2">${r}</div>
                     </div>
                 </div>
+                ${l}
                 <div id="screenshots-container" class="mb-4">
                     <div class="skeleton-container skeleton h-64">
                         <div class="flex items-center justify-center h-full text-base-content/50">
@@ -97,13 +103,13 @@
                     </div>
                 </div>
                 ${e.note?`<div class="app-note alert alert-warning"><strong>Note:</strong> ${e.note}</div>`:""}
-            `}function i(e){if(!Array.isArray(e)||e.length===0)return"<p>No screenshots available.</p>";let o=e.map((n,s)=>new Promise(t=>{let l=new Image;l.onload=()=>t({src:n,index:s,valid:!0}),l.onerror=()=>t({src:n,index:s,valid:!1}),l.src=n}));return Promise.all(o).then(n=>{let s=n.filter(l=>l.valid);if(s.length===0)return"<p>No screenshots available.</p>";let t='<div class="carousel w-full h-64 rounded-lg">';return s.forEach((l,d)=>{let b=(d+1)%s.length,m=(d-1+s.length)%s.length;t+=`
-                        <div id="slide${d}" class="carousel-item relative w-full">
-                            <img src="${l.src}" class="w-full h-full object-contain cursor-pointer" alt="Screenshot ${d+1}" data-fullscreen-src="${l.src}"/>
-                            <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-                                <a href="#slide${m}" class="btn btn-circle">\u276E</a>
-                                <a href="#slide${b}" class="btn btn-circle">\u276F</a>
+            `}function a(e){if(!Array.isArray(e)||e.length===0)return Promise.resolve("<p>No screenshots available.</p>");let r=e.map((i,s)=>new Promise(l=>{let t=new Image;t.onload=()=>l({src:i,index:s,valid:!0}),t.onerror=()=>l({src:i,index:s,valid:!1}),t.src=i}));return Promise.all(r).then(i=>{let s=i.filter(t=>t.valid);if(s.length===0)return"<p>No screenshots available.</p>";let l='<div class="carousel w-full h-64 rounded-lg">';return s.forEach((t,n)=>{let h=`slide${n+1}`,f=n===0?s.length:n,p=n===s.length-1?1:n+2;l+=`
+                            <div id="${h}" class="carousel-item relative w-full">
+                                <img src="${t.src}" class="w-full h-full object-contain cursor-pointer" alt="Screenshot ${n+1}" data-fullscreen-src="${t.src}"/>
+                                <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                                    <button data-target="slide${f}" class="btn btn-circle prev-img">\u276E</button>
+                                    <button data-target="slide${p}" class="btn btn-circle next-img">\u276F</button>
+                                </div>
                             </div>
-                        </div>
-                    `}),t+="</div>",t})}return c.innerHTML=r,setTimeout(()=>{c.innerHTML=v(a);let e=document.getElementById("screenshots-container");e&&i(a.screenshots).then(o=>{let n=e.querySelector(".skeleton-container"),s=e.querySelector(".carousel-container");s&&(s.innerHTML=o,n.remove(),s.classList.remove("hidden"),s.querySelectorAll("img").forEach(t=>{t.addEventListener("click",()=>{fullscreenImage.src=t.dataset.fullscreenSrc,imageDialog.showModal()})}),document.querySelectorAll(".carousel-item a").forEach(t=>{t.addEventListener("click",l=>{l.preventDefault();let d=l.target.getAttribute("href");document.querySelector(d).scrollIntoView({behavior:"smooth"})})}))}),c.querySelectorAll(".category-tag").forEach(o=>{o.addEventListener("click",n=>{let s=n.target.dataset.category;updateCategoryFilter(s)})})},500),r}document.querySelector('form[method="dialog"] button').addEventListener("click",h);function h(){u.close();let a=new URL(window.location);a.searchParams.delete("app"),history.pushState({},"",a)}});})();
+                        `}),l+="</div>",l})}return v.innerHTML=d,setTimeout(()=>{v.innerHTML=c(o);let e=document.getElementById("screenshots-container");e&&a(o.screenshots).then(r=>{let i=e.querySelector(".skeleton-container"),s=e.querySelector(".carousel-container");if(!s)return console.log("error"),null;s.innerHTML=r,i.remove(),s.classList.remove("hidden"),s.querySelectorAll("img").forEach(l=>{l.addEventListener("click",()=>{m.src=l.dataset.fullscreenSrc,g.showModal()})}),s.querySelectorAll(".prev-img, .next-img").forEach(l=>{l.addEventListener("click",t=>{let n=document.getElementById(l.dataset.target);n&&n.scrollIntoView({behavior:"smooth",block:"nearest",inline:"start"})})})})},1e3),d}});})();
 //# sourceMappingURL=script.js.map

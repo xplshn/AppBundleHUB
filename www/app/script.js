@@ -1,22 +1,39 @@
 document.addEventListener('DOMContentLoaded', () => {
     const appDetailsModal = document.getElementById('app-details-modal');
     const detailsContent = document.querySelector('.details-body');
+    const imageDialog = document.getElementById('image-dialog');
+    const fullscreenImage = document.getElementById('fullscreen-image');
+
+    const dialogClose = document.getElementById('close-dialog');
 
     // Function to show app details
-    window.showAppDetails = function(name, apps) {
+    window.showAppDetails = function (name, apps) {
+        if (!Array.isArray(apps)) {
+            console.error('Apps data is not an array');
+            return;
+        }
+
         const app = apps.find(app => (app.pkg_name || app.pkg) === name);
-        if (app) {
-            detailsContent.innerHTML = createAppDetails(app);
+        if (!app) {
+            console.error('App not found:', name);
+            return;
+        }
+
+        try {
+            // Show modal first
             appDetailsModal.showModal();
+
+            // Update content
+            detailsContent.innerHTML = createAppDetails(app);
 
             // Update URL with app details
             const url = new URL(window.location);
             url.searchParams.set('app', name);
             history.pushState({ app: name }, '', url);
-        } else {
-            console.error('App not found:', name);
+        } catch (error) {
+            console.error('Error showing app details:', error);
         }
-    }
+    };
 
     function createAppDetails(app) {
         // Initial skeleton loading state
@@ -66,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     .split(',')
                     .map(cat => cat.trim())
                     .filter(cat => cat)
-                    .map(cat => `<span class="badge badge-neutral category-tag" data-category="${cat}">${cat}</span>`)
+                    .map(cat => `<span class="badge badge-neutral category-tag cursor-pointer" data-category="${cat}">${cat}</span>`)
                     .join('')
                 : '';
 
@@ -78,6 +95,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 day: 'numeric'
             });
 
+            // Parse and format rich description if available
+            const richDescriptionHtml = app.rich_description
+                ? `
+                    <div class="rich-description mt-4 mb-6 prose max-w-none">
+                        <h3 class="text-xl font-semibold mb-3">About ${app.pkg_name || app.pkg}</h3>
+                        ${app.rich_description.replace(/\u003cp\u003e/g, '<p>')}
+                    </div>
+                  `
+                : '';
+
             return `
                 <div class="details-header flex items-start gap-4 mb-4">
                     <img src="${app.icon}" alt="${app.pkg_name || app.pkg}" class="app-icon w-16 h-16 object-contain"
@@ -88,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="category-tags flex flex-wrap gap-2 mt-2">${categoryTags}</div>
                     </div>
                 </div>
+                ${richDescriptionHtml}
                 <div id="screenshots-container" class="mb-4">
                     <div class="skeleton-container skeleton h-64">
                         <div class="flex items-center justify-center h-full text-base-content/50">
@@ -146,44 +174,47 @@ document.addEventListener('DOMContentLoaded', () => {
         // Function to create carousel HTML only for valid screenshots
         function createCarouselHtml(screenshots) {
             if (!Array.isArray(screenshots) || screenshots.length === 0) {
-                return '<p>No screenshots available.</p>';
+                return Promise.resolve('<p>No screenshots available.</p>');
             }
 
-            let loadingPromises = screenshots.map((src, index) =>
+            const loadingPromises = screenshots.map((src, index) =>
                 new Promise((resolve) => {
-                    let img = new Image();
+                    const img = new Image();
                     img.onload = () => resolve({ src, index, valid: true });
                     img.onerror = () => resolve({ src, index, valid: false });
                     img.src = src;
                 })
             );
 
-            return Promise.all(loadingPromises).then(results => {
-                const validScreenshots = results.filter(result => result.valid);
+            return Promise.all(loadingPromises)
+                .then(results => {
+                    const validScreenshots = results.filter(result => result.valid);
 
-                if (validScreenshots.length === 0) {
-                    return '<p>No screenshots available.</p>';
-                }
+                    if (validScreenshots.length === 0) {
+                        return '<p>No screenshots available.</p>';
+                    }
 
-                let carouselHtml = '<div class="carousel w-full h-64 rounded-lg">';
-                validScreenshots.forEach((screenshot, idx) => {
-                    const nextIdx = (idx + 1) % validScreenshots.length;
-                    const prevIdx = (idx - 1 + validScreenshots.length) % validScreenshots.length;
+                    let carouselHtml = '<div class="carousel w-full h-64 rounded-lg">';
+                    validScreenshots.forEach((screenshot, idx) => {
+                        const slideId = `slide${idx + 1}`;
+                        const prevSlide = idx === 0 ? validScreenshots.length : idx;
+                        const nextSlide = idx === validScreenshots.length - 1 ? 1 : idx + 2;
 
-                    carouselHtml += `
-                        <div id="slide${idx}" class="carousel-item relative w-full">
-                            <img src="${screenshot.src}" class="w-full h-full object-contain cursor-pointer" alt="Screenshot ${idx + 1}" data-fullscreen-src="${screenshot.src}"/>
-                            <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-                                <a href="#slide${prevIdx}" class="btn btn-circle">❮</a>
-                                <a href="#slide${nextIdx}" class="btn btn-circle">❯</a>
+                        carouselHtml += `
+                            <div id="${slideId}" class="carousel-item relative w-full">
+                                <img src="${screenshot.src}" class="w-full h-full object-contain cursor-pointer" alt="Screenshot ${idx + 1}" data-fullscreen-src="${screenshot.src}"/>
+                                <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                                    <button data-target="slide${prevSlide}" class="btn btn-circle prev-img">❮</button>
+                                    <button data-target="slide${nextSlide}" class="btn btn-circle next-img">❯</button>
+                                </div>
                             </div>
-                        </div>
-                    `;
-                });
+                        `;
+                    });
 
-                carouselHtml += '</div>';
-                return carouselHtml;
-            });
+                    carouselHtml += '</div>';
+
+                    return carouselHtml;
+                });
         }
 
         // Initially show skeleton
@@ -200,54 +231,42 @@ document.addEventListener('DOMContentLoaded', () => {
                     const skeletonContainer = screenshotsContainer.querySelector('.skeleton-container');
                     const carouselContainer = screenshotsContainer.querySelector('.carousel-container');
 
-                    if (carouselContainer) {
-                        carouselContainer.innerHTML = carouselHtml;
-                        // Remove skeleton and show carousel
-                        skeletonContainer.remove();
-                        carouselContainer.classList.remove('hidden');
-
-                        // Add event listeners to carousel images
-                        carouselContainer.querySelectorAll('img').forEach(img => {
-                            img.addEventListener('click', () => {
-                                fullscreenImage.src = img.dataset.fullscreenSrc;
-                                imageDialog.showModal();
-                            });
-                        });
-
-                        // Add event listeners to carousel arrows to prevent default behavior
-                        document.querySelectorAll('.carousel-item a').forEach(link => {
-                            link.addEventListener('click', (e) => {
-                                e.preventDefault(); // Prevent the default behavior of the anchor tag
-                                const targetId = e.target.getAttribute('href');
-                                document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
-                            });
-                        });
+                    if (!carouselContainer) {
+                        console.log('error')
+                        return null
                     }
+
+                    carouselContainer.innerHTML = carouselHtml;
+                    // Remove skeleton and show carousel
+                    skeletonContainer.remove();
+                    carouselContainer.classList.remove('hidden');
+
+                    // Add event listeners to carousel images
+                    carouselContainer.querySelectorAll('img').forEach(img => {
+                        img.addEventListener('click', () => {
+                            fullscreenImage.src = img.dataset.fullscreenSrc;
+                            imageDialog.showModal();
+                        });
+                    });
+
+                    // Add event listeners to carousel arrows to prevent default behavior
+                    carouselContainer.querySelectorAll('.prev-img, .next-img').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const targetSlide = document.getElementById(button.dataset.target);
+                            if (targetSlide) {
+                                targetSlide.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'nearest',
+                                    inline: 'start'
+                                });
+                            }
+                        });
+                    });
                 });
             }
 
-            // Add event listeners to category tags in app details
-            detailsContent.querySelectorAll('.category-tag').forEach(tag => {
-                tag.addEventListener('click', (e) => {
-                    const category = e.target.dataset.category;
-                    updateCategoryFilter(category);
-                });
-            });
-        }, 500);
+        }, 1000);
 
         return skeletonHtml;
-    }
-
-    // Event listener to close app details
-    document.querySelector('form[method="dialog"] button').addEventListener('click', closeDetails);
-
-    // Function to close app details
-    function closeDetails() {
-        appDetailsModal.close();
-
-        // Update URL to remove app details
-        const url = new URL(window.location);
-        url.searchParams.delete('app');
-        history.pushState({}, '', url);
     }
 });

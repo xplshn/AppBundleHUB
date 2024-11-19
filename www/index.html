@@ -25,7 +25,7 @@
 
 <body data-theme="light">
     <nav data-theme="inherit" class="flex sticky flex-col gap-2 navbar py-2 top-0">
-        <div class="content-container">
+        <div class="content-container flex flex-col">
             <div class="flex flex-row w-full items-center justify-between">
                 <h1 class="text-lg sm:text-xl font-bold">💾 AppBundleHUB</h1>
                 <div class="flex flex-row justify-center items-center gap-2">
@@ -74,8 +74,8 @@
                 </div>
             </div>
             <!-- Mobile search input (hidden by default) -->
-            <div id="mobile-search-container" class="hidden w-full mt-4 transition-opacity duration-300 opacity-0">
-                <input type="text" class="input input-bordered grow" id="mobile-search-input"
+            <div id="mobile-search-container" class="hidden w-full mt-4 flex transition-opacity duration-300 opacity-0">
+                <input type="text" class="input w-full input-bordered grow" id="mobile-search-input"
                     placeholder="Search apps..." />
             </div>
         </div>
@@ -83,13 +83,8 @@
 
 
     <main class="content-container">
-        <!-- Carousel Section at the Top -->
-        <h2 class="text-2xl font-bold my-4">Trending</h2>
-
-        <div class="shadow-xl rounded-xl">
-            <div id="popular-apps-carousel" class="w-full h-64">
-                <!-- Carousel items will be dynamically inserted here -->
-            </div>
+        <div id="popular-apps-carousel" class="">
+            <!-- Carousel items will be dynamically inserted here -->
         </div>
 
         <!-- App sections will be dynamically inserted here -->
@@ -109,11 +104,11 @@
 
     <!-- Fullscreen Image Dialog -->
     <dialog id="image-dialog" class="modal">
-        <div class="modal-box">
+        <div class="modal-box max-w-2xl">
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+              </form>
             <img id="fullscreen-image" src="" alt="Fullscreen Image" class="w-full h-full object-contain">
-            <div class="modal-action">
-                <button id="close-dialog" class="btn">Close</button>
-            </div>
         </div>
     </dialog>
 
