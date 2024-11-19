@@ -2,19 +2,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.querySelector('.theme-controller');
     const navElement = document.querySelector('nav');
 
-    if (themeToggle) {
-        // Set initial state
-        const currentTheme = document.body.getAttribute('data-theme');
-        themeToggle.checked = currentTheme === 'dark';
+    // Function to apply the theme
+    const applyTheme = (theme) => {
+        document.body.setAttribute('data-theme', theme);
+        if (navElement) {
+            navElement.setAttribute('data-theme', theme);
+        }
+        if (themeToggle) {
+            themeToggle.checked = theme === 'dark';
+        }
+    };
 
-        // Handle theme changes
+    // Detect user's preferred color scheme
+    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const storedTheme = localStorage.getItem('theme');
+    const defaultTheme = storedTheme || (prefersDarkScheme ? 'dark' : 'light');
+
+    // Apply the detected/stored theme
+    applyTheme(defaultTheme);
+
+    // Handle theme toggle changes
+    if (themeToggle) {
         themeToggle.addEventListener('change', (e) => {
             const isDarkMode = e.target.checked;
             const newTheme = isDarkMode ? 'dark' : 'light';
-            document.body.setAttribute('data-theme', newTheme);
-            if (navElement) {
-                navElement.setAttribute('data-theme', newTheme);
-            }
+            applyTheme(newTheme);
+            localStorage.setItem('theme', newTheme); // Save the user's preference
         });
     }
 });
