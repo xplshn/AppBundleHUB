@@ -1,0 +1,2 @@
+(()=>{document.addEventListener("DOMContentLoaded",()=>{let e=document.querySelector(".theme-controller"),t=document.querySelector("nav");if(e){let d=document.body.getAttribute("data-theme");e.checked=d==="dark",e.addEventListener("change",o=>{let n=o.target.checked?"dark":"light";document.body.setAttribute("data-theme",n),t&&t.setAttribute("data-theme",n)})}});})();
+//# sourceMappingURL=darkMode.js.map

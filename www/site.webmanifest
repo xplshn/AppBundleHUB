@@ -1,0 +1,36 @@
+{
+    "name":"AppBundleHUB",
+    "short_name":"AppBundleHUB",
+    "start_url": "/",
+    "description": "A repo & website that builds a ton of appbundles, weekly, completely automated. Firefox, Chromium, inkscape, ppsspp, steam, thunar, xfce components & some mutlicall AppBundles too! (there's lots more)",
+    "icons":[
+        {
+            "src":"/android-chrome-192x192.png",
+            "sizes":"192x192",
+            "type":"image/png"
+        },
+        {
+            "src":"/android-chrome-512x512.png",
+            "sizes":"512x512",
+            "type":"image/png"
+        }
+    ],
+    "screenshots": [
+       {
+           "src": "/desktop_screenshot.png", 
+           "sizes": "1888x829", 
+           "type": "image/png",
+           "form_factor": "wide" 
+       },
+       {
+            "src": "/screenshot.png", 
+            "sizes": "487x654", 
+            "type": "image/png",
+            "form_factor": "narrow" 
+        }
+   ],
+    "theme_color":"#ffffff",
+    "background_color":"#ffffff",
+    "display":"standalone",
+    "orientation": "portrait"
+}
