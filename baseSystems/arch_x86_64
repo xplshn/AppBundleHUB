@@ -41,24 +41,26 @@ mkdir -p ./ArchLinux_localResources && cd ./ArchLinux_localResources
 if [ "$AUR" = 1 ]; then
     yay -Sy --noconfirm $@ ; yay -Yc ; yay -Scc --noconfirm ; yay -Ps 
     yay -Ql $@
-    pacman -Rcnsd base-devel --noconfirm
-    pacman -Rcnsd perl --noconfirm
-    pacman -Rcnsd python --noconfirm
-    pacman -Scc --noconfirm ; yay -Scc --noconfirm
+    pacman --noconfirm -Rcnsd base-devel
+    pacman --noconfirm -Rcnsd perl
+    pacman --noconfirm -Rcnsd python
+    pacman --noconfirm -Scc ; yay --noconfirm -Scc
 
 else
-    pacman -Sy --noconfirm $@
-    pacman -Ql $@
-    pacman -Rcnsd base-devel --noconfirm
-    pacman -Rcnsd perl --noconfirm
-    pacman -Rcnsd python --noconfirm
-    pacman -Scc --noconfirm
+    pacman --noconfirm -Sy $@
+    pacman --noconfirm -Ql $@
+    pacman --noconfirm -Rcnsd base-devel
+    pacman --noconfirm -Rcnsd perl
+    pacman --noconfirm -Rcnsd python
+    pacman --noconfirm -Scc
 fi
-# ArchLinux is stupid
-touch /etc/localtime
-mkdir -p /app/.disabled
-touch /app/.disabled/SHARE_OPT
-echo "070dbdbffc888abef97ae21766de319b" > /etc/machine-id
+#if [ "$SANDBOX" = "1" ]; then
+#    # ArchLinux is stupid
+#    rm -f /etc/localtime /etc/machine-id
+#    touch /etc/localtime /etc/machine-id
+#    mkdir -p /app/.disabled
+#    touch /app/.disabled/SHARE_OPT
+#fi
 EOF
             		}
             	}
