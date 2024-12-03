@@ -15,7 +15,7 @@ mkdir -p ./EweOSLinux_localResources && cd ./EweOSLinux_localResources
     wget "https://os-repo-cloudflare.ewe.moe/eweos-images/eweos-$(uname -m)-tarball.tar.xz" && {
         xz -d "eweos-$(uname -m)-tarball.tar.xz"
 		gzip "eweos-$(uname -m)-tarball.tar" && {
-			mv "eweos-$(uname -m)-tarball.tar.xz" "rootfs.tgz"
+			mv "eweos-$(uname -m)-tarball.tar.gz" "rootfs.tgz"
 			# ---
 			if ! wget -qO "AppRun.rootfs" "https://github.com/xplshn/pelf/raw/refs/heads/pelf-ng/assets/AppRun.rootfs-based"; then
 				error "Unable to download AppRun.rootfs-based and add it as ./AppRun.rootfs"
