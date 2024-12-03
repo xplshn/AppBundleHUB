@@ -1,0 +1,72 @@
+#!/bin/sh
+
+OPWD="$PWD"
+BASE="$(dirname "$(realpath "$0")")"
+if [ "$OPWD" != "$BASE" ]; then
+	echo "... $BASE is not the same as $PWD ..."
+	echo "Going into $BASE and coming back here in a bit"
+	cd "$BASE" || exit 1
+fi
+trap 'cd "$OPWD"' INT EXIT
+
+mkdir -p ./EweOSLinux_localResources && cd ./EweOSLinux_localResources
+
+[ ! -f "rootfs.tgz" ] && [ -z "$NO_DOWNLOAD" ] && {
+    wget "https://os-repo-cloudflare.ewe.moe/eweos-images/eweos-$(uname -m)-tarball.tar.xz" && {
+        xz -d "eweos-$(uname -m)-tarball.tar.xz"
+		gzip "eweos-$(uname -m)-tarball.tar" && {
+			mv "eweos-$(uname -m)-tarball.tar.xz" "rootfs.tgz"
+			# ---
+			if ! wget -qO "AppRun.rootfs" "https://github.com/xplshn/pelf/raw/refs/heads/pelf-ng/assets/AppRun.rootfs-based"; then
+				error "Unable to download AppRun.rootfs-based and add it as ./AppRun.rootfs"
+			fi
+			# ---
+			if ! wget -qO "AppRun.sharun" "https://github.com/xplshn/pelf/raw/refs/heads/pelf-ng/assets/AppRun.sharun"; then
+				error "Unable to download AppRun.sharun and add it as ./AppRun.sharun"
+			fi
+			# ---
+			if ! wget -qO "AppRun.sharun.ovfsProto" "https://github.com/xplshn/pelf/raw/refs/heads/pelf-ng/assets/AppRun.sharun.ovfsProto"; then
+				error "Unable to download AppRun.sharun.proto and add it as ./AppRun.sharun.proto"
+			fi
+			# ---
+			if ! wget -qO "bwrap" "https://bin.ajam.dev/$(uname -m)/bwrap-patched"; then
+				error "Unable to download bwrap and add it as ./bwrap"
+			fi
+			# ---
+			if ! wget -qO "fuse-overlayfs" "https://bin.ajam.dev/$(uname -m)/fuse-overlayfs"; then
+				error "Unable to download fuse-overlayfs and add it as ./fuse-overlayfs"
+			fi
+			# ---
+			cat <<'EOF' >./pkgadd.sh && chmod +x ./pkgadd.sh # you can use ./pkgadd (single line, includes --Xbwrap command) for single-line installation procedures, or ./pkgadd.sh (always runs as uid 0, gid 0, within the container, its a sh script, can be multiline) for a more involved setup
+#!/bin/sh
+if [ "$AUR" = 1 ]; then
+    yay -Sy --noconfirm $@ ; yay -Yc ; yay -Scc --noconfirm ; yay -Ps 
+    yay -Ql $@
+    pacman --noconfirm -Rcnsd base-devel
+    pacman --noconfirm -Rcnsd perl
+    pacman --noconfirm -Rcnsd python
+    pacman --noconfirm -Scc ; yay --noconfirm -Scc
+
+else
+    pacman --noconfirm -Sy $@
+    pacman --noconfirm -Ql $@
+    pacman --noconfirm -Rcnsd base-devel
+    pacman --noconfirm -Rcnsd perl
+    pacman --noconfirm -Rcnsd python
+    pacman --noconfirm -Scc
+fi
+#if [ "$SANDBOX" = "1" ]; then
+#    # ArchLinux is stupid
+#    rm -f /etc/localtime /etc/machine-id
+#    touch /etc/localtime /etc/machine-id
+#    mkdir -p /app/.disabled
+#    touch /app/.disabled/SHARE_OPT
+#fi
+EOF
+            		}
+            	}
+            }
+
+export LOCAL_PATH="$PWD" && {
+    cd "$OPWD"
+} && "$@"
