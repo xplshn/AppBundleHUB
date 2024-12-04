@@ -54,13 +54,11 @@ else
     pacman --noconfirm -Rcnsd python
     pacman --noconfirm -Scc
 fi
-#if [ "$SANDBOX" = "1" ]; then
-#    # ArchLinux is stupid
-#    rm -f /etc/localtime /etc/machine-id
-#    touch /etc/localtime /etc/machine-id
-#    mkdir -p /app/.disabled
-#    touch /app/.disabled/SHARE_OPT
-#fi
+if [ "$SANDBOX" = "1" ]; then
+    # ArchLinux is stupid
+    mkdir -p /app/.disabled
+    touch /app/.disabled/SHARE_OPT
+fi
 EOF
             		}
             	}
