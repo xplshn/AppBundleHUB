@@ -1,19 +1,7 @@
 {
   "version": 3,
-  "sources": [
-    "../darkMode.js"
-  ],
-  "sourcesContent": [
-    "document.addEventListener('DOMContentLoaded', () => {\n    const themeToggle = document.querySelector('.theme-controller');\n    const navElement = document.querySelector('nav');\n\n    // Function to apply the theme\n    const applyTheme = (theme) => {\n        document.body.setAttribute('data-theme', theme);\n        if (navElement) {\n            navElement.setAttribute('data-theme', theme);\n        }\n        if (themeToggle) {\n            themeToggle.checked = theme === 'dark';\n        }\n    };\n\n    // Detect user's preferred color scheme\n    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;\n    const storedTheme = localStorage.getItem('theme');\n    const defaultTheme = storedTheme || (prefersDarkScheme ? 'dark' : 'light');\n\n    // Apply the detected/stored theme\n    applyTheme(defaultTheme);\n\n    // Handle theme toggle changes\n    if (themeToggle) {\n        themeToggle.addEventListener('change', (e) => {\n            const isDarkMode = e.target.checked;\n            const newTheme = isDarkMode ? 'dark' : 'light';\n            applyTheme(newTheme);\n            localStorage.setItem('theme', newTheme); // Save the user's preference\n        });\n    }\n});\n"
-  ],
+  "sources": ["../darkMode.js"],
+  "sourcesContent": ["document.addEventListener('DOMContentLoaded', () => {\n    const themeToggle = document.querySelector('.theme-controller');\n    const navElement = document.querySelector('nav');\n\n    // Function to apply the theme\n    const applyTheme = (theme) => {\n        document.body.setAttribute('data-theme', theme);\n        if (navElement) {\n            navElement.setAttribute('data-theme', theme);\n        }\n        if (themeToggle) {\n            themeToggle.checked = theme === 'dark';\n        }\n    };\n\n    // Detect user's preferred color scheme\n    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;\n    const storedTheme = localStorage.getItem('theme');\n    const defaultTheme = storedTheme || (prefersDarkScheme ? 'dark' : 'light');\n\n    // Apply the detected/stored theme\n    applyTheme(defaultTheme);\n\n    // Handle theme toggle changes\n    if (themeToggle) {\n        themeToggle.addEventListener('change', (e) => {\n            const isDarkMode = e.target.checked;\n            const newTheme = isDarkMode ? 'dark' : 'light';\n            applyTheme(newTheme);\n            localStorage.setItem('theme', newTheme); // Save the user's preference\n        });\n    }\n});\n"],
   "mappings": "MAAA,SAAS,iBAAiB,mBAAoB,IAAM,CAChD,IAAMA,EAAc,SAAS,cAAc,mBAAmB,EACxDC,EAAa,SAAS,cAAc,KAAK,EAGzCC,EAAcC,GAAU,CAC1B,SAAS,KAAK,aAAa,aAAcA,CAAK,EAC1CF,GACAA,EAAW,aAAa,aAAcE,CAAK,EAE3CH,IACAA,EAAY,QAAUG,IAAU,OAExC,EAGMC,EAAoB,OAAO,WAAW,8BAA8B,EAAE,QAEtEC,EADc,aAAa,QAAQ,OAAO,IACXD,EAAoB,OAAS,SAGlEF,EAAWG,CAAY,EAGnBL,GACAA,EAAY,iBAAiB,SAAW,GAAM,CAE1C,IAAMM,EADa,EAAE,OAAO,QACE,OAAS,QACvCJ,EAAWI,CAAQ,EACnB,aAAa,QAAQ,QAASA,CAAQ,CAC1C,CAAC,CAET,CAAC",
-  "names": [
-    "themeToggle",
-    "navElement",
-    "applyTheme",
-    "theme",
-    "prefersDarkScheme",
-    "defaultTheme",
-    "newTheme"
-  ]
+  "names": ["themeToggle", "navElement", "applyTheme", "theme", "prefersDarkScheme", "defaultTheme", "newTheme"]
 }

@@ -6,6 +6,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const dialogClose = document.getElementById('close-dialog');
 
+    // Function to close the modal when clicking outside
+    function closeModalOnOutsideClick(modal) {
+        const backdrop = modal.querySelector('.modal-backdrop');
+        backdrop.addEventListener('click', () => {
+            modal.close();
+        });
+    }
+
+    // Apply the function to both modals
+    closeModalOnOutsideClick(appDetailsModal);
+    closeModalOnOutsideClick(imageDialog);
+
     // Function to show app details
     window.showAppDetails = function (name, apps) {
         if (!Array.isArray(apps)) {
