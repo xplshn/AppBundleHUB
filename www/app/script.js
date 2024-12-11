@@ -108,11 +108,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Parse and format rich description if available
-            const richDescriptionHtml = app.rich_description
+            const longDescriptionHTML = app.long_description
                 ? `
                     <div class="rich-description mt-4 mb-6 prose max-w-none">
                         <h3 class="text-xl font-semibold mb-3">About ${app.pkg_name || app.pkg}</h3>
-                        ${app.rich_description.replace(/\u003cp\u003e/g, '<p>')}
+                        ${app.long_description.replace(/\u003cp\u003e/g, '<p>')}
                     </div>
                   `
                 : '';
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="category-tags flex flex-wrap gap-2 mt-2">${categoryTags}</div>
                     </div>
                 </div>
-                ${richDescriptionHtml}
+                ${longDescriptionHTML}
                 <div id="screenshots-container" class="mb-4">
                     <div class="skeleton-container skeleton h-64">
                         <div class="flex items-center justify-center h-full text-base-content/50">
