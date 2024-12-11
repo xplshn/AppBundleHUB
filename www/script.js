@@ -114,11 +114,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         const isPortable = app.pkg.endsWith('.NixAppImage') || app.pkg.endsWith('.FlatImage') || app.pkg.endsWith('.AppBundle');
         let badgeColor;
         if (app.pkg.endsWith('.NixAppImage')) {
-            badgeColor = 'badge-warning'; // Bronze
+            badgeColor = 'badge-warning';
         } else if (app.pkg.endsWith('.FlatImage')) {
-            badgeColor = 'badge-success'; // Yellow
+            badgeColor = 'badge-info';
         } else if (app.pkg.endsWith('.AppBundle')) {
-            badgeColor = 'badge-info'; // Green
+            badgeColor = 'badge-success';
         }
 
         return `
