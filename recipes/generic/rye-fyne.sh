@@ -1,5 +1,4 @@
 #!/bin/sh
-# Reason: Should use OVFS/Proto AppRun. Not only that, but we should also simplify the entire thing.
 
 # Setup base directory
 OPWD="$PWD"
@@ -84,13 +83,13 @@ build_rye_fyne() {
     cp "$PROJECT_NAME" "$GOBIN" || log_error "Failed to copy $PROJECT_NAME to $GOBIN."
 
     # Install required tools
-    log_action "Installing required tools"
+    #log_action "Installing required tools"
     export DBIN_INSTALL_DIR="$HOME/.local/bin"
-    wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "/usr/local/bin/dbin" add sharun sharun-lib4bin || log_error "Failed to install dbin and related tools."
+    #wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "/usr/local/bin/dbin" add sharun sharun-lib4bin || log_error "Failed to install dbin and related tools."
     export PATH="$HOME/.local/bin:$PATH"
 
-    git clone --depth 1 https://github.com/xplshn/pelf "$TEMP_DIR/pelf" || log_error "Failed to clone pelf."
-    cp "$TEMP_DIR/pelf/pelf"* /usr/local/bin || log_error "Failed to copy pelf binaries to /usr/local/bin."
+    #git clone --depth 1 https://github.com/xplshn/pelf "$TEMP_DIR/pelf" || log_error "Failed to clone pelf."
+    #cp "$TEMP_DIR/pelf/pelf"* /usr/local/bin || log_error "Failed to copy pelf binaries to /usr/local/bin."
 
     # Set up AppDir
     log_action "Setting up AppDir for $PROJECT_NAME"
