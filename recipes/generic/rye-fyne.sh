@@ -94,13 +94,8 @@ build_rye_fyne() {
     # Set up AppDir
     log_action "Setting up AppDir for $PROJECT_NAME"
     mkdir -p ./ryeFyne.AppDir
-    cat <<'EOF' > ./ryeFyne.AppDir/AppRun
-#!/bin/sh
-BIN_PATH="/bin/rye-fyne"
-SELF=$(readlink -f "$0")
-SELF_TEMPDIR=${SELF%/*}
-"${SELF_TEMPDIR}${BIN_PATH}" "$@"
-EOF
+    echo "rye-fyne" > ./ryeFyne.AppDir/entrypoint
+    wget -qO "./ryeFyne.AppDir/AppRun" "https://github.com/xplshn/pelf/raw/refs/heads/pelf-ng/assets/AppRun.sharun.ovfsProto"
     chmod +x ./ryeFyne.AppDir/AppRun || log_error "Failed to make AppRun executable."
 
     # Final steps
