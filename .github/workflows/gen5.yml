@@ -41,9 +41,11 @@ jobs:
           name: tag-name
           path: tag_name.txt
 
-      #- name: Remove non-compliant tools
-      #  run: |
-      #    apk del bash findutils gawk grep diffutils coreutils
+      - name: Add non-compliant tools, because sucky software requires sucky software #- name: Remove non-compliant tools
+        run: |
+          #apk del bash findutils gawk grep diffutils coreutils
+          apk add bash file binutils patchelf findutils grep sed coreutils strace
+
       - name: Set up GOBIN and install lib4bin
         run: |
           set -x
