@@ -41,26 +41,29 @@ jobs:
           name: tag-name
           path: tag_name.txt
 
-      - name: Remove non-compliant tools
-        run: |
-          apk del bash findutils gawk grep diffutils coreutils
+      #- name: Remove non-compliant tools
+      #  run: |
+      #    apk del bash findutils gawk grep diffutils coreutils
       - name: Set up GOBIN and install lib4bin
         run: |
           set -x
           export GOBIN="$GITHUB_WORKSPACE/.local/bin"
+          export DBIN_INSTALL_DIR="$GOBIN"
           mkdir -p "$GOBIN"
+          echo "DBIN_INSTALL_DIR=$DBIN_INSTALL_DIR" >> $GITHUB_ENV
           echo "GOBIN=$GOBIN" >> $GITHUB_ENV
           echo "PATH=$GOBIN:$PATH" >> $GITHUB_ENV
           git clone --depth 1 --branch dev https://github.com/xplshn/pelf
           cp ./pelf/* "$GOBIN" || true
-          cd ./pelf/cmd/dynexec/lib4bin
-          go install .
-          cd -
+          #cd ./pelf/cmd/dynexec/lib4bin
+          #go install .
+          #cd -
           cd ./pelf/cmd/misc/appstream_helper
           go install .
-          export DBIN_INSTALL_DIR="$GOBIN"
-          echo "DBIN_INSTALL_DIR=$DBIN_INSTALL_DIR" >> $GITHUB_ENV
           wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "/usr/local/bin/dbin" add sharun sharun-lib4bin
+          echo "WITH_SHARUN=1" >> $GITHUB_ENV
+          echo "GEN_LIB_PATH=1" >> $GITHUB_ENV
+          echo "ANY_EXECUTABLE=1" >> $GITHUB_ENV
       - name: Set OUT_DIR environment variable
         run: |
           OUT_DIR="$GITHUB_WORKSPACE/APPBUNDLES"
