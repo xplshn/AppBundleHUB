@@ -99,7 +99,6 @@ build_rye_fyne() {
     chmod +x ./ryeFyne.AppDir/AppRun || log_error "Failed to make AppRun executable."
 
     # Final steps
-    cd ./ryeFyne.AppDir || log_error "Failed to enter ryeFyne.AppDir."
     lib4bin --dst-dir "./ryeFyne.AppDir" "$GOBIN/$PROJECT_NAME" || log_error "lib4bin failed."
 
     pelf-dwfs --add-appdir "./ryeFyne.AppDir" --appbundle-id "rye-$(date +%d_%m_%Y)-xplshn" --output-to "$GOBIN/ryeFyne.dwfs.AppBundle" --embed-static-tools || log_error "Failed to create AppBundle."
