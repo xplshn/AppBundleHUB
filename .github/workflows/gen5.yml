@@ -58,6 +58,9 @@ jobs:
           cd -
           cd ./pelf/cmd/misc/appstream_helper
           go install .
+          export DBIN_INSTALL_DIR="$GOBIN"
+          echo "DBIN_INSTALL_DIR=$DBIN_INSTALL_DIR" >> $GITHUB_ENV
+          wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "/usr/local/bin/dbin" add sharun sharun-lib4bin
       - name: Set OUT_DIR environment variable
         run: |
           OUT_DIR="$GITHUB_WORKSPACE/APPBUNDLES"
