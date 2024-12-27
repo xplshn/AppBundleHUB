@@ -61,7 +61,7 @@ jobs:
           cd ./pelf/cmd/misc/appstream_helper
           go install .
           wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "/usr/local/bin/dbin" add sharun sharun-lib4bin
-          mv "$(which sharun-lib4bin)" "$(dirname "$(which sharun-lib4bin)")/lib4bin" 
+          mv "$DBIN_INSTALL_DIR/sharun-lib4bin" "$DBIN_INSTALL_DIR/lib4bin" 
           echo "WITH_SHARUN=1" >> $GITHUB_ENV
           echo "GEN_LIB_PATH=1" >> $GITHUB_ENV
           echo "ANY_EXECUTABLE=1" >> $GITHUB_ENV
