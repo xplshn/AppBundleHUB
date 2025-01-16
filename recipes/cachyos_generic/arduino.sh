@@ -1,1 +1,1 @@
-AUR=0 arch_x86_64 pelfCreator -m "xplshn" -n "cc.arduino.IDE2" -p "arduino-ide" -e "arduino-ide.desktop" -x "usr/bin/arduino-ide"
+AUR=0 arch_x86_64 pelfCreator -m "xplshn" -n "cc.arduino.IDE2" -p "arduino-ide" -e "arduino-ide.desktop" -s #-x "usr/bin/arduino-ide usr/bin/arduino-cli usr/bin/arduino-fwuploader usr/bin/electron" -k "usr/lib/arduino-ide usr/share/doc/arduino-ide usr/share/doc/arduino-fwuploader"
