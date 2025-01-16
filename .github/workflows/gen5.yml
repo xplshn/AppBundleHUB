@@ -56,7 +56,7 @@ jobs:
           echo "GOBIN=$GOBIN" >> $GITHUB_ENV
           echo "PATH=$GOBIN:$PATH" >> $GITHUB_ENV
           git clone --depth 1 --branch dev https://github.com/xplshn/pelf
-          cp ./pelf/* "$GOBIN" || true
+          cp ./pelf/pelf* "$GOBIN" || true
           #cd ./pelf/cmd/dynexec/lib4bin
           #go install .
           #cd -
