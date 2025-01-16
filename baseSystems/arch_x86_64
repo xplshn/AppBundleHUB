@@ -39,21 +39,26 @@ mkdir -p ./ArchLinux_localResources && cd ./ArchLinux_localResources
 			cat <<'EOF' >./pkgadd.sh && chmod +x ./pkgadd.sh # you can use ./pkgadd (single line, includes --Xbwrap command) for single-line installation procedures, or ./pkgadd.sh (always runs as uid 0, gid 0, within the container, its a sh script, can be multiline) for a more involved setup
 #!/bin/sh
 if [ "$AUR" = 1 ]; then
-    yay -Sy --noconfirm $@ ; yay -Yc ; yay -Scc --noconfirm ; yay -Ps 
-    yay -Ql $@
-    pacman --noconfirm -Rcnsd base-devel
-    pacman --noconfirm -Rcnsd perl
-    pacman --noconfirm -Rcnsd python
-    pacman --noconfirm -Scc ; yay --noconfirm -Scc
+    yay -Sy --nocofirm "$@" 
+    yay -Yc --nocofirm 
+    yay -Scc --nocofirm 
+    yay -Ps 
+    yay -Ql "$@"
+    pacman --nocofirm -Scc 
+    yay --nocofirm -Scc
 
 else
-    pacman --noconfirm -Sy $@
-    pacman --noconfirm -Ql $@
-    pacman --noconfirm -Rcnsd base-devel
-    pacman --noconfirm -Rcnsd perl
-    pacman --noconfirm -Rcnsd python
-    pacman --noconfirm -Scc
+    pacman --nocofirm -Sy "$@"
+    pacman --nocofirm -Ql "$@"
+    pacman --nocofirm -Scc
 fi
+
+for pkg in base-devel perl python; do
+	if pacman -Qs "$pkg" > /dev/null; then
+		pacman --nocofirm -Rns "$pkg"
+	fi
+done
+
 if [ "$SANDBOX" = "1" ]; then
     # ArchLinux is stupid
     mkdir -p /app/.disabled
