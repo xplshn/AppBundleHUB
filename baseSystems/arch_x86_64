@@ -39,18 +39,11 @@ mkdir -p ./ArchLinux_localResources && cd ./ArchLinux_localResources
 			cat <<'EOF' >./pkgadd.sh && chmod +x ./pkgadd.sh # you can use ./pkgadd (single line, includes --Xbwrap command) for single-line installation procedures, or ./pkgadd.sh (always runs as uid 0, gid 0, within the container, its a sh script, can be multiline) for a more involved setup
 #!/bin/sh
 if [ "$AUR" = 1 ]; then
-    yay -Sy --nocofirm "$@" 
-    yay -Yc --nocofirm 
-    yay -Scc --nocofirm 
-    yay -Ps 
-    yay -Ql "$@"
-    pacman --nocofirm -Scc 
-    yay --nocofirm -Scc
-
+    yay -Sy --noconfirm $@ ; yay -Yc ; yay -Scc --noconfirm ; yay -Ps 
+    yay -Ql $@
 else
-    pacman --nocofirm -Sy "$@"
-    pacman --nocofirm -Ql "$@"
-    pacman --nocofirm -Scc
+    pacman --noconfirm -Sy $@
+    pacman --noconfirm -Ql $@
 fi
 
 for pkg in base-devel perl python; do
@@ -58,6 +51,7 @@ for pkg in base-devel perl python; do
 		pacman --nocofirm -Rns "$pkg"
 	fi
 done
+pacman --noconfirm -Scc ; yay --noconfirm -Scc
 
 if [ "$SANDBOX" = "1" ]; then
     # ArchLinux is stupid
