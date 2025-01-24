@@ -49,7 +49,7 @@ jobs:
       - name: Set up GOBIN and install lib4bin
         run: |
           set -x
-          export GOBIN="$GITHUB_WORKSPACE/.local/bin"
+          export GOBIN="$GITHUB_WORKSPACE/.local/bin" CGO_ENABLED=0 GO_LDFLAGS='-buildmode=static-pie' GOFLAGS='-ldflags=-static-pie -ldflags=-s -ldflags=-w'
           export DBIN_INSTALL_DIR="$GOBIN"
           mkdir -p "$GOBIN"
           echo "DBIN_INSTALL_DIR=$DBIN_INSTALL_DIR" >> $GITHUB_ENV
@@ -62,11 +62,17 @@ jobs:
           #cd -
           cd ./pelf/cmd/misc/appstream_helper
           go install .
+          cd ../../standaloneRuntimes/go
+          go build
+          strip ./appbundle-runtime
+          mv ./appbundle-runtime "$GOBIN"
+          cd
           wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "/usr/local/bin/dbin" add sharun sharun-lib4bin
           mv "$DBIN_INSTALL_DIR/sharun-lib4bin" "$DBIN_INSTALL_DIR/lib4bin" 
           echo "WITH_SHARUN=1" >> $GITHUB_ENV
           echo "GEN_LIB_PATH=1" >> $GITHUB_ENV
           echo "ANY_EXECUTABLE=1" >> $GITHUB_ENV
+          echo "_VAR_CUSTOM_RUNTIME=$GOBIN/appbundle-runtime" >> $GITHUB_ENV
       - name: Set OUT_DIR environment variable
         run: |
           OUT_DIR="$GITHUB_WORKSPACE/APPBUNDLES"
