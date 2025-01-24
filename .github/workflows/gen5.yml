@@ -14,7 +14,7 @@ on:
         required: false
         default: "true"
       appbundle_fs:
-        description: "Filesystem type for AppBundle (e.g., sqfs, ext4)"
+        description: "Filesystem type for AppBundle (valid ones include: dwfs, sqfs)"
         required: false
         default: "sqfs"
 
