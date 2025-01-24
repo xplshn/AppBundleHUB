@@ -13,6 +13,10 @@ on:
         description: "Create a release (true/false)"
         required: false
         default: "true"
+      appbundle_fs:
+        description: "Filesystem type for AppBundle (e.g., sqfs, ext4)"
+        required: false
+        default: "sqfs"
 
 jobs:
   build:
@@ -73,6 +77,7 @@ jobs:
           echo "GEN_LIB_PATH=1" >> $GITHUB_ENV
           echo "ANY_EXECUTABLE=1" >> $GITHUB_ENV
           echo "_VAR_CUSTOM_RUNTIME=$GOBIN/appbundle-runtime" >> $GITHUB_ENV
+          echo "APPBUNDLE_FS=${{ github.event.inputs.appbundle_fs }}" >> $GITHUB_ENV
       - name: Set OUT_DIR environment variable
         run: |
           OUT_DIR="$GITHUB_WORKSPACE/APPBUNDLES"
