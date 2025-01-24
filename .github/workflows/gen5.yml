@@ -62,7 +62,7 @@ jobs:
           #cd -
           cd ./pelf/cmd/misc/appstream_helper
           go install .
-          cd ../../standaloneRuntimes/go
+          cd ../../../standaloneRuntimes/go
           go build
           strip ./appbundle-runtime
           mv ./appbundle-runtime "$GOBIN"
