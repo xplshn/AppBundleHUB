@@ -71,7 +71,7 @@ jobs:
           strip ./appbundle-runtime
           mv ./appbundle-runtime "$GOBIN"
           cd
-          wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "/usr/local/bin/dbin" add sharun sharun-lib4bin
+          wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "/usr/local/bin/dbin" add sharun sharun-lib4bin squashfstools/mksquashfs squashfstools/unsquashfs squashfstools/sqfstar squashfstools/sqfscat squashfuse squashfuse_ll
           mv "$DBIN_INSTALL_DIR/sharun-lib4bin" "$DBIN_INSTALL_DIR/lib4bin" 
           echo "WITH_SHARUN=1" >> $GITHUB_ENV
           echo "GEN_LIB_PATH=1" >> $GITHUB_ENV
