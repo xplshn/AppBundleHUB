@@ -59,8 +59,9 @@ jobs:
           echo "DBIN_INSTALL_DIR=$DBIN_INSTALL_DIR" >> $GITHUB_ENV
           echo "PATH=$GOBIN:$PATH" >> $GITHUB_ENV
           # Set up the PELF toolchain
-		  wget -qO "$DBIN_INSTALL_DIR/pelf" "https://github.com/xplshn/pelf/releases/latest/download/pelf_$(uname -m)" && chmod +x "$DBIN_INSTALL_DIR/pelf"
-		  wget -qO "$DBIN_INSTALL_DIR/pelfCreator" "https://github.com/xplshn/pelf/releases/latest/download/pelfCreator_$(uname -m)" && chmod +x "$DBIN_INSTALL_DIR/pelfCreator"
+	  wget -qO "$DBIN_INSTALL_DIR/pelf" "https://github.com/xplshn/pelf/releases/latest/download/pelf_$(uname -m)" && chmod +x "$DBIN_INSTALL_DIR/pelf"
+          wget -qO "$DBIN_INSTALL_DIR/pelfCreator" "https://github.com/xplshn/pelf/releases/latest/download/pelfCreator_$(uname -m)" && chmod +x "$DBIN_INSTALL_DIR/pelfCreator"
+	  echo "aa"
 
       - name: Set OUT_DIR environment variable
         run: |
