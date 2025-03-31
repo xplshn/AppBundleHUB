@@ -1,0 +1,240 @@
+name: Build and Release AppBundles - NG
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+    inputs:
+      script_pattern:
+        description: "Pattern to match scripts to build (leave empty to build all)"
+        required: false
+        default: ""
+      release:
+        description: "Create a release (true/false)"
+        required: false
+        default: "true"
+      appbundle_fs:
+        description: "Filesystem type for AppBundle (valid ones include: dwfs, sqfs)"
+        required: false
+        default: "sqfs"
+
+jobs:
+  build:
+    name: Build AppBundles
+    runs-on: ubuntu-latest
+    permissions: write-all
+    container:
+      image: "docker.io/azathothas/appbundler-alpine:latest"
+      options: --privileged
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate TAG_NAME
+        id: set_tag_name
+        run: |
+          TAG_NAME="v${GITHUB_RUN_NUMBER}-$(date +'%Y%m%d%H%M%S')"
+          echo "$TAG_NAME" > tag_name.txt
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
+
+        # Upload TAG_NAME as an artifact
+      - name: Upload TAG_NAME artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tag-name
+          path: tag_name.txt
+
+      - name: Add non-compliant tools, because sucky software requires sucky software #- name: Remove non-compliant tools
+        run: |
+          #apk del bash findutils gawk grep diffutils coreutils
+          apk add bash file binutils patchelf findutils grep sed coreutils strace
+
+      - name: Set up GOBIN and install lib4bin
+        run: |
+          set -x
+          export GOBIN="$GITHUB_WORKSPACE/.local/bin" CGO_ENABLED=0 GO_LDFLAGS='-buildmode=static-pie' GOFLAGS='-ldflags=-static-pie -ldflags=-s -ldflags=-w'
+          export DBIN_INSTALL_DIR="$GOBIN"
+          mkdir -p "$GOBIN"
+          echo "DBIN_INSTALL_DIR=$DBIN_INSTALL_DIR" >> $GITHUB_ENV
+          echo "PATH=$GOBIN:$PATH" >> $GITHUB_ENV
+          # Set up the PELF toolchain
+		  wget -qO "$DBIN_INSTALL_DIR/pelf" "https://github.com/xplshn/pelf/releases/latest/download/pelf_$(uname -m)" && chmod +x "$DBIN_INSTALL_DIR/pelf"
+		  wget -qO "$DBIN_INSTALL_DIR/pelfCreator" "https://github.com/xplshn/pelf/releases/latest/download/pelfCreator_$(uname -m)" && chmod +x "$DBIN_INSTALL_DIR/pelfCreator"
+
+      - name: Set OUT_DIR environment variable
+        run: |
+          OUT_DIR="$GITHUB_WORKSPACE/APPBUNDLES"
+          META_OUT_DIR="$GITHUB_WORKSPACE/APPBUNDLES_META"
+          mkdir -p "$OUT_DIR" "$META_OUT_DIR"
+          echo "OUT_DIR=${OUT_DIR}" >> $GITHUB_ENV
+          echo "META_OUT_DIR=${META_OUT_DIR}" >> $GITHUB_ENV
+      - name: List available scripts
+        run: |
+          echo "Listing available recipes:"
+          tree "$GITHUB_WORKSPACE/recipes"
+      - name: Run selected build scripts
+        run: |
+          ls "$GITHUB_WORKSPACE/baseSystems"
+          set -x
+          export PATH="$GITHUB_WORKSPACE/baseSystems:$PATH"
+          echo "PATH=$PATH" >> $GITHUB_ENV
+          cd $OUT_DIR
+          SCRIPT_PATTERN="${{ github.event.inputs.script_pattern }}"
+          if [ -z "$SCRIPT_PATTERN" ]; then
+            echo "No script pattern provided, running all scripts."
+            PATTERN=".*"
+          else
+            PATTERN="$SCRIPT_PATTERN"
+          fi
+          for script in "$GITHUB_WORKSPACE/recipes/"*/*.*sh; do
+            if echo "$script" | grep -E "$PATTERN"; then
+              chmod +x "$script"
+              DEBUG=1 "$script"
+            fi
+          done
+      - name: Generate metadata
+        run: |
+          set -x
+          wget "https://meta.pkgforge.dev/misc/FLATPAK_APPSTREAM.xml"
+          appstream-helper --components-xml ./FLATPAK_APPSTREAM.xml --input-dir "$OUT_DIR" --output-dir "$META_OUT_DIR" --output-file "$META_OUT_DIR/metadata_x86_64-Linux.json" --download-url-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/${{ env.TAG_NAME }}/" --metadata-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/latest_metadata/" --pelf-edition "${{ github.event.inputs.appbundle_fs }}"
+      - name: Upload app bundle artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-bundles
+          path: ${{ env.OUT_DIR }}/*.AppBundle
+
+      - name: List generated metadata files
+        run: |
+          ls ${{ env.META_OUT_DIR }}/*
+      - name: Upload metadata artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: metadata
+          path: ${{ env.META_OUT_DIR }}/*
+
+  release:
+    name: Release AppBundles
+    runs-on: ubuntu-latest
+    needs: build
+    permissions: write-all
+    if: ${{ github.event.inputs.release == 'true' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download app bundle artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: app-bundles
+          path: ${{ github.workspace }}
+
+      - name: Download metadata artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: metadata
+          path: ${{ github.workspace }}
+
+      - name: Manage Tags
+        run: |
+          git fetch --tags
+          TAGS=$(git tag | grep -v "^latest_metadata$" | sort -V)
+          TAG_COUNT=$(echo "$TAGS" | wc -l)
+          if [ "$TAG_COUNT" -gt 5 ]; then
+            TAGS_TO_DELETE=$(echo "$TAGS" | head -n -1)
+            for TAG in $TAGS_TO_DELETE; do
+              git tag -d "$TAG"
+              git push origin --delete "$TAG"
+            done
+          fi
+
+      - name: Download TAG_NAME artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tag-name
+
+      - name: Read TAG_NAME
+        id: get_tag_name
+        run: |
+          TAG_NAME=$(cat tag_name.txt)
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
+
+      - name: Create Git Tag
+        run: |
+          git tag "${{ env.TAG_NAME }}"
+          git push origin "${{ env.TAG_NAME }}"
+      - name: Determine if pre-release
+        id: determine_prerelease
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "prerelease=true" >> $GITHUB_ENV
+          else
+            echo "prerelease=false" >> $GITHUB_ENV
+          fi
+      - name: Create Release
+        uses: softprops/action-gh-release@v2.0.8
+        with:
+          name: "Weekly Release - ${{ env.TAG_NAME }}"
+          tag_name: "${{ env.TAG_NAME }}"
+          prerelease: ${{ env.prerelease }}
+          draft: false
+          generate_release_notes: false
+          make_latest: true
+          files: |
+            ${{ github.workspace }}/*.AppBundle
+            ${{ github.workspace }}/metadata_x86_64-Linux.json
+        continue-on-error: true
+
+  publish_metadata:
+    name: Publish Metadata
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{ github.event.inputs.release == 'true' }}
+    permissions: write-all
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download metadata artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: metadata
+          path: ${{ github.workspace }}
+
+      - name: Update latest_metadata tag and create release
+        run: |
+          git fetch --tags
+          if git tag -l | grep -q "^latest_metadata$"; then
+            git tag -d latest_metadata
+            git push origin --delete latest_metadata || true
+          fi
+          git tag latest_metadata
+          git push origin latest_metadata
+
+      - name: Download TAG_NAME artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tag-name
+
+      - name: Read TAG_NAME
+        id: get_tag_name
+        run: |
+          TAG_NAME=$(cat tag_name.txt)
+          echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
+
+      - name: Create Release for Metadata
+        uses: softprops/action-gh-release@v2.0.8
+        with:
+          name: "Latest Metadata"
+          tag_name: "latest_metadata"
+          files: |
+            ${{ github.workspace }}/*.json
+            ${{ github.workspace }}/*.png
+            ${{ github.workspace }}/*.svg
+            ${{ github.workspace }}/*.desktop
+            ${{ github.workspace }}/*.xml
+          body: "Metadata files for ${{ env.TAG_NAME }}"
+          draft: false
+          prerelease: true
+          make_latest: false
