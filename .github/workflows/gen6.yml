@@ -38,30 +38,30 @@ jobs:
           echo "$TAG_NAME" > tag_name.txt
           echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
 
-        # Upload TAG_NAME as an artifact
       - name: Upload TAG_NAME artifact
         uses: actions/upload-artifact@v4
         with:
           name: tag-name
           path: tag_name.txt
 
-      - name: Add non-compliant tools, because sucky software requires sucky software #- name: Remove non-compliant tools
+      - name: Add non-compliant tools
         run: |
-          #apk del bash findutils gawk grep diffutils coreutils
           apk add bash file binutils patchelf findutils grep sed coreutils strace
 
       - name: Set up GOBIN and install lib4bin
         run: |
           set -x
-          export GOBIN="$GITHUB_WORKSPACE/.local/bin" CGO_ENABLED=0 GO_LDFLAGS='-buildmode=static-pie' GOFLAGS='-ldflags=-static-pie -ldflags=-s -ldflags=-w'
+          export GOBIN="$GITHUB_WORKSPACE/.local/bin"
+          export CGO_ENABLED=0
+          export GO_LDFLAGS='-buildmode=static-pie'
+          export GOFLAGS='-ldflags=-static-pie -ldflags=-s -ldflags=-w'
           export DBIN_INSTALL_DIR="$GOBIN"
           mkdir -p "$GOBIN"
           echo "DBIN_INSTALL_DIR=$DBIN_INSTALL_DIR" >> $GITHUB_ENV
           echo "PATH=$GOBIN:$PATH" >> $GITHUB_ENV
           # Set up the PELF toolchain
-	  wget -qO "$DBIN_INSTALL_DIR/pelf" "https://github.com/xplshn/pelf/releases/latest/download/pelf_$(uname -m)" && chmod +x "$DBIN_INSTALL_DIR/pelf"
+          wget -qO "$DBIN_INSTALL_DIR/pelf" "https://github.com/xplshn/pelf/releases/latest/download/pelf_$(uname -m)" && chmod +x "$DBIN_INSTALL_DIR/pelf"
           wget -qO "$DBIN_INSTALL_DIR/pelfCreator" "https://github.com/xplshn/pelf/releases/latest/download/pelfCreator_$(uname -m)" && chmod +x "$DBIN_INSTALL_DIR/pelfCreator"
-	  echo "aa"
 
       - name: Set OUT_DIR environment variable
         run: |
@@ -70,10 +70,12 @@ jobs:
           mkdir -p "$OUT_DIR" "$META_OUT_DIR"
           echo "OUT_DIR=${OUT_DIR}" >> $GITHUB_ENV
           echo "META_OUT_DIR=${META_OUT_DIR}" >> $GITHUB_ENV
+
       - name: List available scripts
         run: |
           echo "Listing available recipes:"
           tree "$GITHUB_WORKSPACE/recipes"
+
       - name: Run selected build scripts
         run: |
           ls "$GITHUB_WORKSPACE/baseSystems"
@@ -94,11 +96,13 @@ jobs:
               DEBUG=1 "$script"
             fi
           done
+
       - name: Generate metadata
         run: |
           set -x
           wget "https://meta.pkgforge.dev/misc/FLATPAK_APPSTREAM.xml"
           appstream-helper --components-xml ./FLATPAK_APPSTREAM.xml --input-dir "$OUT_DIR" --output-dir "$META_OUT_DIR" --output-file "$META_OUT_DIR/metadata_x86_64-Linux.json" --download-url-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/${{ env.TAG_NAME }}/" --metadata-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/latest_metadata/" --pelf-edition "${{ github.event.inputs.appbundle_fs }}"
+
       - name: Upload app bundle artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -108,6 +112,7 @@ jobs:
       - name: List generated metadata files
         run: |
           ls ${{ env.META_OUT_DIR }}/*
+
       - name: Upload metadata artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -165,6 +170,7 @@ jobs:
         run: |
           git tag "${{ env.TAG_NAME }}"
           git push origin "${{ env.TAG_NAME }}"
+
       - name: Determine if pre-release
         id: determine_prerelease
         run: |
@@ -173,6 +179,7 @@ jobs:
           else
             echo "prerelease=false" >> $GITHUB_ENV
           fi
+
       - name: Create Release
         uses: softprops/action-gh-release@v2.0.8
         with:
