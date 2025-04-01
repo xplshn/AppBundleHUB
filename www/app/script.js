@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const app = apps.find(app => (app.pkg_name || app.pkg) === name);
+        const app = apps.find(app => (app.pkg_name || app.pkg_id) === name);
         if (!app) {
             console.error('App not found:', name);
             return;
@@ -90,8 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Function to create the actual content
         function createFinalContent(app) {
-            const categoryTags = app.category
-                ? app.category
+            const categoryTags = app.categories
+                ? app.categories
                     .split(',')
                     .map(cat => cat.trim())
                     .filter(cat => cat)
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const longDescriptionHTML = app.long_description
                 ? `
                     <div class="rich-description mt-4 mb-6 prose max-w-none">
-                        <h3 class="text-xl font-semibold mb-3">About ${app.pkg_name || app.pkg}</h3>
+                        <h3 class="text-xl font-semibold mb-3">About ${app.pkg_name || app.pkg_id}</h3>
                         ${app.long_description.replace(/\u003cp\u003e/g, '<p>')}
                     </div>
                   `
@@ -119,10 +119,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return `
                 <div class="details-header flex items-start gap-4 mb-4">
-                    <img src="${app.icon}" alt="${app.pkg_name || app.pkg}" class="app-icon w-16 h-16 object-contain"
+                    <img src="${app.icon}" alt="${app.pkg_name || app.pkg_id}" class="app-icon w-16 h-16 object-contain"
                          onerror="this.style.display='none';">
                     <div>
-                        <h2 class="text-2xl font-semibold">${app.pkg_name || app.pkg}</h2>
+                        <h2 class="text-2xl font-semibold">${app.pkg_name || app.pkg_id}</h2>
                         <p>${app.description || 'No description available.'}</p>
                         <div class="category-tags flex flex-wrap gap-2 mt-2">${categoryTags}</div>
                     </div>
@@ -157,26 +157,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="app-links flex gap-2 mb-4">
                     <a href="${app.download_url}" class="download-button btn btn-primary">Download</a>
-                    ${app.src_url ? `<a href="${app.src_url}" class="link-button btn btn-secondary" target="_blank">Source Code</a>` : ''}
-                    ${app.homepage ? `<a href="${app.homepage}" class="link-button btn btn-secondary" target="_blank">Website</a>` : ''}
+                    ${app.src_urls && app.src_urls.length > 0 ? `<a href="${app.src_urls[0]}" class="link-button btn btn-secondary" target="_blank">Source Code</a>` : ''}
+                    ${app.web_urls && app.web_urls.length > 0 ? `<a href="${app.web_urls[0]}" class="link-button btn btn-secondary" target="_blank">Website</a>` : ''}
                 </div>
                 <div class="install-section p-4 bg-base-200 rounded-lg mb-4">
 
                 <div class="tooltip tooltip-info tooltip-right" data-tip="one-click-install requires dbin protocol to be set up correctly on your system">
-                    <a href="dbin://install?${app.pkg}" class="install-button btn btn-ghost text-lg">Install <span class="nf nf-oct-desktop_download"></span></a>
+                    <a href="dbin://install?${app.pkg_id}" class="install-button btn btn-ghost text-lg">Install <span class="nf nf-oct-desktop_download"></span></a>
                 </div>
 
                     <h4 class="text-base font-semibold mb-2"># If you don't have <span class="code">dbin</span> installed:</h4>
                     <div class="code bg-base-300 p-2 rounded mb-4">
-                        <pre data-prefix="$"><code>wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- install ${app.pkg_name || app.pkg}</code></pre>
+                        <pre data-prefix="$"><code>wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- install ${app.pkg_name || app.pkg_id}</code></pre>
                     </div>
                     <h4 class="text-base font-semibold mb-2"># If you have <span class="code">dbin</span> installed:</h4>
                     <div class="code bg-base-300 p-2 rounded mb-4">
-                        <pre data-prefix="$"><code>dbin install ${app.pkg}</code></pre>
+                        <pre data-prefix="$"><code>dbin install ${app.pkg_id}</code></pre>
                     </div>
                     <h4 class="text-base font-semibold mb-2"># Alternative using <span class="code">soar</span>:</h4>
                     <div class="code bg-base-300 p-2 rounded">
-                        <pre data-prefix="$"><code>soar add ${app.pkg}</code></pre>
+                        <pre data-prefix="$"><code>soar add ${app.pkg_id}</code></pre>
                     </div>
                 </div>
                 ${app.note ? `<div class="app-note alert alert-warning"><strong>Note:</strong> ${app.note}</div>` : ''}

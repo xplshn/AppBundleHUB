@@ -53,6 +53,25 @@
                         </div>
                     </div>
 
+                    <!-- Repository Selection Dropdown -->
+					<div class="dropdown dropdown-end">
+					    <label tabindex="0" class="btn btn-ghost btn-circle">
+					        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="h-4 w-4">
+					            <path fill-rule="evenodd"
+					                d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 1a6 6 0 1 0 0 12A6 6 0 0 0 8 2zM8 3a5 5 0 1 1 0 10A5 5 0 0 1 8 3z"
+					                clip-rule="evenodd" />
+					        </svg>
+					    </label>
+					    <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+					        <li><a id="repo-amd64" href="#">unified dbin repo (amd64)</a></li>
+					        <li><a id="repo-arm64" href="#">unified dbin repo (arm64)</a></li>
+					        <li>
+					            <label for="file-input" class="cursor-pointer">upload repo index (json)</label>
+					            <input type="file" id="file-input" class="hidden" accept=".json">
+					        </li>
+					    </ul>
+					</div>
+
                     <label class="swap swap-rotate">
                         <!-- this hidden checkbox controls the state -->
                         <input type="checkbox" class="theme-controller" value="dark" />
@@ -81,7 +100,6 @@
         </div>
     </nav>
 
-
     <main class="content-container">
         <div id="popular-apps-carousel" class="">
             <!-- Carousel items will be dynamically inserted here -->
@@ -101,7 +119,7 @@
         </div>
         <div class="modal-backdrop"></div>
     </dialog>
-    
+
     <!-- Fullscreen Image Dialog -->
     <dialog id="image-dialog" class="modal">
         <div class="modal-box max-w-2xl">

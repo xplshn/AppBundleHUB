@@ -1,4 +1,5 @@
 let apps = [];
+let currentRepo = 'amd64';
 
 export function setApps(newApps) {
     apps = newApps;
@@ -21,7 +22,7 @@ function createLoadingSkeleton() {
             <div class="my-8 space-y-4">
                 <!-- Category Title Skeleton -->
                 <div class="skeleton h-8 w-48"></div>
-                
+
                 <!-- App Cards Grid Skeleton -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     ${Array(6).fill().map(() => `
@@ -30,7 +31,7 @@ function createLoadingSkeleton() {
                             <figure class="hidden sm:block w-24 h-24 p-4">
                                 <div class="skeleton w-full h-full rounded-lg"></div>
                             </figure>
-                            
+
                             <!-- App Content Skeleton -->
                             <div class="card-body">
                                 <div class="hidden sm:block space-y-3">
@@ -53,22 +54,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     const appSections = document.getElementById('app-sections');
     const searchInput = document.getElementById('desktop-search-input');
     const mobileSearchInput = document.getElementById('mobile-search-input');
+    const repoAmd64 = document.getElementById('repo-amd64');
+    const repoArm64 = document.getElementById('repo-arm64');
+    const fileInput = document.getElementById('file-input');
+    const uploadButton = document.getElementById('upload-button');
 
     let categories = new Map();
 
     // Fetch app data from the provided URL
     async function fetchAppData() {
-        const appSections = document.getElementById('app-sections');
+        if (!appSections) return;
         const popularAppsCarousel = document.getElementById('popular-apps-carousel');
 
         // Show loading state
         appSections.innerHTML = createLoadingSkeleton();
-        popularAppsCarousel.innerHTML = ''; // Clear carousel while loading
+        if (popularAppsCarousel) {
+            popularAppsCarousel.innerHTML = ''; // Clear carousel while loading
+        }
 
         try {
-            const response = await fetch('https://raw.githubusercontent.com/xplshn/dbin-metadata/refs/heads/master/misc/cmd/modMetadataAIO-ng/METADATA_AIO_amd64_linux.json');
+            const response = await fetch(`METADATA_${currentRepo}_linux.json`);
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
             const data = await response.json();
-            setApps(data.pkg || []);
+            setApps(data);
             processCategories();
             initializeFromUrl(); // Initialize state from URL after data is fetched.
             displayPopularApps();
@@ -97,8 +109,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         categories.clear();
 
         getApps().forEach(app => {
-            if (app.category) {
-                const appCategories = app.category.split(',').map(cat => cat.trim());
+            if (app.categories) {
+                const appCategories = app.categories.split(',').map(cat => cat.trim());
                 appCategories.forEach(category => {
                     if (category) {
                         const count = categories.get(category) || 0;
@@ -145,6 +157,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Display the apps in the sections
     function displayApps(searchTerm = '') {
+        if (!appSections) return;
         let filteredApps = getApps();
 
         if (searchTerm) {
@@ -152,7 +165,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             filteredApps = filteredApps.filter(app =>
                 (app.pkg_name && app.pkg_name.toLowerCase().includes(term)) ||
                 (app.description && app.description.toLowerCase().includes(term)) ||
-                (app.category && app.category.toLowerCase().includes(term))
+                (app.categories && app.categories.toLowerCase().includes(term))
             );
         }
 
@@ -162,8 +175,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         categories.forEach((count, category) => {
             // Filter apps for this category
             const categoryApps = filteredApps.filter(app => {
-                if (!app.category) return false;
-                const appCategories = app.category.split(',').map(cat => cat.trim());
+                if (!app.categories) return false;
+                const appCategories = app.categories.split(',').map(cat => cat.trim());
                 return appCategories.includes(category) && !displayedApps.has(app.pkg_name || app.pkg_id);
             });
 
@@ -238,9 +251,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Show all apps in a specific category
     function showAllAppsInCategory(category) {
+        if (!appSections) return;
         const categoryApps = getApps().filter(app => {
-            if (!app.category) return false;
-            const appCategories = app.category.split(',').map(cat => cat.trim());
+            if (!app.categories) return false;
+            const appCategories = app.categories.split(',').map(cat => cat.trim());
             return appCategories.includes(category);
         });
 
@@ -266,26 +280,87 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Event Listeners
-    searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value;
-        displayApps(searchTerm);
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value;
+            displayApps(searchTerm);
 
-        // Update URL with search term
-        const url = new URL(window.location);
-        url.searchParams.set('search', searchTerm);
-        history.pushState({ search: searchTerm }, '', url);
-    });
+            // Update URL with search term
+            const url = new URL(window.location);
+            url.searchParams.set('search', searchTerm);
+            history.pushState({ search: searchTerm }, '', url);
+        });
+    }
 
+    if (mobileSearchInput) {
+        mobileSearchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value;
+            displayApps(searchTerm);
 
-    mobileSearchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value;
-        displayApps(searchTerm);
+            // Update URL with search term
+            const url = new URL(window.location);
+            url.searchParams.set('search', searchTerm);
+            history.pushState({ search: searchTerm }, '', url);
+        });
+    }
 
-        // Update URL with search term
-        const url = new URL(window.location);
-        url.searchParams.set('search', searchTerm);
-        history.pushState({ search: searchTerm }, '', url);
-    });
+    // Repository Selection Event Listeners
+    if (repoAmd64) {
+        repoAmd64.addEventListener('click', () => {
+            currentRepo = 'amd64';
+            fetchAppData();
+        });
+    }
+
+    if (repoArm64) {
+        repoArm64.addEventListener('click', () => {
+            currentRepo = 'arm64';
+            fetchAppData();
+        });
+    }
+
+    // File Input Event Listener
+    if (uploadButton) {
+        uploadButton.addEventListener('click', () => {
+            if (fileInput) {
+                fileInput.click();
+            }
+        });
+    }
+
+    if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        if (!data || typeof data !== 'object') {
+                            throw new Error('Invalid JSON structure: root should be an object');
+                        }
+                        const allApps = [];
+                        for (const key in data) {
+                            if (Array.isArray(data[key])) {
+                                allApps.push(...data[key]);
+                            }
+                        }
+                        setApps(allApps);
+                        processCategories();
+                        initializeFromUrl(); // Initialize state from URL after data is fetched.
+                        displayPopularApps();
+                        displayApps();
+                    } catch (error) {
+                        console.error('Error parsing JSON file:', error);
+                        if (appSections) {
+                            appSections.innerHTML = '<div class="error">Failed to load applications. Please ensure the file is a valid JSON object with arrays as values.</div>';
+                        }
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+    }
 
     // Initial load
     fetchAppData();
@@ -331,7 +406,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     `;
 
         const popularApps = getApps()
-            .sort((a, b) => b.popularity_rank - a.popularity_rank)
+            .sort((a, b) => b.rank - a.rank)
             .slice(0, 10);
 
         // Function to validate screenshots
@@ -398,14 +473,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             const nextSlide = index === popularApps.length - 1 ? 1 : index + 2;
 
             return `
-                <div id="${slideId}" 
-                     class="carousel-item relative w-full cursor-pointer" 
+                <div id="${slideId}"
+                     class="carousel-item relative w-full cursor-pointer"
                      data-name="${app.pkg_name || app.pkg_id}">
                     <div class="flex flex-col lg:flex-row justify-center w-full gap-4 p-4">
                         <div class="lg:w-1/3 flex items-center flex-col justify-center space-y-4">
                             <div class="flex items-center space-x-4">
-                                <img src="${app.icon}" 
-                                     alt="${app.pkg_name || app.pkg_id}" 
+                                <img src="${app.icon}"
+                                     alt="${app.pkg_name || app.pkg_id}"
                                      class="w-16 h-16 object-contain">
                                 <h3 class="text-lg sm:text-xl font-semibold">${app.pkg_name || app.pkg_id}</h3>
                             </div>
@@ -413,8 +488,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                         </div>
                         <div class="hidden lg:block lg:w-2/3 relative">
                             <div class="w-full h-48 overflow-hidden rounded-lg">
-                                <img src="${firstValidScreenshot}" 
-                                     alt="Screenshot" 
+                                <img src="${firstValidScreenshot}"
+                                     alt="Screenshot"
                                      class="w-full h-full object-cover bg-base-200">
                             </div>
                         </div>
@@ -471,7 +546,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         }
 
-
         let autoScrollInterval = setInterval(autoScroll, 5000);
 
         carousel.addEventListener('mouseenter', () => {
@@ -483,3 +557,4 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 });
+
