@@ -5,4 +5,5 @@ if ! wget -qO "$APPDIR/.DirIcon" "https://i.ibb.co/qx1n74v/image.png"; then
 	echo "Unable to add .DirIcon (png, 128x128) to the AppDir"
 	exit 1
 fi
-"$APPDIR"/.gen
+ID="$(basename "$APPDIR")"
+pelf --add-appdir "$APPDIR" --appbundle-id "$ID" --output-to "$ID.dwfs.AppBundle"
