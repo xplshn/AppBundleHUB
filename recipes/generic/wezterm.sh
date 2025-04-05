@@ -4,5 +4,6 @@ pelfCreator -m "xplshn" -n "org.wezfurlong.wezterm" -p "wezterm" -e "wezterm-gui
     	echo "Failed to 128x128 icon"
     	exit 1
     fi
-    "$APPDIR/.gen"
+    ID="$(basename "$APPDIR")"
+    pelf --add-appdir "$APPDIR" --appbundle-id "$ID" --output-to "$ID.dwfs.AppBundle"
 }
