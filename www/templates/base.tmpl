@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ block "title" . }}{{ end }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+    <style>
+        .skeleton {
+            animation: skeleton-loading 1s linear infinite alternate;
+        }
+        @keyframes skeleton-loading {
+            0% {
+                background-color: hsl(200, 20%, 80%);
+            }
+            100% {
+                background-color: hsl(200, 20%, 95%);
+            }
+        }
+        .app-icon {
+            width: 8rem;
+            height: 8rem;
+        }
+        .app-card {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .lazy-load-image {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .lazy-load-image.loaded {
+            opacity: 1;
+        }
+        .carousel-icon {
+            width: 6rem;
+            height: 6rem;
+        }
+    </style>
+</head>
+<body class="bg-base-100">
+    {{ block "content" . }}{{ end }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeButtons = document.querySelectorAll('[data-theme-value]');
+            const html = document.querySelector('html');
+            const themeIcon = document.getElementById('theme-icon');
+
+            const savedTheme = localStorage.getItem('app-theme') || 'auto';
+
+            function applyTheme(theme) {
+                if (theme === 'auto') {
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    html.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+                    themeIcon.textContent = prefersDark ? '🌙' : '🌞';
+                } else {
+                    html.setAttribute('data-theme', theme);
+                    themeIcon.textContent = theme === 'dark' ? '🌙' : '🌞';
+                }
+                localStorage.setItem('app-theme', theme);
+            }
+
+            applyTheme(savedTheme);
+
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (localStorage.getItem('app-theme') === 'auto') {
+                    applyTheme('auto');
+                }
+            });
+
+            themeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const theme = button.getAttribute('data-theme-value');
+                    applyTheme(theme);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

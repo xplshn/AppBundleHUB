@@ -1,0 +1,276 @@
+{{ define "title" }}AppBundleHUB{{ end }}
+
+{{ define "content" }}
+<div class="drawer">
+    <input id="my-drawer" type="checkbox" class="drawer-toggle" />
+    <div class="drawer-content flex flex-col">
+        <div class="navbar bg-base-200 shadow-lg sticky top-0 z-30">
+            <div class="navbar-start">
+                <label for="my-drawer" class="btn btn-ghost drawer-button lg:hidden">☰</label>
+                <a class="btn btn-ghost normal-case text-xl">AppBundleHUB</a>
+            </div>
+            <div class="navbar-end gap-2">
+                <div class="form-control flex flex-row gap-2">
+                    <div class="dropdown">
+                        <label tabindex="0" class="btn btn-outline">📦 Repos: {{.CurrentRepoSelection}}</label>
+                        <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow-2xl bg-base-300 rounded-box w-64">
+                            <li><a data-repo="all">All Repositories</a></li>
+                            {{range .RepoGroups}}
+                            <li class="menu-title">{{.Name}}</li>
+                            {{range .Repos}}
+                            <li><a data-repo="{{.Name}}">{{.Name}}</a></li>
+                            {{end}}
+                            {{end}}
+                        </ul>
+                    </div>
+                    <input type="text" placeholder="Search apps..." class="input input-bordered w-full md:w-auto" id="searchBar" />
+                </div>
+                <div class="dropdown dropdown-end">
+                    <label tabindex="0" class="btn btn-ghost btn-circle"><span id="theme-icon">🌞</span></label>
+                    <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow-2xl bg-base-300 rounded-box w-52">
+                        <li><a data-theme-value="auto">🔄 Auto</a></li>
+                        <li><a data-theme-value="light">🌞 Light</a></li>
+                        <li><a data-theme-value="dark">🌙 Dark</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <main class="flex-grow container mx-auto px-4 py-8">
+            <div class="carousel w-full rounded-box shadow-xl mb-10">
+                {{range $index, $entry := .TopEntries}}
+                <div id="slide{{$index}}" class="carousel-item relative w-full">
+                    {{if $entry.Screenshots}}
+                    <div class="hero h-64 md:h-80 lg:h-96" style="background-image: url({{index $entry.Screenshots 0}});">
+                    {{else}}
+                    <div class="hero h-64 md:h-80 lg:h-96" style="background-image: url({{$entry.Icon}});">
+                    {{end}}
+                        <div class="hero-overlay bg-opacity-60"></div>
+                        <div class="hero-content text-center text-neutral-content">
+                            <div class="max-w-md">
+                                <img src="{{$entry.Icon}}" alt="{{$entry.PrettyName}}" class="carousel-icon mx-auto mb-4" />
+                                <h1 class="mb-5 text-3xl md:text-4xl font-bold">{{$entry.PrettyName}}</h1>
+                                <p class="mb-5 line-clamp-2">{{$entry.Description}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+                        {{if eq $index 0}}
+                        <a href="#slide{{len $.TopEntries | dec}}" class="btn btn-circle">❮</a>
+                        {{else}}
+                        <a href="#slide{{$index | dec}}" class="btn btn-circle">❮</a>
+                        {{end}}
+                        {{if eq $index (len $.TopEntries | dec)}}
+                        <a href="#slide0" class="btn btn-circle">❯</a>
+                        {{else}}
+                        <a href="#slide{{$index | inc}}" class="btn btn-circle">❯</a>
+                        {{end}}
+                    </div>
+                </div>
+                {{end}}
+            </div>
+
+            {{range .Categories}}
+            {{$categoryEntries := index $.CategoryEntries .Name}}
+            {{if $categoryEntries}}
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold mb-4">{{.Name}}</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {{range first 9 $categoryEntries}}
+                    <div class="app-card card bg-base-200 shadow-md hover:shadow-xl transition-all"
+                         data-categories="{{.Categories}}"
+                         data-name="{{.PrettyName}}"
+                         data-description="{{.Description}}"
+                         data-repo="{{.RepoName}}"
+                         onclick="window.location.href='{{.RepoName}}/{{.Name}}/{{.PkgId}}/index.html'">
+                        <figure class="px-4 pt-4 relative h-40">
+                            <div class="skeleton w-full h-full rounded-lg"></div>
+                            <img data-src="{{.Icon}}" alt="{{.PrettyName}}"
+                                 class="lazy-load-image rounded-lg w-full h-full object-contain absolute inset-0"
+                                 loading="lazy" />
+                        </figure>
+                        <div class="card-body p-4">
+                            <div class="flex justify-between items-start">
+                                <h2 class="card-title text-lg">{{.PrettyName}}</h2>
+                                <span class="badge badge-outline badge-sm" title="{{.RepoURL}}">{{.RepoGroup}}</span>
+                            </div>
+                            <p class="text-sm line-clamp-2">{{.Description}}</p>
+                            <div class="card-actions justify-between items-center mt-3">
+                                <div class="flex flex-wrap gap-1">
+                                    {{if .Categories}}
+                                    {{range splitCategories .Categories}}
+                                    <a href="/categories/{{.}}/index.html" class="badge badge-outline badge-sm" onclick="event.stopPropagation()">{{.}}</a>
+                                    {{end}}
+                                    {{end}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{end}}
+                </div>
+                <div class="text-center mt-4">
+                    <a href="/categories/{{.Name}}/index.html" class="btn btn-primary">See More {{.Name}}...</a>
+                </div>
+            </div>
+            {{end}}
+            {{end}}
+
+            <div id="no-results" class="hidden col-span-full text-center py-10">
+                <div class="flex flex-col items-center justify-center gap-4">
+                    <span class="text-4xl">🔍</span>
+                    <h3 class="text-xl font-medium">No apps found</h3>
+                    <p class="text-sm opacity-70">Try adjusting your search or filter</p>
+                    <button class="btn btn-sm btn-ghost mt-2" data-category="all">Show all apps</button>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer p-10 bg-base-200 text-base-content">
+            <aside>
+                <span class="text-4xl">📦</span>
+                <p class="font-bold">AppBundleHUB<br/>Your one-stop portable Linux apps repository</p>
+                <p>Copyright © 2024-2025 - ZERO rights reserved</p>
+            </aside>
+            <nav>
+                <a class="link link-hover" href="https://github.com/xplshn/AppBundleHUB">Source Code</a>
+            </nav>
+        </footer>
+    </div>
+
+    <div class="drawer-side z-40">
+        <label for="my-drawer" class="drawer-overlay"></label>
+        <ul class="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
+            <li class="mb-4">
+                <a class="flex items-center gap-2">
+                    <span class="text-2xl">📦</span>
+                    <span class="font-bold text-lg">AppBundleHUB</span>
+                </a>
+            </li>
+            <li class="menu-title">Categories</li>
+            <li><a data-category="all">All Applications</a></li>
+            {{range .Categories}}
+            <li><a data-category="{{.Name}}">{{.Name}}</a></li>
+            {{end}}
+            <li class="menu-title mt-4">Repositories</li>
+            <li><a data-repo="all">All Repositories</a></li>
+            {{range .RepoGroups}}
+            <li class="menu-title">{{.Name}}</li>
+            {{range .Repos}}
+            <li><a data-repo="{{.Name}}">{{.Name}}</a></li>
+            {{end}}
+            {{end}}
+        </ul>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const lazyLoadImages = document.querySelectorAll('.lazy-load-image');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    const src = img.getAttribute('data-src');
+                    img.setAttribute('src', src);
+                    img.addEventListener('load', () => {
+                        img.classList.add('loaded');
+                        const skeleton = img.previousElementSibling;
+                        if (skeleton && skeleton.classList.contains('skeleton')) {
+                            skeleton.style.display = 'none';
+                        }
+                    });
+                    observer.unobserve(img);
+                }
+            });
+        }, { threshold: 0.1 });
+
+        lazyLoadImages.forEach(img => {
+            observer.observe(img);
+        });
+
+        const categoryButtons = document.querySelectorAll('[data-category]');
+        const appCards = document.querySelectorAll('.app-card');
+        const noResults = document.getElementById('no-results');
+        const repoButtons = document.querySelectorAll('[data-repo]');
+        let currentRepoFilter = 'all';
+
+        function filterApps(category, repo) {
+            let hasResults = false;
+
+            appCards.forEach(card => {
+                const cardCategories = card.getAttribute('data-categories').toLowerCase();
+                const cardRepo = card.getAttribute('data-repo');
+
+                const categoryMatch = category === 'all' || cardCategories.includes(category.toLowerCase());
+                const repoMatch = repo === 'all' || cardRepo === repo;
+
+                if (categoryMatch && repoMatch) {
+                    card.style.display = '';
+                    hasResults = true;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            noResults.classList.toggle('hidden', hasResults);
+
+            document.querySelectorAll('[data-category]').forEach(btn => {
+                btn.classList.toggle('btn-active', btn.getAttribute('data-category') === category);
+            });
+
+            document.querySelectorAll('[data-repo]').forEach(btn => {
+                btn.classList.toggle('btn-active', btn.getAttribute('data-repo') === repo);
+            });
+
+            if (repo === 'all') {
+                document.querySelector('.dropdown label').textContent = '📦 Repos: All';
+            } else {
+                document.querySelector('.dropdown label').textContent = '📦 Repos: ' +
+                    Array.from(document.querySelectorAll('[data-repo]'))
+                        .find(btn => btn.getAttribute('data-repo') === repo).textContent;
+            }
+        }
+
+        categoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const category = button.getAttribute('data-category');
+                filterApps(category, currentRepoFilter);
+                document.getElementById('my-drawer').checked = false;
+            });
+        });
+
+        repoButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const repo = button.getAttribute('data-repo');
+                currentRepoFilter = repo;
+                const currentCategory = document.querySelector('[data-category].btn-active')?.getAttribute('data-category') || 'all';
+                filterApps(currentCategory, repo);
+                document.getElementById('my-drawer').checked = false;
+            });
+        });
+
+        const searchBar = document.getElementById('searchBar');
+        searchBar.addEventListener('input', () => {
+            const searchTerm = searchBar.value.toLowerCase();
+            let hasResults = false;
+
+            appCards.forEach(card => {
+                if (card.style.display === 'none') return;
+
+                const appName = card.getAttribute('data-name').toLowerCase();
+                const appDesc = card.getAttribute('data-description').toLowerCase();
+                const isVisible = appName.includes(searchTerm) || appDesc.includes(searchTerm);
+
+                if (isVisible) {
+                    card.style.display = '';
+                    hasResults = true;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            noResults.classList.toggle('hidden', hasResults || searchTerm === '');
+        });
+    });
+</script>
+{{ end }}
