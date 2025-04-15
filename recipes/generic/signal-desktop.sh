@@ -1,1 +1,1 @@
-pelfCreator  -m "xplshn" -n "org.signal.Signal" -p "signal-desktop" -e "signal-desktop.desktop"
+pelfCreator  -m "xplshn" -n "org.signal.Signal" -p "signal-desktop@testing" -e "signal-desktop.desktop"
