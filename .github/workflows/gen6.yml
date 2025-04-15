@@ -94,7 +94,7 @@ jobs:
           for script in "$GITHUB_WORKSPACE/recipes/"*/*.*sh; do
             if echo "$script" | grep -E "$PATTERN"; then
               chmod +x "$script"
-              DEBUG=1 "$script"
+              DEBUG=x "$script"
             fi
           done
 
