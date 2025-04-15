@@ -1,2 +1,0 @@
-# Reason: Package is too big, it has been added using cachyOS as base too. # NOTE: Kept for use as reference to add more eweOS-based packages
-eweos_x86_64 pelfCreator -m "xplshn" -n "org.prismlauncher.PrismLauncher" -p "prismlauncher qt6-wayland" -e "org.prismlauncher.PrismLauncher.desktop" -s
