@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: alpine:latest
+      image: alpine:edge
 
     steps:
       - name: Install Hugo, Git, and the worst version of Tar
