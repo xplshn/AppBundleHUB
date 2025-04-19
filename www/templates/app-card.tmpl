@@ -1,0 +1,32 @@
+{{ define "app-card" }}
+
+<div class="app-card card bg-base-200 shadow-md hover:shadow-xl transition-all"
+     data-categories="{{.Categories}}"
+     data-name="{{.PrettyName}}"
+     data-description="{{.Description}}"
+     data-repo="{{.RepoName}}"
+     onclick="window.location.href='./{{.Name}}/{{.PkgId}}:{{.RepoName}}/index.html'">
+    <figure class="px-4 pt-4 relative h-40">
+        <div class="skeleton w-full h-full rounded-lg"></div>
+        <img data-src="{{.Icon}}" alt="{{.PrettyName}}"
+             class="lazy-load-image rounded-lg w-full h-full object-contain absolute inset-0"
+             loading="lazy" />
+    </figure>
+    <div class="card-body p-4">
+        <div class="flex justify-between items-start">
+            <h2 class="card-title text-lg">{{.PrettyName}}</h2>
+            <span class="badge badge-outline badge-sm" title="{{.RepoURL}}">{{.RepoGroup}}</span>
+        </div>
+        <p class="text-sm line-clamp-2">{{.Description}}</p>
+        <div class="card-actions justify-between items-center mt-3">
+            <div class="flex flex-wrap gap-1">
+                {{if .Categories}}
+                {{range splitCategories .Categories}}
+                <a href="categories/{{.}}/index.html" class="badge badge-outline badge-sm" onclick="event.stopPropagation()">{{.}}</a>
+                {{end}}
+                {{end}}
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }}

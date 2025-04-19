@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>torzu - AppBundleHUB</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+    <style>
+        .skeleton {
+            animation: skeleton-loading 1s linear infinite alternate;
+        }
+        @keyframes skeleton-loading {
+            0% {
+                background-color: hsl(200, 20%, 80%);
+            }
+            100% {
+                background-color: hsl(200, 20%, 95%);
+            }
+        }
+        .app-icon {
+            width: 8rem;
+            height: 8rem;
+        }
+        .app-card {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .lazy-load-image {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .lazy-load-image.loaded {
+            opacity: 1;
+        }
+        .carousel-icon {
+            width: 6rem;
+            height: 6rem;
+        }
+    </style>
+</head>
+<body class="bg-base-100">
+    
+
+<div class="navbar bg-base-200 shadow-lg sticky top-0 z-30">
+    <div class="navbar-start">
+        <a href="../../index.html" class="btn btn-ghost">↩ Back</a>
+    </div>
+    <div class="navbar-center">
+        <a href="../../index.html" class="btn btn-ghost normal-case text-xl">AppBundleHUB</a>
+    </div>
+    <div class="navbar-end">
+        <div class="dropdown dropdown-end">
+            <label tabindex="0" class="btn btn-ghost btn-circle"><span id="theme-icon">🌞</span></label>
+            <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow-2xl bg-base-300 rounded-box w-52">
+                <li><a data-theme-value="auto">🔄 Auto</a></li>
+                <li><a data-theme-value="light">🌞 Light</a></li>
+                <li><a data-theme-value="dark">🌙 Dark</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-3">
+            <div class="flex flex-col sm:flex-row gap-6 items-center bg-base-200 p-6 rounded-box shadow-lg">
+                <div class="skeleton rounded-lg app-icon" id="app-icon-skeleton"></div>
+                <img src="https://api.ghcr.pkgforge.dev/pkgforge/pkgcache/torzu/appimage/pkgforge-dev/stable/torzu?tag=20250330-152425-x86_64-linux&amp;download=torzu.png" alt="torzu" class="app-icon object-contain rounded-lg"
+                     onload="document.getElementById('app-icon-skeleton').style.display='none';" />
+                <div class="text-center sm:text-left">
+                    <h1 class="text-3xl font-bold">torzu</h1>
+                    <div class="flex flex-wrap gap-1 mt-2">
+                        
+                        <span class="badge badge-outline" title="https://raw.githubusercontent.com/xplshn/dbin-metadata/refs/heads/master/misc/cmd/1.4/pkgcache_amd64_linux.web.cbor.zst">pkgcache</span>
+                    </div>
+                    <div class="flex flex-wrap gap-4 mt-3">
+                        <div class="tooltip" data-tip="Version">
+                            <span class="flex items-center gap-1">📌 20250330-152425</span>
+                        </div>
+                        <div class="tooltip" data-tip="Size">
+                            <span class="flex items-center gap-1">📦 126 MB</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="ml-auto flex flex-col sm:flex-row gap-3">
+                    <a href="dbin://ask/install/torzu.appimage#github.com.pkgforge-dev.Torzu-AppImage.stable" class="btn btn-primary tooltip" data-tip="dbin://ask/ protocol needed!">
+                        ⚡ Install
+                    </a>
+                    
+                    <div class="dropdown dropdown-end">
+                        <label tabindex="0" class="btn btn-outline">🔄 Other Versions</label>
+                        <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow-2xl bg-base-300 rounded-box w-64">
+                            
+                            <li><a href="../../pkgcache/torzu.appimage/github.com.pkgforge-dev.Torzu-AppImage.v3/index.html">github.com.pkgforge-dev.Torzu-AppImage.v3 (20250330-152425)</a></li>
+                            
+                        </ul>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2">
+            
+<div class="card bg-base-200 shadow-lg">
+    <div class="card-body">
+        <h2 class="card-title">Screenshots</h2>
+        
+        <div class="alert alert-info shadow-lg">
+            <span>ℹ️ No screenshots available for this application.</span>
+        </div>
+        
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const carousel = document.getElementById('screenshot-carousel');
+        if (carousel) {
+            let currentIndex = 0;
+            const slides = carousel.querySelectorAll('.carousel-item');
+            const totalSlides = slides.length;
+
+            function showSlide(index) {
+                slides.forEach((slide, i) => {
+                    slide.style.display = i === index ? 'block' : 'none';
+                });
+            }
+
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % totalSlides;
+                showSlide(currentIndex);
+            }
+
+            showSlide(currentIndex);
+            setInterval(nextSlide, 4000);
+
+            carousel.addEventListener('click', function(event) {
+                if (event.target.tagName === 'A') {
+                    event.preventDefault();
+                    const targetId = event.target.getAttribute('href').substring(1);
+                    const targetIndex = parseInt(targetId.replace('slide', ''), 10);
+                    currentIndex = targetIndex;
+                    showSlide(currentIndex);
+                }
+            });
+        }
+    });
+</script>
+
+        </div>
+
+        <div class="lg:col-span-1">
+            
+<div class="card bg-base-200 shadow-lg">
+    <div class="card-body">
+        <h2 class="card-title">Details</h2>
+        <div class="overflow-x-auto">
+            <table class="table table-zebra">
+                <tbody>
+                    <tr><td class="font-bold">Package Name</td><td>torzu.appimage</td></tr>
+                    <tr><td class="font-bold">Package ID</td><td>github.com.pkgforge-dev.Torzu-AppImage.stable</td></tr>
+                    <tr><td class="font-bold">Build Date</td><td>2025-03-30T19:13:59Z</td></tr>
+                    <tr>
+                        <td class="font-bold">License</td>
+                        <td>
+                            
+                            <span class="badge badge-outline badge-sm">GPL-3.0</span>
+                            
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        
+        <div class="mt-4">
+            <h3 class="font-bold">Source Code</h3>
+            <ol class="list-decimal list-inside">
+                
+                <li><a href="https://github.com/pkgforge-dev/Torzu-AppImage" class="link link-primary break-all">https://github.com/pkgforge-dev/Torzu-AppImage</a></li>
+                
+            </ol>
+        </div>
+        
+
+        
+        <div class="mt-4">
+            <h3 class="font-bold">Website</h3>
+            <ol class="list-decimal list-inside">
+                
+                <li><a href="https://notabug.org/litucks/torzu" class="link link-primary break-all">https://notabug.org/litucks/torzu</a></li>
+                
+            </ol>
+        </div>
+        
+    </div>
+</div>
+
+        </div>
+
+        <div class="lg:col-span-3">
+            <div class="card bg-base-200 shadow-lg">
+                <div class="card-body">
+                    <h2 class="card-title">Description</h2>
+                    <p class="whitespace-pre-line">Fork of yuzu, an open-source Nintendo Switch emulator</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-3">
+            
+<div class="card bg-base-200 shadow-lg">
+    <div class="card-body">
+        <h2 class="card-title">Installation</h2>
+        <div class="alert alert-info shadow-lg">
+            <span>ℹ️ Manual install using dbin</span>
+        </div>
+        <div class="mockup-code">
+            <pre data-prefix="$"><code>dbin install torzu.appimage#github.com.pkgforge-dev.Torzu-AppImage.stable</code></pre>
+        </div>
+    </div>
+</div>
+
+        </div>
+    </div>
+</div>
+
+    
+<footer class="footer p-10 bg-base-200 text-base-content">
+    <aside>
+        <span class="text-4xl">📦</span>
+        <p class="font-bold">AppBundleHUB<br/>Your one-stop portable Linux apps repository</p>
+        <p>🅮 - ZERO rights reserved</p>
+    </aside>
+    <nav>
+        <a class="link link-hover" href="https://github.com/xplshn/AppBundleHUB">Source Code</a>
+    </nav>
+</footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeButtons = document.querySelectorAll('[data-theme-value]');
+            const html = document.querySelector('html');
+            const themeIcon = document.getElementById('theme-icon');
+
+            const savedTheme = localStorage.getItem('app-theme') || 'auto';
+
+            function applyTheme(theme) {
+                if (theme === 'auto') {
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    html.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+                    themeIcon.textContent = prefersDark ? '🌙' : '🌞';
+                } else {
+                    html.setAttribute('data-theme', theme);
+                    themeIcon.textContent = theme === 'dark' ? '🌙' : '🌞';
+                }
+                localStorage.setItem('app-theme', theme);
+            }
+
+            applyTheme(savedTheme);
+
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (localStorage.getItem('app-theme') === 'auto') {
+                    applyTheme('auto');
+                }
+            });
+
+            themeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const theme = button.getAttribute('data-theme-value');
+                    applyTheme(theme);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

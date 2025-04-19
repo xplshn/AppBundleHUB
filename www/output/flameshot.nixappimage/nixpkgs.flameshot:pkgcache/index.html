@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flameshot - AppBundleHUB</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+    <style>
+        .skeleton {
+            animation: skeleton-loading 1s linear infinite alternate;
+        }
+        @keyframes skeleton-loading {
+            0% {
+                background-color: hsl(200, 20%, 80%);
+            }
+            100% {
+                background-color: hsl(200, 20%, 95%);
+            }
+        }
+        .app-icon {
+            width: 8rem;
+            height: 8rem;
+        }
+        .app-card {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .lazy-load-image {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .lazy-load-image.loaded {
+            opacity: 1;
+        }
+        .carousel-icon {
+            width: 6rem;
+            height: 6rem;
+        }
+    </style>
+</head>
+<body class="bg-base-100">
+    
+
+<div class="navbar bg-base-200 shadow-lg sticky top-0 z-30">
+    <div class="navbar-start">
+        <a href="../../index.html" class="btn btn-ghost">↩ Back</a>
+    </div>
+    <div class="navbar-center">
+        <a href="../../index.html" class="btn btn-ghost normal-case text-xl">AppBundleHUB</a>
+    </div>
+    <div class="navbar-end">
+        <div class="dropdown dropdown-end">
+            <label tabindex="0" class="btn btn-ghost btn-circle"><span id="theme-icon">🌞</span></label>
+            <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow-2xl bg-base-300 rounded-box w-52">
+                <li><a data-theme-value="auto">🔄 Auto</a></li>
+                <li><a data-theme-value="light">🌞 Light</a></li>
+                <li><a data-theme-value="dark">🌙 Dark</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-3">
+            <div class="flex flex-col sm:flex-row gap-6 items-center bg-base-200 p-6 rounded-box shadow-lg">
+                <div class="skeleton rounded-lg app-icon" id="app-icon-skeleton"></div>
+                <img src="https://api.ghcr.pkgforge.dev/pkgforge/pkgcache/flameshot/nixappimage/nixpkgs/unstable/flameshot?tag=12.1.0-unstable-2025-03-10-x86_64-linux&amp;download=flameshot.png" alt="flameshot" class="app-icon object-contain rounded-lg"
+                     onload="document.getElementById('app-icon-skeleton').style.display='none';" />
+                <div class="text-center sm:text-left">
+                    <h1 class="text-3xl font-bold">flameshot</h1>
+                    <div class="flex flex-wrap gap-1 mt-2">
+                        
+                        
+                        <a href="../../categories/Graphics/index.html" class="badge badge-outline">Graphics</a>
+                        
+                        
+                        <span class="badge badge-outline" title="https://raw.githubusercontent.com/xplshn/dbin-metadata/refs/heads/master/misc/cmd/1.4/pkgcache_amd64_linux.web.cbor.zst">pkgcache</span>
+                    </div>
+                    <div class="flex flex-wrap gap-4 mt-3">
+                        <div class="tooltip" data-tip="Version">
+                            <span class="flex items-center gap-1">📌 12.1.0-unstable-2025-03-10</span>
+                        </div>
+                        <div class="tooltip" data-tip="Size">
+                            <span class="flex items-center gap-1">📦 99 MB</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="ml-auto flex flex-col sm:flex-row gap-3">
+                    <a href="dbin://ask/install/flameshot.nixappimage#nixpkgs.flameshot" class="btn btn-primary tooltip" data-tip="dbin://ask/ protocol needed!">
+                        ⚡ Install
+                    </a>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2">
+            
+<div class="card bg-base-200 shadow-lg">
+    <div class="card-body">
+        <h2 class="card-title">Screenshots</h2>
+        
+        <div class="carousel w-full rounded-box" id="screenshot-carousel">
+            
+            <div id="slide0" class="carousel-item relative w-full">
+                <a href="https://raw.githubusercontent.com/flameshot-org/flameshot/master/data/img/preview/usageStatic.png" target="_blank">
+                    <div class="skeleton w-full h-80 rounded-lg"></div>
+                    <img src="https://raw.githubusercontent.com/flameshot-org/flameshot/master/data/img/preview/usageStatic.png" alt="Screenshot 0"
+                         class="w-full h-80 object-contain"
+                         onload="this.previousElementSibling.style.display='none';" />
+                </a>
+                <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+                    
+                    <a href="#slide1" class="btn btn-circle">❮</a>
+                    
+                    
+                    <a href="#slide1" class="btn btn-circle">❯</a>
+                    
+                </div>
+            </div>
+            
+            <div id="slide1" class="carousel-item relative w-full">
+                <a href="https://raw.githubusercontent.com/flameshot-org/flameshot/master/data/img/preview/animatedUsage.gif" target="_blank">
+                    <div class="skeleton w-full h-80 rounded-lg"></div>
+                    <img src="https://raw.githubusercontent.com/flameshot-org/flameshot/master/data/img/preview/animatedUsage.gif" alt="Screenshot 1"
+                         class="w-full h-80 object-contain"
+                         onload="this.previousElementSibling.style.display='none';" />
+                </a>
+                <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+                    
+                    <a href="#slide0" class="btn btn-circle">❮</a>
+                    
+                    
+                    <a href="#slide0" class="btn btn-circle">❯</a>
+                    
+                </div>
+            </div>
+            
+        </div>
+        <div class="flex justify-center w-full py-2 gap-2">
+            
+            <a href="#slide0" class="btn btn-xs">1</a>
+            
+            <a href="#slide1" class="btn btn-xs">2</a>
+            
+        </div>
+        
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const carousel = document.getElementById('screenshot-carousel');
+        if (carousel) {
+            let currentIndex = 0;
+            const slides = carousel.querySelectorAll('.carousel-item');
+            const totalSlides = slides.length;
+
+            function showSlide(index) {
+                slides.forEach((slide, i) => {
+                    slide.style.display = i === index ? 'block' : 'none';
+                });
+            }
+
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % totalSlides;
+                showSlide(currentIndex);
+            }
+
+            showSlide(currentIndex);
+            setInterval(nextSlide, 4000);
+
+            carousel.addEventListener('click', function(event) {
+                if (event.target.tagName === 'A') {
+                    event.preventDefault();
+                    const targetId = event.target.getAttribute('href').substring(1);
+                    const targetIndex = parseInt(targetId.replace('slide', ''), 10);
+                    currentIndex = targetIndex;
+                    showSlide(currentIndex);
+                }
+            });
+        }
+    });
+</script>
+
+        </div>
+
+        <div class="lg:col-span-1">
+            
+<div class="card bg-base-200 shadow-lg">
+    <div class="card-body">
+        <h2 class="card-title">Details</h2>
+        <div class="overflow-x-auto">
+            <table class="table table-zebra">
+                <tbody>
+                    <tr><td class="font-bold">Package Name</td><td>flameshot.nixappimage</td></tr>
+                    <tr><td class="font-bold">Package ID</td><td>nixpkgs.flameshot</td></tr>
+                    <tr><td class="font-bold">Build Date</td><td>2025-03-25T20:14:03Z</td></tr>
+                    <tr>
+                        <td class="font-bold">License</td>
+                        <td>
+                            
+                            <span class="badge badge-outline badge-sm">GPL-3.0</span>
+                            
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        
+        <div class="mt-4">
+            <h3 class="font-bold">Source Code</h3>
+            <ol class="list-decimal list-inside">
+                
+                <li><a href="https://github.com/flameshot/flameshot" class="link link-primary break-all">https://github.com/flameshot/flameshot</a></li>
+                
+            </ol>
+        </div>
+        
+
+        
+        <div class="mt-4">
+            <h3 class="font-bold">Website</h3>
+            <ol class="list-decimal list-inside">
+                
+                <li><a href="https://flameshot.org" class="link link-primary break-all">https://flameshot.org</a></li>
+                
+                <li><a href="https://github.com/flameshot-org/flameshot" class="link link-primary break-all">https://github.com/flameshot-org/flameshot</a></li>
+                
+            </ol>
+        </div>
+        
+    </div>
+</div>
+
+        </div>
+
+        <div class="lg:col-span-3">
+            <div class="card bg-base-200 shadow-lg">
+                <div class="card-body">
+                    <h2 class="card-title">Description</h2>
+                    <p class="whitespace-pre-line">Powerful and simple to use screenshot software</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="lg:col-span-3">
+            
+<div class="card bg-base-200 shadow-lg">
+    <div class="card-body">
+        <h2 class="card-title">Installation</h2>
+        <div class="alert alert-info shadow-lg">
+            <span>ℹ️ Manual install using dbin</span>
+        </div>
+        <div class="mockup-code">
+            <pre data-prefix="$"><code>dbin install flameshot.nixappimage#nixpkgs.flameshot</code></pre>
+        </div>
+    </div>
+</div>
+
+        </div>
+    </div>
+</div>
+
+    
+<footer class="footer p-10 bg-base-200 text-base-content">
+    <aside>
+        <span class="text-4xl">📦</span>
+        <p class="font-bold">AppBundleHUB<br/>Your one-stop portable Linux apps repository</p>
+        <p>🅮 - ZERO rights reserved</p>
+    </aside>
+    <nav>
+        <a class="link link-hover" href="https://github.com/xplshn/AppBundleHUB">Source Code</a>
+    </nav>
+</footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeButtons = document.querySelectorAll('[data-theme-value]');
+            const html = document.querySelector('html');
+            const themeIcon = document.getElementById('theme-icon');
+
+            const savedTheme = localStorage.getItem('app-theme') || 'auto';
+
+            function applyTheme(theme) {
+                if (theme === 'auto') {
+                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    html.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+                    themeIcon.textContent = prefersDark ? '🌙' : '🌞';
+                } else {
+                    html.setAttribute('data-theme', theme);
+                    themeIcon.textContent = theme === 'dark' ? '🌙' : '🌞';
+                }
+                localStorage.setItem('app-theme', theme);
+            }
+
+            applyTheme(savedTheme);
+
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (localStorage.getItem('app-theme') === 'auto') {
+                    applyTheme('auto');
+                }
+            });
+
+            themeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const theme = button.getAttribute('data-theme-value');
+                    applyTheme(theme);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

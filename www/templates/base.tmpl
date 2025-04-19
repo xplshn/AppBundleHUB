@@ -51,6 +51,7 @@
 </head>
 <body class="bg-base-100">
     {{ block "content" . }}{{ end }}
+    {{ template "footer" . }}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const themeButtons = document.querySelectorAll('[data-theme-value]');

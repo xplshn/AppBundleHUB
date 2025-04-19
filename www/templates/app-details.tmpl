@@ -1,0 +1,46 @@
+{{ define "app-details" }}
+<div class="card bg-base-200 shadow-lg">
+    <div class="card-body">
+        <h2 class="card-title">Details</h2>
+        <div class="overflow-x-auto">
+            <table class="table table-zebra">
+                <tbody>
+                    <tr><td class="font-bold">Package Name</td><td>{{.Name}}</td></tr>
+                    <tr><td class="font-bold">Package ID</td><td>{{.PkgId}}</td></tr>
+                    <tr><td class="font-bold">Build Date</td><td>{{.BuildDate}}</td></tr>
+                    <tr>
+                        <td class="font-bold">License</td>
+                        <td>
+                            {{range .License}}
+                            <span class="badge badge-outline badge-sm">{{.}}</span>
+                            {{end}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        {{if .SrcURLs}}
+        <div class="mt-4">
+            <h3 class="font-bold">Source Code</h3>
+            <ol class="list-decimal list-inside">
+                {{range .SrcURLs}}
+                <li><a href="{{.}}" class="link link-primary break-all">{{.}}</a></li>
+                {{end}}
+            </ol>
+        </div>
+        {{end}}
+
+        {{if .WebURLs}}
+        <div class="mt-4">
+            <h3 class="font-bold">Website</h3>
+            <ol class="list-decimal list-inside">
+                {{range .WebURLs}}
+                <li><a href="{{.}}" class="link link-primary break-all">{{.}}</a></li>
+                {{end}}
+            </ol>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{ end }}

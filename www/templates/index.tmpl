@@ -16,10 +16,10 @@
                         <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow-2xl bg-base-300 rounded-box w-64">
                             <li><a data-repo="all">All Repositories</a></li>
                             {{range .RepoGroups}}
-                            <li class="menu-title">{{.Name}}</li>
-                            {{range .Repos}}
-                            <li><a data-repo="{{.Name}}">{{.Name}}</a></li>
-                            {{end}}
+                                <li class="menu-title">{{.Name}}</li>
+                                {{range .Repos}}
+                                    <li><a data-repo="{{.Name}}">{{.Name}}</a></li>
+                                {{end}}
                             {{end}}
                         </ul>
                     </div>
@@ -37,7 +37,7 @@
         </div>
 
         <main class="flex-grow container mx-auto px-4 py-8">
-            <div class="carousel w-full rounded-box shadow-xl mb-10">
+            <div class="carousel w-full rounded-box shadow-xl mb-10" id="top-carousel">
                 {{range $index, $entry := .TopEntries}}
                 <div id="slide{{$index}}" class="carousel-item relative w-full">
                     {{if $entry.Screenshots}}
@@ -73,43 +73,15 @@
             {{range .Categories}}
             {{$categoryEntries := index $.CategoryEntries .Name}}
             {{if $categoryEntries}}
-            <div class="mb-8">
+            <div class="mb-8 category-section" data-category="{{.Name}}">
                 <h2 class="text-2xl font-bold mb-4">{{.Name}}</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {{range first 9 $categoryEntries}}
-                    <div class="app-card card bg-base-200 shadow-md hover:shadow-xl transition-all"
-                         data-categories="{{.Categories}}"
-                         data-name="{{.PrettyName}}"
-                         data-description="{{.Description}}"
-                         data-repo="{{.RepoName}}"
-                         onclick="window.location.href='{{.RepoName}}/{{.Name}}/{{.PkgId}}/index.html'">
-                        <figure class="px-4 pt-4 relative h-40">
-                            <div class="skeleton w-full h-full rounded-lg"></div>
-                            <img data-src="{{.Icon}}" alt="{{.PrettyName}}"
-                                 class="lazy-load-image rounded-lg w-full h-full object-contain absolute inset-0"
-                                 loading="lazy" />
-                        </figure>
-                        <div class="card-body p-4">
-                            <div class="flex justify-between items-start">
-                                <h2 class="card-title text-lg">{{.PrettyName}}</h2>
-                                <span class="badge badge-outline badge-sm" title="{{.RepoURL}}">{{.RepoGroup}}</span>
-                            </div>
-                            <p class="text-sm line-clamp-2">{{.Description}}</p>
-                            <div class="card-actions justify-between items-center mt-3">
-                                <div class="flex flex-wrap gap-1">
-                                    {{if .Categories}}
-                                    {{range splitCategories .Categories}}
-                                    <a href="/categories/{{.}}/index.html" class="badge badge-outline badge-sm" onclick="event.stopPropagation()">{{.}}</a>
-                                    {{end}}
-                                    {{end}}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {{range first 6 (sortByRank $categoryEntries)}}
+                    {{ template "app-card" . }}
                     {{end}}
                 </div>
                 <div class="text-center mt-4">
-                    <a href="/categories/{{.Name}}/index.html" class="btn btn-primary">See More {{.Name}}...</a>
+                    <a href="categories/{{.Name}}/index.html" class="btn btn-primary">See More {{.Name}}...</a>
                 </div>
             </div>
             {{end}}
@@ -124,17 +96,6 @@
                 </div>
             </div>
         </main>
-
-        <footer class="footer p-10 bg-base-200 text-base-content">
-            <aside>
-                <span class="text-4xl">📦</span>
-                <p class="font-bold">AppBundleHUB<br/>Your one-stop portable Linux apps repository</p>
-                <p>Copyright © 2024-2025 - ZERO rights reserved</p>
-            </aside>
-            <nav>
-                <a class="link link-hover" href="https://github.com/xplshn/AppBundleHUB">Source Code</a>
-            </nav>
-        </footer>
     </div>
 
     <div class="drawer-side z-40">
@@ -255,8 +216,6 @@
             let hasResults = false;
 
             appCards.forEach(card => {
-                if (card.style.display === 'none') return;
-
                 const appName = card.getAttribute('data-name').toLowerCase();
                 const appDesc = card.getAttribute('data-description').toLowerCase();
                 const isVisible = appName.includes(searchTerm) || appDesc.includes(searchTerm);
@@ -269,8 +228,43 @@
                 }
             });
 
+            document.querySelectorAll('.category-section').forEach(section => {
+                section.style.display = 'none';
+            });
+
             noResults.classList.toggle('hidden', hasResults || searchTerm === '');
         });
+
+        const carousel = document.getElementById('top-carousel');
+        if (carousel) {
+            let currentIndex = 0;
+            const slides = carousel.querySelectorAll('.carousel-item');
+            const totalSlides = slides.length;
+
+            function showSlide(index) {
+                slides.forEach((slide, i) => {
+                    slide.style.display = i === index ? 'block' : 'none';
+                });
+            }
+
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % totalSlides;
+                showSlide(currentIndex);
+            }
+
+            showSlide(currentIndex);
+            setInterval(nextSlide, 4000);
+
+            carousel.addEventListener('click', function(event) {
+                if (event.target.tagName === 'A') {
+                    event.preventDefault();
+                    const targetId = event.target.getAttribute('href').substring(1);
+                    const targetIndex = parseInt(targetId.replace('slide', ''), 10);
+                    currentIndex = targetIndex;
+                    showSlide(currentIndex);
+                }
+            });
+        }
     });
 </script>
 {{ end }}

@@ -1,0 +1,76 @@
+{{ define "carousel" }}
+<div class="card bg-base-200 shadow-lg">
+    <div class="card-body">
+        <h2 class="card-title">Screenshots</h2>
+        {{if .Screenshots}}
+        <div class="carousel w-full rounded-box" id="screenshot-carousel">
+            {{range $index, $screenshot := .Screenshots}}
+            <div id="slide{{$index}}" class="carousel-item relative w-full">
+                <a href="{{$screenshot}}" target="_blank">
+                    <div class="skeleton w-full h-80 rounded-lg"></div>
+                    <img src="{{$screenshot}}" alt="Screenshot {{$index}}"
+                         class="w-full h-80 object-contain"
+                         onload="this.previousElementSibling.style.display='none';" />
+                </a>
+                <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+                    {{if eq $index 0}}
+                    <a href="#slide{{len $.Screenshots | dec}}" class="btn btn-circle">❮</a>
+                    {{else}}
+                    <a href="#slide{{$index | dec}}" class="btn btn-circle">❮</a>
+                    {{end}}
+                    {{if eq $index (len $.Screenshots | dec)}}
+                    <a href="#slide0" class="btn btn-circle">❯</a>
+                    {{else}}
+                    <a href="#slide{{$index | inc}}" class="btn btn-circle">❯</a>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
+        </div>
+        <div class="flex justify-center w-full py-2 gap-2">
+            {{range $index, $screenshot := .Screenshots}}
+            <a href="#slide{{$index}}" class="btn btn-xs">{{inc $index}}</a>
+            {{end}}
+        </div>
+        {{else}}
+        <div class="alert alert-info shadow-lg">
+            <span>ℹ️ No screenshots available for this application.</span>
+        </div>
+        {{end}}
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const carousel = document.getElementById('screenshot-carousel');
+        if (carousel) {
+            let currentIndex = 0;
+            const slides = carousel.querySelectorAll('.carousel-item');
+            const totalSlides = slides.length;
+
+            function showSlide(index) {
+                slides.forEach((slide, i) => {
+                    slide.style.display = i === index ? 'block' : 'none';
+                });
+            }
+
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % totalSlides;
+                showSlide(currentIndex);
+            }
+
+            showSlide(currentIndex);
+            setInterval(nextSlide, 4000);
+
+            carousel.addEventListener('click', function(event) {
+                if (event.target.tagName === 'A') {
+                    event.preventDefault();
+                    const targetId = event.target.getAttribute('href').substring(1);
+                    const targetIndex = parseInt(targetId.replace('slide', ''), 10);
+                    currentIndex = targetIndex;
+                    showSlide(currentIndex);
+                }
+            });
+        }
+    });
+</script>
+{{ end }}

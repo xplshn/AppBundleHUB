@@ -1,0 +1,13 @@
+{{ define "app-installation" }}
+<div class="card bg-base-200 shadow-lg">
+    <div class="card-body">
+        <h2 class="card-title">Installation</h2>
+        <div class="alert alert-info shadow-lg">
+            <span>ℹ️ Manual install using dbin</span>
+        </div>
+        <div class="mockup-code">
+            <pre data-prefix="$"><code>dbin install {{.Name}}#{{.PkgId}}</code></pre>
+        </div>
+    </div>
+</div>
+{{ end }}

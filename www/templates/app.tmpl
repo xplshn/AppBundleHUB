@@ -1,25 +1,7 @@
 {{ define "title" }}{{.PrettyName}} - AppBundleHUB{{ end }}
 
 {{ define "content" }}
-<div class="navbar bg-base-200 shadow-lg sticky top-0 z-30">
-    <div class="navbar-start">
-        <a href="../../../index.html" class="btn btn-ghost">↩ Back</a>
-    </div>
-    <div class="navbar-center">
-        <a href="../../../index.html" class="btn btn-ghost normal-case text-xl">AppBundleHUB</a>
-    </div>
-    <div class="navbar-end">
-        <div class="dropdown dropdown-end">
-            <label tabindex="0" class="btn btn-ghost btn-circle"><span id="theme-icon">🌞</span></label>
-            <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow-2xl bg-base-300 rounded-box w-52">
-                <li><a data-theme-value="auto">🔄 Auto</a></li>
-                <li><a data-theme-value="light">🌞 Light</a></li>
-                <li><a data-theme-value="dark">🌙 Dark</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
-
+{{ template "navbar" . }}
 <div class="container mx-auto px-4 py-8">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div class="lg:col-span-3">
@@ -32,7 +14,7 @@
                     <div class="flex flex-wrap gap-1 mt-2">
                         {{if .Categories}}
                         {{range splitCategories .Categories}}
-                        <a href="../../../categories/{{.}}/index.html" class="badge badge-outline">{{.}}</a>
+                        <a href="../../categories/{{.}}/index.html" class="badge badge-outline">{{.}}</a>
                         {{end}}
                         {{end}}
                         <span class="badge badge-outline" title="{{.RepoURL}}">{{.RepoName}}</span>
@@ -55,7 +37,7 @@
                         <label tabindex="0" class="btn btn-outline">🔄 Other Versions</label>
                         <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow-2xl bg-base-300 rounded-box w-64">
                             {{range .AlternativeVersions}}
-                            <li><a href="../../../{{.RepoName}}/{{.Name}}/{{.PkgId}}/index.html">{{.PkgId}} ({{.Version}})</a></li>
+                            <li><a href="../../{{.RepoName}}/{{.Name}}/{{.PkgId}}/index.html">{{.PkgId}} ({{.Version}})</a></li>
                             {{end}}
                         </ul>
                     </div>
@@ -65,91 +47,11 @@
         </div>
 
         <div class="lg:col-span-2">
-            <div class="card bg-base-200 shadow-lg">
-                <div class="card-body">
-                    <h2 class="card-title">Screenshots</h2>
-                    {{if .Screenshots}}
-                    <div class="carousel w-full rounded-box">
-                        {{range $index, $screenshot := .Screenshots}}
-                        <div id="slide{{$index}}" class="carousel-item relative w-full">
-                            <div class="skeleton w-full h-80 rounded-lg"></div>
-                            <img src="{{$screenshot}}" alt="Screenshot {{$index}}"
-                                 class="w-full h-80 object-contain"
-                                 onload="this.previousElementSibling.style.display='none';" />
-                            <div class="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-                                {{if eq $index 0}}
-                                <a href="#slide{{len $.Screenshots | dec}}" class="btn btn-circle">❮</a>
-                                {{else}}
-                                <a href="#slide{{$index | dec}}" class="btn btn-circle">❮</a>
-                                {{end}}
-                                {{if eq $index (len $.Screenshots | dec)}}
-                                <a href="#slide0" class="btn btn-circle">❯</a>
-                                {{else}}
-                                <a href="#slide{{$index | inc}}" class="btn btn-circle">❯</a>
-                                {{end}}
-                            </div>
-                        </div>
-                        {{end}}
-                    </div>
-                    <div class="flex justify-center w-full py-2 gap-2">
-                        {{range $index, $screenshot := .Screenshots}}
-                        <a href="#slide{{$index}}" class="btn btn-xs">{{inc $index}}</a>
-                        {{end}}
-                    </div>
-                    {{else}}
-                    <div class="alert alert-info shadow-lg">
-                        <span>ℹ️ No screenshots available for this application.</span>
-                    </div>
-                    {{end}}
-                </div>
-            </div>
+            {{ template "carousel" . }}
         </div>
 
         <div class="lg:col-span-1">
-            <div class="card bg-base-200 shadow-lg">
-                <div class="card-body">
-                    <h2 class="card-title">Details</h2>
-                    <div class="overflow-x-auto">
-                        <table class="table table-zebra">
-                            <tbody>
-                                <tr><td class="font-bold">Package Name</td><td>{{.Name}}</td></tr>
-                                <tr><td class="font-bold">Package ID</td><td>{{.PkgId}}</td></tr>
-                                <tr><td class="font-bold">Build Date</td><td>{{.BuildDate}}</td></tr>
-                                <tr>
-                                    <td class="font-bold">License</td>
-                                    <td>
-                                        {{range .License}}
-                                        <span class="badge badge-outline badge-sm">{{.}}</span>
-                                        {{end}}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {{if .SrcURLs}}
-                    <div class="mt-4">
-                        <h3 class="font-bold">Source Code</h3>
-                        <ol class="list-decimal list-inside">
-                            {{range .SrcURLs}}
-                            <li><a href="{{.}}" class="link link-primary break-all">{{.}}</a></li>
-                            {{end}}
-                        </ol>
-                    </div>
-                    {{end}}
-
-                    {{if .WebURLs}}
-                    <div class="mt-4">
-                        <h3 class="font-bold">Website</h3>
-                        <ol class="list-decimal list-inside">
-                            {{range .WebURLs}}
-                            <li><a href="{{.}}" class="link link-primary break-all">{{.}}</a></li>
-                            {{end}}
-                        </ol>
-                    </div>
-                    {{end}}
-                </div>
-            </div>
+            {{ template "app-details" . }}
         </div>
 
         <div class="lg:col-span-3">
@@ -162,18 +64,7 @@
         </div>
 
         <div class="lg:col-span-3">
-            <div class="card bg-base-200 shadow-lg">
-                <div class="card-body">
-                    <h2 class="card-title">Installation</h2>
-                    <div class="alert alert-info shadow-lg">
-                        <span>ℹ️ Install using dbin</span>
-                        <div class="text-xs">Make sure you have dbin installed on your system</div>
-                    </div>
-                    <div class="mockup-code">
-                        <pre data-prefix="$"><code>dbin install {{.Name}}#{{.PkgId}}</code></pre>
-                    </div>
-                </div>
-            </div>
+            {{ template "app-installation" . }}
         </div>
     </div>
 </div>

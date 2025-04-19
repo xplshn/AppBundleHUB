@@ -1,0 +1,20 @@
+{{ define "navbar" }}
+<div class="navbar bg-base-200 shadow-lg sticky top-0 z-30">
+    <div class="navbar-start">
+        <a href="{{ range $i := seq .BackLevels }}{{ end }}{{ range $i := seq .BackLevels }}../{{ end }}index.html" class="btn btn-ghost">↩ Back</a>
+    </div>
+    <div class="navbar-center">
+        <a href="{{ range $i := seq .BackLevels }}{{ end }}{{ range $i := seq .BackLevels }}../{{ end }}index.html" class="btn btn-ghost normal-case text-xl">AppBundleHUB</a>
+    </div>
+    <div class="navbar-end">
+        <div class="dropdown dropdown-end">
+            <label tabindex="0" class="btn btn-ghost btn-circle"><span id="theme-icon">🌞</span></label>
+            <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow-2xl bg-base-300 rounded-box w-52">
+                <li><a data-theme-value="auto">🔄 Auto</a></li>
+                <li><a data-theme-value="light">🌞 Light</a></li>
+                <li><a data-theme-value="dark">🌙 Dark</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{{ end }}
