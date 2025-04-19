@@ -29,7 +29,7 @@ jobs:
       - name: Install Hugo, Git, and the worst version of Tar
         run: |
           apk update
-          apk add hugo git tar
+          apk add hugo git tar go
 
       - name: Checkout GitHub repo
         uses: actions/checkout@v4
@@ -44,9 +44,8 @@ jobs:
 
       - name: Generate the site
         run: |
-          #cd "${GITHUB_WORKSPACE}/www"
-          #tree
-          #./gen.sh
+          cd "${GITHUB_WORKSPACE}/www"
+          ./gen.sh
           cd "${GITHUB_WORKSPACE}"
 
           # Prepare git to commit changes
