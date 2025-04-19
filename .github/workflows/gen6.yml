@@ -63,6 +63,7 @@ jobs:
           # Set up the PELF toolchain
           wget -qO "$DBIN_INSTALL_DIR/pelf" "https://github.com/xplshn/pelf/releases/latest/download/pelf_$(uname -m)" && chmod +x "$DBIN_INSTALL_DIR/pelf"
           wget -qO "$DBIN_INSTALL_DIR/pelfCreator" "https://github.com/xplshn/pelf/releases/latest/download/pelfCreator_$(uname -m)" && chmod +x "$DBIN_INSTALL_DIR/pelfCreator"
+          wget -qO "$DBIN_INSTALL_DIR/appstream-helper" "https://github.com/xplshn/pelf/releases/latest/download/appstream-helper_$(uname -m)" && chmod +x "$DBIN_INSTALL_DIR/appstream-helper"
 
       - name: Set OUT_DIR environment variable
         run: |
