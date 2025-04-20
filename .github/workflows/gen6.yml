@@ -16,7 +16,7 @@ on:
       appbundle_fs:
         description: "Filesystem type for AppBundle (valid ones include: dwarfs, squashfs)"
         required: false
-        default: "squashfs"
+        default: "dwarfs"
 
 jobs:
   build:
