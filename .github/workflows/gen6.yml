@@ -101,7 +101,8 @@ jobs:
 
       - name: Generate metadata
         run: |
-          appstream-helper --input-dir "$OUT_DIR" --output-file "$META_OUT_DIR/metadata_$(uname -m)-$(basename "$(uname -o)").json" --output-markdown --output-file "$META_OUT_DIR/metadata_$(uname -m)-$(basename "$(uname -o)").md" --repo-name "AppBundleHUB" --download-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/${{ env.TAG_NAME }}/"
+          FILE_NOEXT="$META_OUT_DIR/metadata_$(uname -m)-$(basename "$(uname -o)")"
+          appstream-helper --input-dir "$OUT_DIR" --output-file "$FILE_NOEXT.json" --output-markdown "$FILE_NOEXT.cbor" --repo-name "AppBundleHUB" --download-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/${{ env.TAG_NAME }}/"
 
       - name: Upload app bundle artifacts
         uses: actions/upload-artifact@v4
