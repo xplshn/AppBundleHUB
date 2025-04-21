@@ -102,7 +102,7 @@ jobs:
       - name: Generate metadata
         run: |
           FILE_NOEXT="$META_OUT_DIR/metadata_$(uname -m)-$(basename "$(uname -o)")"
-          appstream-helper --input-dir "$OUT_DIR" --output-file "$FILE_NOEXT.json" --output-markdown "$FILE_NOEXT.cbor" --repo-name "AppBundleHUB" --download-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/${{ env.TAG_NAME }}/"
+          appstream-helper --input-dir "$OUT_DIR" --output-file "${FILE_NOEXT}.json" --output-markdown "${FILE_NOEXT}.md" --repo-name "AppBundleHUB" --download-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/${{ env.TAG_NAME }}/"
 
       - name: Upload app bundle artifacts
         uses: actions/upload-artifact@v4
@@ -192,7 +192,7 @@ jobs:
           make_latest: true
           files: |
             ${{ github.workspace }}/*.AppBundle
-            ${{ github.workspace }}/metadata_x86_64-Linux.json
+            ${{ github.workspace }}/metadata_*.*
         continue-on-error: true
 
   publish_metadata:
@@ -239,6 +239,7 @@ jobs:
           tag_name: "latest_metadata"
           files: |
             ${{ github.workspace }}/*.json
+            ${{ github.workspace }}/*.md
             ${{ github.workspace }}/*.png
             ${{ github.workspace }}/*.svg
             ${{ github.workspace }}/*.desktop
