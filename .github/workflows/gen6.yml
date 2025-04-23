@@ -182,7 +182,7 @@ jobs:
           fi
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2.0.8
+        uses: softprops/action-gh-release@v2.2.2
         with:
           name: "Weekly Release - ${{ env.TAG_NAME }}"
           tag_name: "${{ env.TAG_NAME }}"
@@ -233,7 +233,7 @@ jobs:
           echo "TAG_NAME=${TAG_NAME}" >> $GITHUB_ENV
 
       - name: Create Release for Metadata
-        uses: softprops/action-gh-release@v2.0.8
+        uses: softprops/action-gh-release@v2.2.2
         with:
           name: "Latest Metadata"
           tag_name: "latest_metadata"
