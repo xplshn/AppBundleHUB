@@ -102,7 +102,7 @@ jobs:
       - name: Generate metadata
         run: |
           ls -FAlsh "$OUT_DIR"
-          "$OUT_DIR"/* --pbundle_appstream | base64 -d
+          "$OUT_DIR"/openarena-quake3e.dwfs.AppBundle --pbundle_appstream | base64 -d
           FILE_NOEXT="$META_OUT_DIR/metadata_$(uname -m)-$(basename "$(uname -o)")"
           appstream-helper --input-dir "$OUT_DIR" --output-file "${FILE_NOEXT}.json" --output-markdown "${FILE_NOEXT}.md" --repo-name "AppBundleHUB" --download-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/${{ env.TAG_NAME }}/"
 
