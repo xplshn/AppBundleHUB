@@ -101,8 +101,9 @@ jobs:
 
       - name: Generate metadata
         run: |
+          ls -FAlsh "$OUT_DIR"
           FILE_NOEXT="$META_OUT_DIR/metadata_$(uname -m)-$(basename "$(uname -o)")"
-          appstream-helper --input-dir "$OUT_DIR" --output-file "${FILE_NOEXT}.json" --output-markdown "${FILE_NOEXT}.md" --repo-name "AppBundleHUB" --download-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/${{ env.TAG_NAME }}/"
+          strace appstream-helper --input-dir "$OUT_DIR" --output-file "${FILE_NOEXT}.json" --output-markdown "${FILE_NOEXT}.md" --repo-name "AppBundleHUB" --download-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/${{ env.TAG_NAME }}/"
 
       - name: Upload app bundle artifacts
         uses: actions/upload-artifact@v4
