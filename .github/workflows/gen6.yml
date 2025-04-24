@@ -46,7 +46,7 @@ jobs:
 
       - name: Add non-compliant tools
         run: |
-          apk add bash file binutils patchelf findutils grep sed coreutils strace
+          apk add bash file binutils patchelf findutils grep sed coreutils strace fuse3
 
       - name: Set up GOBIN and install lib4bin
         run: |
