@@ -56,6 +56,7 @@ jobs:
           export GO_LDFLAGS='-buildmode=static-pie'
           export GOFLAGS='-ldflags=-static-pie -ldflags=-s -ldflags=-w'
           export DBIN_INSTALL_DIR="$GOBIN"
+          export PATH="$GOBIN:$PATH"
           mkdir -p "$GOBIN"
           echo "DBIN_INSTALL_DIR=$DBIN_INSTALL_DIR" >> $GITHUB_ENV
           echo "PATH=$GOBIN:$PATH" >> $GITHUB_ENV
