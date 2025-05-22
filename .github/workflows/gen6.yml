@@ -69,6 +69,10 @@ jobs:
           wget -qO "$DBIN_INSTALL_DIR/pelfCreator" "https://github.com/xplshn/pelf/releases/latest/download/pelfCreator_$(uname -m)" && chmod +x "$DBIN_INSTALL_DIR/pelfCreator"
           wget -qO "$DBIN_INSTALL_DIR/appstream-helper" "https://github.com/xplshn/pelf/releases/latest/download/appstream-helper_$(uname -m)" && chmod +x "$DBIN_INSTALL_DIR/appstream-helper"
 
+          export BASE_ARCHLINUX="/tmp/pelfCreatorExtension_archLinux_$(uname -m)"
+          mkdir "$BASE_ARCHLINUX"
+          wget -qO- "https://github.com/xplshn/pelf/releases/latest/download/pelfCreatorExtension_archLinux_$(uname -m).tar.zst" | zstdcat | tar xf - -C "$BASE_ARCHLINUX"
+
       - name: Set OUT_DIR environment variable
         run: |
           OUT_DIR="$GITHUB_WORKSPACE/APPBUNDLES"
