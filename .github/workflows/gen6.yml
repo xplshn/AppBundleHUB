@@ -46,7 +46,7 @@ jobs:
 
       - name: Add non-compliant tools
         run: |
-          apk add bash file binutils patchelf findutils grep sed coreutils strace fuse3 zstd
+          apk add bash file binutils patchelf findutils grep sed coreutils strace fuse3
 
       - name: Set up GOBIN and install lib4bin
         run: |
@@ -64,6 +64,9 @@ jobs:
           else
             echo "PBUNDLE_FS=${{ github.event.inputs.appbundle_fs }}" >> $GITHUB_ENV
           fi
+
+          wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "$DBIN_INSTALL_DIR/dbin" add zstd/zstd zstd/zstdcat
+          
           # Set up the PELF toolchain
           wget -qO "$DBIN_INSTALL_DIR/pelf" "https://github.com/xplshn/pelf/releases/latest/download/pelf_$(uname -m)" && chmod +x "$DBIN_INSTALL_DIR/pelf"
           wget -qO "$DBIN_INSTALL_DIR/pelfCreator" "https://github.com/xplshn/pelf/releases/latest/download/pelfCreator_$(uname -m)" && chmod +x "$DBIN_INSTALL_DIR/pelfCreator"
