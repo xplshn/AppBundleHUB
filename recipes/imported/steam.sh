@@ -13,9 +13,9 @@ FNAME="$(basename "$URL")"
 curl -LOs $URL
 chmod +x $FNAME
 ./$FNAME --appimage-extract && {
-  pelf --add-appdir "${APPBUNDLE_ID}.AppDir" \
+  pelf --add-appdir "./squashfs-root" \
        --output-to "${NAME}.dwfs.AppBundle"  \
        --appbundle-id "${APPBUNDLE_ID}"
 }
 
-rm "$FNAME"
+rm -rf "$FNAME" "./squashfs-root" "./AppDir"
