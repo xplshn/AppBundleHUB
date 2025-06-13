@@ -2,7 +2,7 @@
 
 NAME="steam"
 MAINTAINER="xplshn"
-DATE="$(date +%Y%m%d)"
+DATE="$(date +%d_%m_%Y)"
 APPBUNDLE_ID="${NAME}-${DATE}-${MAINTAINER}"
 ARCH="$(uname -m)"
 
