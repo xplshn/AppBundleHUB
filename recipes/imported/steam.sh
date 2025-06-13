@@ -14,7 +14,7 @@ curl -LOs $URL
 chmod +x $FNAME
 ./$FNAME --appimage-extract && {
   pelf --add-appdir "./squashfs-root" \
-       --output-to "${NAME}.dwfs.AppBundle"  \
+       --output-to "${APPBUNDLE_ID}.dwfs.AppBundle"  \
        --appbundle-id "${APPBUNDLE_ID}"
 }
 
