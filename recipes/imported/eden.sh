@@ -2,7 +2,7 @@
 
 NAME="eden"
 MAINTAINER="xplshn"
-DATE="$(date +%Y%m%d)"
+DATE="$(date +%d_%m_%Y)"
 APPBUNDLE_ID="${NAME}-${DATE}-${MAINTAINER}"
 ARCH="$(uname -m)"
 
@@ -15,7 +15,7 @@ chmod +x $FNAME
 
 #/$FNAME --appimage-extract && {
 #  pelf --add-appdir "./squashfs-root" \
-#       --output-to "${NAME}.dwfs.AppBundle"  \
+#       --output-to "${APPBUNDLE_ID}.dwfs.AppBundle"  \
 #       --appbundle-id "${APPBUNDLE_ID}"
 #}
 #rm -rf "$FNAME" "./squashfs-root" "./AppDir"
