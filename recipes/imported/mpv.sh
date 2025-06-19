@@ -9,9 +9,9 @@ ARCH="$(uname -m)"
 URL="$(curl -Ls https://api.github.com/repos/pkgforge-dev/mpv-AppImage/releases/latest | sed 's/[()",{} ]/\n/g' | grep -o "https.*mpv.*-anylinux-${ARCH}\.dwfs.AppBundle$" | tr '\n' ' ')" #'
 FNAME="$APPBUNDLE_ID.dwfs.AppBundle" #FNAME="$(basename "$URL")"
 
-# Download #and extract
+# Download and extract
 curl -Ls "$URL" -o "$FNAME"
-chmod +x "$FNAME"
+chmod +x $FNAME
 
 #/$FNAME --appimage-extract && {
 #  pelf --add-appdir "./squashfs-root" \
