@@ -18,4 +18,4 @@ chmod +x $FNAME
        --output-to "${APPBUNDLE_ID}.dwfs.AppBundle"  \
        --appbundle-id "io.mpv.Mpv-${DATE}-${MAINTAINER}"
 }
-rm -rf "$FNAME" "./squashfs-root" "./AppDir"
+rm -rf "./squashfs-root" "./AppDir"
