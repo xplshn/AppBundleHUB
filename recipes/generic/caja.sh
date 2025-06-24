@@ -1,4 +1,4 @@
-pelfCreator -m "xplshn" -n "caja" -p "caja" -x "usr/bin/caja" -e "caja.desktop" -z
+pelfCreator -m "xplshn" -n "caja" -p "caja" -x "usr/bin/caja /usr/bin/caja-file-management-properties /usr/bin/caja-connect-server /usr/bin/caja-autorun-software" -e "caja.desktop" -z
 
 APPDIR="$(echo $PWD/caja-*.AppDir)"
 APPBUNDLE_ID="$(basename "$APPDIR" .AppDir)"
