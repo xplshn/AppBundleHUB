@@ -159,16 +159,16 @@ jobs:
 
       - name: Manage Tags
         run: |
-          git fetch --tags
-          TAGS=$(git tag | grep -v "^latest_metadata$" | sort -V)
-          TAG_COUNT=$(echo "$TAGS" | wc -l)
-          if [ "$TAG_COUNT" -gt 5 ]; then
-            TAGS_TO_DELETE=$(echo "$TAGS" | head -n -1)
-            for TAG in $TAGS_TO_DELETE; do
-              git tag -d "$TAG"
-              git push origin --delete "$TAG"
-            done
-          fi
+          #git fetch --tags
+          #TAGS=$(git tag | grep -v "^latest_metadata$" | sort -V)
+          #TAG_COUNT=$(echo "$TAGS" | wc -l)
+          #if [ "$TAG_COUNT" -gt 10 ]; then
+          #  TAGS_TO_DELETE=$(echo "$TAGS" | head -n -5)
+          #  for TAG in $TAGS_TO_DELETE; do
+          #    git tag -d "$TAG"
+          #    git push origin --delete "$TAG"
+          #  done
+          #fi
 
       - name: Download TAG_NAME artifact
         uses: actions/download-artifact@v4
