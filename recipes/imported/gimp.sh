@@ -1,14 +1,14 @@
 #!/bin/sh -u
 
-NAME="mpv"
+NAME="GIMP"
 OWNER="pkgforge-dev"
-REPO="github.com/${OWNER}/${NAME}-AppImage"
+REPO="github.com/${OWNER}/GIMP-and-PhotoGIMP-AppImage"
 DATE="$(date +%d_%m_%Y)"
 ARCH="$(uname -m)"
 
 URL="$(curl -Ls https://api.github.com/repos/${OWNER}/"$(basename "$REPO")"/releases/latest \
   | sed 's/[()",{} ]/\n/g' \
-  | grep -o "https.*${NAME}.*-anylinux-${ARCH}\\.dwfs\\.AppBundle$" \
+  | grep -o "https.*GIMP.*-anylinux-${ARCH}\\.dwfs\\.AppBundle$" \
   | head -n1)"
 
 # reference: mpv-0.38.0-anylinux-x86_64.dwfs.AppBundle

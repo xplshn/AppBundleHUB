@@ -1,6 +1,6 @@
 #!/bin/sh -u
 
-NAME="mpv"
+NAME="DeSmuME"
 OWNER="pkgforge-dev"
 REPO="github.com/${OWNER}/${NAME}-AppImage"
 DATE="$(date +%d_%m_%Y)"

@@ -1,21 +1,27 @@
 #!/bin/sh -u
 
 NAME="eden"
-MAINTAINER="xplshn"
+OWNER="pflyly"
+REPO="github.com/${OWNER}/${NAME}-nightly"
 DATE="$(date +%d_%m_%Y)"
-APPBUNDLE_ID="${NAME}-${DATE}-${MAINTAINER}"
 ARCH="$(uname -m)"
 
-URL="$(curl -Ls https://api.github.com/repos/pflyly/eden-nightly/releases/latest | sed 's/[()",{} ]/\n/g' | grep -o "https.*Eden-[0-9]\+-Legacy-${ARCH}\\.dwfs\\.AppBundle$" | head -n1)"
-FNAME="$APPBUNDLE_ID.dwfs.AppBundle" #FNAME="$(basename "$URL")"
+
+URL="$(curl -Ls https://api.github.com/repos/${OWNER}/"$(basename "$REPO")"/releases/latest \
+  | sed 's/[()",{} ]/\n/g' \
+  | grep -o "https.*Eden-[0-9]\+-Legacy-${ARCH}\\.dwfs\\.AppBundle$" \
+  | head -n1)"
+
+# reference: mpv-0.38.0-anylinux-x86_64.dwfs.AppBundle
+VERSION="$(basename "$URL" | awk -F- '{print $2}' | tr '[:upper:]' '[:lower:]')"
+
+NAME="$(echo "$NAME" | tr '[:upper:]' '[:lower:]')"
+REPO="$(echo "$REPO" | tr '/' '.' | tr '[:upper:]' '[:lower:]')"
+
+APPBUNDLE_ID="${NAME}#${REPO}:${VERSION}@${DATE}"
+
+FNAME="$APPBUNDLE_ID.dwfs.AppBundle"
 
 # Download and extract
 curl -Ls "$URL" -o "$FNAME"
-chmod +x $FNAME
-
-#/$FNAME --appimage-extract && {
-#  pelf --add-appdir "./squashfs-root" \
-#       --output-to "${APPBUNDLE_ID}.dwfs.AppBundle"  \
-#       --appbundle-id "${APPBUNDLE_ID}"
-#}
-#rm -rf "$FNAME" "./squashfs-root" "./AppDir"
+chmod +x "$FNAME"

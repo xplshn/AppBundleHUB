@@ -1,8 +1,8 @@
 #!/bin/sh -u
 
-NAME="mpv"
+NAME="zenity"
 OWNER="pkgforge-dev"
-REPO="github.com/${OWNER}/${NAME}-AppImage"
+REPO="github.com/${OWNER}/Zenity-GTK3-AppImage"
 DATE="$(date +%d_%m_%Y)"
 ARCH="$(uname -m)"
 
