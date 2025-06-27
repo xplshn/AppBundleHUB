@@ -9,7 +9,7 @@ ARCH="$(uname -m)"
 
 URL="$(curl -Ls https://api.github.com/repos/${OWNER}/"$(basename "$REPO")"/releases/latest \
   | sed 's/[()",{} ]/\n/g' \
-  | grep -o "https.*Eden-[0-9]\+-Legacy-${ARCH}\\.dwfs\\.AppBundle$" \
+  | grep -i "^http.*${NAME}.*${ARCH}.*\\.dwfs\\.AppBundle$" \
   | head -n1)"
 
 # reference: mpv-0.38.0-anylinux-x86_64.dwfs.AppBundle
