@@ -67,7 +67,7 @@ jobs:
           fi
 
           wget -qO- "https://raw.githubusercontent.com/xplshn/dbin/master/stubdl" | sh -s -- --install "$DBIN_INSTALL_DIR/dbin" add zstd/zstd zstd/zstdcat
-          
+
           # Set up the PELF toolchain
           wget -qO "$DBIN_INSTALL_DIR/pelf" "https://github.com/xplshn/pelf/releases/latest/download/pelf_$(uname -m)" && chmod +x "$DBIN_INSTALL_DIR/pelf"
           wget -qO "$DBIN_INSTALL_DIR/pelfCreator" "https://github.com/xplshn/pelf/releases/latest/download/pelfCreator_$(uname -m)" && chmod +x "$DBIN_INSTALL_DIR/pelfCreator"
@@ -125,21 +125,21 @@ jobs:
           RESTORE_MAP="restore_filenames.sh"
           printf "#!/bin/sh\n" > "$RESTORE_MAP"
           printf "# Restore original filenames after download\n" >> "$RESTORE_MAP"
-          
+
           # Sanitize each AppBundle file
           for file in *.AppBundle; do
             [ ! -f "$file" ] && continue
-            
+
             # Replace forbidden characters with descriptive strings
             sanitized="$file"
             sanitized=$(printf "%s" "$sanitized" | sed 's/"/DQUOTE/g')
-            sanitized=$(printf "%s" "$sanitized" | sed 's/:/COLON/g') 
+            sanitized=$(printf "%s" "$sanitized" | sed 's/:/COLON/g')
             sanitized=$(printf "%s" "$sanitized" | sed 's/</LTHAN/g')
             sanitized=$(printf "%s" "$sanitized" | sed 's/>/GTHAN/g')
             sanitized=$(printf "%s" "$sanitized" | sed 's/|/PIPE/g')
             sanitized=$(printf "%s" "$sanitized" | sed 's/\*/STAR/g')
             sanitized=$(printf "%s" "$sanitized" | sed 's/?/QMARK/g')
-            
+
             if [ "$file" != "$sanitized" ]; then
               printf "Sanitizing: %s -> %s\n" "$file" "$sanitized"
               mv "$file" "$sanitized"
@@ -162,7 +162,7 @@ jobs:
           ls ${{ env.META_OUT_DIR }}/*
 
       - name: Upload metadata artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: metadata
           path: ${{ env.META_OUT_DIR }}/*
