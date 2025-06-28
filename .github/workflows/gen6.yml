@@ -118,11 +118,33 @@ jobs:
           FILE_NOEXT="$META_OUT_DIR/metadata_$(uname -m)-$(basename "$(uname -o)")"
           appstream-helper --input-dir "$OUT_DIR" --output-file "${FILE_NOEXT}.json" --output-markdown "${FILE_NOEXT}.md" --repo-name "AppBundleHUB" --download-prefix "https://github.com/xplshn/AppBundleHUB/releases/download/${{ env.TAG_NAME }}/"
 
+      - name: Sanitize filenames for artifact upload
+        run: |
+          cd "$OUT_DIR"
+          # Create restoration mapping
+          RESTORE_MAP="restore_filenames.sh"
+          printf "#!/bin/sh\n" > "$RESTORE_MAP"
+          printf "# Restore original filenames after download\n" >> "$RESTORE_MAP"
+          
+          # Sanitize each AppBundle file
+          for file in *.AppBundle; do
+            [ ! -f "$file" ] && continue
+            sanitized=$(printf "%s" "$file" | tr '":><|*?' '_' | tr -d '\r\n')
+            if [ "$file" != "$sanitized" ]; then
+              printf "Sanitizing: %s -> %s\n" "$file" "$sanitized"
+              mv "$file" "$sanitized"
+              printf "mv \"%s\" \"%s\"\n" "$sanitized" "$file" >> "$RESTORE_MAP"
+            fi
+          done
+          chmod +x "$RESTORE_MAP"
+
       - name: Upload app bundle artifacts
         uses: actions/upload-artifact@v4
         with:
           name: app-bundles
-          path: ${{ env.OUT_DIR }}/*.AppBundle
+          path: |
+            ${{ env.OUT_DIR }}/*.AppBundle
+            ${{ env.OUT_DIR }}/restore_filenames.sh
 
       - name: List generated metadata files
         run: |
@@ -150,6 +172,16 @@ jobs:
         with:
           name: app-bundles
           path: ${{ github.workspace }}
+
+      - name: Restore original filenames
+        run: |
+          cd "${{ github.workspace }}"
+          if [ -f "restore_filenames.sh" ]; then
+            printf "Restoring original filenames...\n"
+            chmod +x restore_filenames.sh
+            ./restore_filenames.sh
+            rm restore_filenames.sh
+          fi
 
       - name: Download metadata artifact
         uses: actions/download-artifact@v4
