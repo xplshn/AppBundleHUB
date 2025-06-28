@@ -121,7 +121,7 @@ jobs:
       - name: Sanitize filenames for artifact upload
         run: |
           cd "$OUT_DIR"
-          # Create restoration mapping
+          # Create restoration script
           RESTORE_MAP="restore_filenames.sh"
           printf "#!/bin/sh\n" > "$RESTORE_MAP"
           printf "# Restore original filenames after download\n" >> "$RESTORE_MAP"
@@ -129,10 +129,21 @@ jobs:
           # Sanitize each AppBundle file
           for file in *.AppBundle; do
             [ ! -f "$file" ] && continue
-            sanitized=$(printf "%s" "$file" | tr '":><|*?' '_' | tr -d '\r\n')
+            
+            # Replace forbidden characters with descriptive strings
+            sanitized="$file"
+            sanitized=$(printf "%s" "$sanitized" | sed 's/"/DQUOTE/g')
+            sanitized=$(printf "%s" "$sanitized" | sed 's/:/COLON/g') 
+            sanitized=$(printf "%s" "$sanitized" | sed 's/</LTHAN/g')
+            sanitized=$(printf "%s" "$sanitized" | sed 's/>/GTHAN/g')
+            sanitized=$(printf "%s" "$sanitized" | sed 's/|/PIPE/g')
+            sanitized=$(printf "%s" "$sanitized" | sed 's/\*/STAR/g')
+            sanitized=$(printf "%s" "$sanitized" | sed 's/?/QMARK/g')
+            
             if [ "$file" != "$sanitized" ]; then
               printf "Sanitizing: %s -> %s\n" "$file" "$sanitized"
               mv "$file" "$sanitized"
+              printf "printf \"Restoring: %%s -> %%s\\\\n\" \"%s\" \"%s\"\n" "$sanitized" "$file" >> "$RESTORE_MAP"
               printf "mv \"%s\" \"%s\"\n" "$sanitized" "$file" >> "$RESTORE_MAP"
             fi
           done
@@ -151,7 +162,7 @@ jobs:
           ls ${{ env.META_OUT_DIR }}/*
 
       - name: Upload metadata artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/download-artifact@v4
         with:
           name: metadata
           path: ${{ env.META_OUT_DIR }}/*
@@ -177,10 +188,13 @@ jobs:
         run: |
           cd "${{ github.workspace }}"
           if [ -f "restore_filenames.sh" ]; then
-            printf "Restoring original filenames...\n"
+            printf "Starting filename restoration...\n"
             chmod +x restore_filenames.sh
             ./restore_filenames.sh
+            printf "Filename restoration complete\n"
             rm restore_filenames.sh
+          else
+            printf "No restore script found\n"
           fi
 
       - name: Download metadata artifact
