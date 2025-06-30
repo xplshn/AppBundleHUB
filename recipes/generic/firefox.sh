@@ -1,1 +1,1 @@
-pelfCreator -m "xplshn" -n "firefox" -i "org.mozilla.firefox" -p "firefox" -e "firefox.desktop"
+pelfCreator -m "xplshn" -n "firefox" -a "org.mozilla.firefox" -p "firefox" -e "firefox.desktop"
