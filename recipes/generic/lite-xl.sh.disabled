@@ -1,1 +1,1 @@
-pelfCreator -m "xplshn" -n "lite-xl" -p "lite-xl" -e "org.lite_xl.lite_xl.desktop"
+pelfCreator -m "xplshn" -n "lite-xl" -a "org.lite_xl.lite_xl" -p "lite-xl" -e "org.lite_xl.lite_xl.desktop"
