@@ -1,1 +1,1 @@
-pelfCreator -m "xplshn" -n "chromium" -i "org.chromium.Chromium" -p "chromium" -e "chromium.desktop" -s
+pelfCreator -m "xplshn" -n "chromium" -a "org.chromium.Chromium" -p "chromium" -e "chromium.desktop" -s
