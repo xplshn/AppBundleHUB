@@ -19,6 +19,10 @@ REPO="$(echo "$REPO" | tr '/' '.' | tr '[:upper:]' '[:lower:]')"
 
 APPBUNDLE_ID="${NAME}-${VERSION}-${REPO}"
 
+if [ "$VERSION" = "studio" ]; then
+    VERSION="$DATE"
+fi
+
 FNAME="$APPBUNDLE_ID.dwfs.AppBundle"
 
 # Download and extract
