@@ -17,7 +17,7 @@ VERSION="$(basename "$URL" | awk -F- '{print $2}' | tr '[:upper:]' '[:lower:]')"
 NAME="$(echo "$NAME" | tr '[:upper:]' '[:lower:]')"
 REPO="$(echo "$REPO" | tr '/' '.' | tr '[:upper:]' '[:lower:]')"
 
-APPBUNDLE_ID="${NAME}#${REPO}:${VERSION}@${DATE}"
+APPBUNDLE_ID="${NAME}-${VERSION}-${REPO}"
 
 FNAME="$APPBUNDLE_ID.dwfs.AppBundle"
 
