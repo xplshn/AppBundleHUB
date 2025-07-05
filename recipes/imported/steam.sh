@@ -3,7 +3,7 @@
 NAME="Steam"
 OWNER="ivan-hc"
 REPO="github.com/${OWNER}/${NAME}-appimage"
-DATE="$(date +%d_%m_%Y)"
+DATE="$(date +%Y%m%d)"
 ARCH="$(uname -m)"
 
 URL="$(curl -Ls https://api.github.com/repos/${OWNER}/"$(basename "$REPO")"/releases/latest \

@@ -3,7 +3,7 @@
 NAME="eden"
 OWNER="pflyly"
 REPO="github.com/${OWNER}/${NAME}-nightly"
-DATE="$(date +%d_%m_%Y)"
+DATE="$(date +%Y%m%d)"
 ARCH="$(uname -m)"
 
 
