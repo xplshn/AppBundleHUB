@@ -117,12 +117,13 @@ jobs:
           cd "$OUT_DIR"
           YELLOW='\033[1;33m'
           NC='\033[0m' # No Color
-          find . -type f -name "*.AppBundle" -size -3M | while read -r file; do
-            echo "${YELLOW}warning${NC}: $file is smaller than 4MB and will be removed"
+          ls -sh *.AppBundle
+          find . -type f -name '*.AppBundle' -size -4M | while read -r file; do
+            printf "${YELLOW}warning${NC}: $file is smaller than 4M and will be removed\n"
             rm -f "$file"
           done
           find . -type d -name "*.AppDir" | while read -r dir; do
-            echo "${YELLOW}warning${NC}: $dir is an AppDir and will be removed"
+            printf "${YELLOW}warning${NC}: $dir is an AppDir and will be removed\n"
             rm -rf "$dir"
           done
 
