@@ -108,7 +108,7 @@ jobs:
           for script in "$GITHUB_WORKSPACE/recipes/"*/*.*sh; do
             if echo "$script" | grep -E "$PATTERN"; then
               chmod +x "$script"
-              export PELFCREATOR_DEPS_LS=1 #DEBUG=x
+              export PELFCREATOR_DEPS_LS=1 _DASBUG=1 #DEBUG=x
               "$script"
             fi
           done
